@@ -18,6 +18,12 @@ public class SystemConfig {
 
     public SystemConfig() {}
 
+    public SystemConfig(boolean loadFromDatabase) {
+        if (loadFromDatabase) {
+            loadFromDb();
+        }
+    }
+
     public synchronized void updateFromMap(Map<String, Object> map, String updatedBy) {
         if (map.containsKey("contentWeight")) {
             this.contentWeight = toDouble(map.get("contentWeight"));
@@ -54,6 +60,46 @@ public class SystemConfig {
         this.lastUpdatedBy = updatedBy != null ? updatedBy : "admin";
     }
 
+    public synchronized boolean applyPreset(String presetName, String updatedBy) {
+        if (presetName == null) return false;
+        switch (presetName.toUpperCase()) {
+            case "ACCURACY_OPTIMIZED":
+                this.contentWeight = 0.60;
+                this.collaborativeWeight = 0.35;
+                this.popularityWeight = 0.05;
+                this.explorationRate = 0.05;
+                this.minConfidenceThreshold = 0.60;
+                break;
+            case "EXPLORATION_DISCOVERY":
+                this.contentWeight = 0.20;
+                this.collaborativeWeight = 0.30;
+                this.popularityWeight = 0.20;
+                this.explorationRate = 0.40;
+                this.minConfidenceThreshold = 0.30;
+                break;
+            case "BALANCED_DEFAULTS":
+                this.contentWeight = 0.40;
+                this.collaborativeWeight = 0.35;
+                this.popularityWeight = 0.25;
+                this.explorationRate = 0.15;
+                this.minConfidenceThreshold = 0.40;
+                break;
+            case "HIGH_DIVERSITY":
+                this.contentWeight = 0.30;
+                this.collaborativeWeight = 0.20;
+                this.popularityWeight = 0.20;
+                this.explorationRate = 0.30;
+                this.minConfidenceThreshold = 0.35;
+                break;
+            default:
+                return false;
+        }
+        normalizeWeights();
+        this.lastUpdatedAt = System.currentTimeMillis();
+        this.lastUpdatedBy = updatedBy != null ? updatedBy : "admin";
+        return true;
+    }
+
     private void normalizeWeights() {
         double sum = contentWeight + collaborativeWeight + popularityWeight;
         if (sum > 0) {
@@ -76,6 +122,50 @@ public class SystemConfig {
         this.activeRoutingEngine = "OSRM_NOMINATIM";
         this.lastUpdatedAt = System.currentTimeMillis();
         this.lastUpdatedBy = "system";
+    }
+
+    public synchronized void saveToDb() {
+        try {
+            com.guvi.recommend.db.DatabaseConnectionManager db = com.guvi.recommend.db.DatabaseConnectionManager.getInstance();
+            if (!db.isJdbcAvailable()) return;
+            String sql = "INSERT INTO settings (key, value, updated_at) VALUES (?, ?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at;";
+            try (java.sql.Connection conn = db.getConnection(); java.sql.PreparedStatement ps = conn.prepareStatement(sql)) {
+                Map<String, Object> map = toMap();
+                for (Map.Entry<String, Object> entry : map.entrySet()) {
+                    ps.setString(1, entry.getKey());
+                    ps.setString(2, String.valueOf(entry.getValue()));
+                    ps.setLong(3, System.currentTimeMillis());
+                    ps.addBatch();
+                }
+                ps.executeBatch();
+            }
+        } catch (Exception ignored) {}
+    }
+
+    public synchronized void loadFromDb() {
+        try {
+            com.guvi.recommend.db.DatabaseConnectionManager db = com.guvi.recommend.db.DatabaseConnectionManager.getInstance();
+            if (!db.isJdbcAvailable()) return;
+            String sql = "SELECT key, value FROM settings";
+            try (java.sql.Connection conn = db.getConnection(); java.sql.Statement stmt = conn.createStatement(); java.sql.ResultSet rs = stmt.executeQuery(sql)) {
+                Map<String, Object> map = new HashMap<>();
+                while (rs.next()) {
+                    map.put(rs.getString("key"), rs.getString("value"));
+                }
+                if (!map.isEmpty()) {
+                    if (map.containsKey("contentWeight")) this.contentWeight = toDouble(map.get("contentWeight"));
+                    if (map.containsKey("collaborativeWeight")) this.collaborativeWeight = toDouble(map.get("collaborativeWeight"));
+                    if (map.containsKey("popularityWeight")) this.popularityWeight = toDouble(map.get("popularityWeight"));
+                    if (map.containsKey("priceSensitivity")) this.priceSensitivity = toDouble(map.get("priceSensitivity"));
+                    if (map.containsKey("explorationRate")) this.explorationRate = toDouble(map.get("explorationRate"));
+                    if (map.containsKey("minConfidenceThreshold")) this.minConfidenceThreshold = toDouble(map.get("minConfidenceThreshold"));
+                    if (map.containsKey("enableLiveWebSearch")) this.enableLiveWebSearch = Boolean.parseBoolean(String.valueOf(map.get("enableLiveWebSearch")));
+                    if (map.containsKey("maxRecommendationsPerQuery")) this.maxRecommendationsPerQuery = (int) toDouble(map.get("maxRecommendationsPerQuery"));
+                    if (map.containsKey("defaultSearchRadiusKm")) this.defaultSearchRadiusKm = (int) toDouble(map.get("defaultSearchRadiusKm"));
+                    if (map.containsKey("activeRoutingEngine")) this.activeRoutingEngine = String.valueOf(map.get("activeRoutingEngine"));
+                }
+            }
+        } catch (Exception ignored) {}
     }
 
     private double toDouble(Object obj) {
