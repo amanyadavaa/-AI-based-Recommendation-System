@@ -1,5 +1,5 @@
 # 🌐 Phase 2: Core Domain Services & Internet Integration Engines
-**Project:** AI-based Recommendation System (GUVI Assignment #69)  
+**Project:** AI-based Recommendation System (Enterprise Capstone)  
 **Author:** Aman Yadav  
 **Repository:** [https://github.com/amanyadavaa/-AI-based-Recommendation-System](https://github.com/amanyadavaa/-AI-based-Recommendation-System)  
 **Status:** Completed & Boost Verified  

@@ -1,8 +1,8 @@
 # Phase 3: OOP Architecture, JDBC Database Operations, and Swing Desktop GUI
 
-## 1. Overview & Academic Alignment
+## 1. Overview & Engineering Alignment
 
-Phase 3 implements the comprehensive academic and engineering requirements specified in the GUVI Assignment #69 syllabus:
+Phase 3 implements the comprehensive engineering requirements specified in the core system specifications:
 - **OOP Implementation**: Polymorphism, Inheritance, Custom Exception Handling, Interfaces.
 - **Collections & Generics**: Generic Data Access Object pattern (`Repository<T, ID>`), Type-safe collections, Top-K heuristics.
 - **Multithreading & Synchronization**: Thread-safe Singleton Connection Manager, `ReentrantLock` concurrency, `SwingWorker` non-blocking UI background threads.
