@@ -1,4 +1,6 @@
 @echo off
+setlocal
+cd /d "%~dp0"
 title OmniRecommend AI - Automated Test Runner
 cls
 echo ==================================================================
@@ -8,12 +10,16 @@ echo.
 
 if not exist "bin" mkdir bin
 
-javac -cp "bin;lib/*" -d bin src\com\guvi\recommend\config\*.java src\com\guvi\recommend\db\*.java src\com\guvi\recommend\db\dao\*.java src\com\guvi\recommend\exception\*.java src\com\guvi\recommend\gui\*.java src\com\guvi\recommend\gui\components\*.java src\com\guvi\recommend\model\*.java src\com\guvi\recommend\service\*.java src\com\guvi\recommend\util\*.java src\com\guvi\recommend\web\*.java src\com\guvi\recommend\test\*.java
-if %ERRORLEVEL% NEQ 0 (
-    echo [ERROR] Test compilation failed!
-    pause
-    exit /b 1
-)
+javac -cp "bin;lib/*" -d bin src\com\guvi\recommend\*.java src\com\guvi\recommend\config\*.java src\com\guvi\recommend\db\*.java src\com\guvi\recommend\db\dao\*.java src\com\guvi\recommend\exception\*.java src\com\guvi\recommend\gui\*.java src\com\guvi\recommend\gui\components\*.java src\com\guvi\recommend\model\*.java src\com\guvi\recommend\service\*.java src\com\guvi\recommend\util\*.java src\com\guvi\recommend\web\*.java src\com\guvi\recommend\web\security\*.java src\com\guvi\recommend\test\*.java
+if errorlevel 1 goto compile_failed
+goto run_tests
+
+:compile_failed
+echo [ERROR] Test compilation failed!
+pause
+exit /b 1
+
+:run_tests
 
 echo [1/7] Running Phase 1 Test Suite...
 java -cp "bin;lib/*" com.guvi.recommend.test.Phase1TestSuite
