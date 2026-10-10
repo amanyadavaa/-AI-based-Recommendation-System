@@ -1,0 +1,60 @@
+name: OmniRecommend AI CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-verify:
+    name: Build, Verify & Test Suites
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21 / 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Create bin Directory
+        run: mkdir -p bin
+
+      - name: Compile All Java Modules
+        run: |
+          javac -cp "lib/*" -d bin $(find src -name "*.java")
+
+      - name: Run Phase 1 Test Suite
+        run: java -cp "bin:lib/*" com.guvi.recommend.test.Phase1TestSuite
+
+      - name: Run Phase 2 Test Suite
+        run: java -cp "bin:lib/*" com.guvi.recommend.test.Phase2TestSuite
+
+      - name: Run Phase 3 Test Suite
+        run: java -cp "bin:lib/*" com.guvi.recommend.test.Phase3TestSuite
+
+      - name: Run Phase 4 Test Suite
+        run: java -cp "bin:lib/*" com.guvi.recommend.test.Phase4TestSuite
+
+      - name: Run Phase 5 Test Suite
+        run: java -cp "bin:lib/*" com.guvi.recommend.test.Phase5TestSuite
+
+      - name: Run Phase 6 Test Suite
+        run: java -cp "bin:lib/*" com.guvi.recommend.test.Phase6TestSuite
+
+      - name: Run Phase 7 Test Suite
+        run: java -cp "bin:lib/*" com.guvi.recommend.test.Phase7TestSuite
+
+      - name: Verify Web Assets Integrity
+        run: |
+          test -f web/index.html
+          test -f web/css/style.css
+          test -f web/js/app.js
+
+      - name: Build Docker Image
+        run: |
+          docker build -t omnirecommend-ai:ci .

@@ -15,30 +15,34 @@ if ($LASTEXITCODE -ne 0) {
     Exit 1
 }
 
-Write-Host "`n[1/6] Running Phase 1 Test Suite..." -ForegroundColor Yellow
+Write-Host "`n[1/7] Running Phase 1 Test Suite..." -ForegroundColor Yellow
 java -cp "bin;lib/*" com.guvi.recommend.test.Phase1TestSuite
 if ($LASTEXITCODE -ne 0) { Exit 1 }
 
-Write-Host "`n[2/6] Running Phase 2 Test Suite..." -ForegroundColor Yellow
+Write-Host "`n[2/7] Running Phase 2 Test Suite..." -ForegroundColor Yellow
 java -cp "bin;lib/*" com.guvi.recommend.test.Phase2TestSuite
 if ($LASTEXITCODE -ne 0) { Exit 1 }
 
-Write-Host "`n[3/6] Running Phase 3 Test Suite (OOP, JDBC & Desktop GUI)..." -ForegroundColor Yellow
+Write-Host "`n[3/7] Running Phase 3 Test Suite (OOP, JDBC & Desktop GUI)..." -ForegroundColor Yellow
 java -cp "bin;lib/*" com.guvi.recommend.test.Phase3TestSuite
 if ($LASTEXITCODE -ne 0) { Exit 1 }
 
-Write-Host "`n[4/6] Running Phase 4 Test Suite (Admin, Analytics & REST API)..." -ForegroundColor Yellow
+Write-Host "`n[4/7] Running Phase 4 Test Suite (Admin, Analytics & REST API)..." -ForegroundColor Yellow
 java -cp "bin;lib/*" com.guvi.recommend.test.Phase4TestSuite
 if ($LASTEXITCODE -ne 0) { Exit 1 }
 
-Write-Host "`n[5/6] Running Phase 5 Test Suite (Web Dashboard & Interactive UI)..." -ForegroundColor Yellow
+Write-Host "`n[5/7] Running Phase 5 Test Suite (Web Dashboard & Interactive UI)..." -ForegroundColor Yellow
 java -cp "bin;lib/*" com.guvi.recommend.test.Phase5TestSuite
 if ($LASTEXITCODE -ne 0) { Exit 1 }
 
-Write-Host "`n[6/6] Running Phase 6 Test Suite (Verification, Packaging & UI Benchmark)..." -ForegroundColor Yellow
+Write-Host "`n[6/7] Running Phase 6 Test Suite (Verification, Packaging & UI Benchmark)..." -ForegroundColor Yellow
 java -cp "bin;lib/*" com.guvi.recommend.test.Phase6TestSuite
 if ($LASTEXITCODE -ne 0) { Exit 1 }
 
+Write-Host "`n[7/7] Running Phase 7 Test Suite (Security, Online Learning & DevOps)..." -ForegroundColor Yellow
+java -cp "bin;lib/*" com.guvi.recommend.test.Phase7TestSuite
+if ($LASTEXITCODE -ne 0) { Exit 1 }
+
 Write-Host "`n==================================================================" -ForegroundColor Green
-Write-Host "  ALL TEST SUITES (PHASES 1, 2, 3, 4, 5 & 6) PASSED SUCCESSFULLY!    " -ForegroundColor Green
+Write-Host "  ALL TEST SUITES (PHASES 1, 2, 3, 4, 5, 6 & 7) PASSED SUCCESSFULLY!    " -ForegroundColor Green
 Write-Host "==================================================================" -ForegroundColor Green

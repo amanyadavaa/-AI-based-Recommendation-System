@@ -1,0 +1,16 @@
+.git
+.gitignore
+.github
+*.db
+*.log
+bin/
+docs/
+test.bat
+test.ps1
+run.bat
+run.ps1
+run-gui.bat
+run-gui.ps1
+README.md
+.idea/
+.vscode/

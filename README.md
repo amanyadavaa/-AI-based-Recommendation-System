@@ -143,17 +143,26 @@ run.bat
 ### Option 3: Manual Compilation & Execution
 ```powershell
 # 1. Compile Java files into bin directory
-javac -d bin (Get-ChildItem -Path src -Filter *.java -Recurse | Select-Object -ExpandProperty FullName)
+javac -cp "lib/*" -d bin (Get-ChildItem -Path src -Filter *.java -Recurse | Select-Object -ExpandProperty FullName)
 
 # 2. Start the embedded server on port 8080
-java -cp bin com.guvi.recommend.Main 8080
+java -cp "bin;lib/*" com.guvi.recommend.Main 8080
 ```
 Open **[http://localhost:8080/](http://localhost:8080/)** in any web browser.
 
+### Option 4: Production Docker Container Deployment
+```bash
+# Build and run with Docker Compose
+docker-compose up -d
+
+# Check live container health
+docker ps
+```
+
 ---
 
-## 🧪 Automated Verification Test Suites (Phases 1, 2, 3, 4, 5 & 6)
-Run all 6 automated test suites sequentially (62/62 tests passing 100%):
+## 🧪 Automated Verification Test Suites (Phases 1, 2, 3, 4, 5, 6 & 7)
+Run all 7 automated test suites sequentially (72/72 tests passing 100%):
 - **Windows Batch**: Double-click `test.bat`
 - **PowerShell**: `powershell -ExecutionPolicy Bypass -File .\test.ps1`
 - **Manual Individual Execution**:
@@ -165,6 +174,7 @@ Run all 6 automated test suites sequentially (62/62 tests passing 100%):
   java -cp "bin;lib/*" com.guvi.recommend.test.Phase4TestSuite
   java -cp "bin;lib/*" com.guvi.recommend.test.Phase5TestSuite
   java -cp "bin;lib/*" com.guvi.recommend.test.Phase6TestSuite
+  java -cp "bin;lib/*" com.guvi.recommend.test.Phase7TestSuite
   ```
 
 ### 📚 Phase Architectural Documentation
@@ -174,6 +184,7 @@ Run all 6 automated test suites sequentially (62/62 tests passing 100%):
 - [`Phase 4: Admin Analytics & REST API Server`](docs/PHASE_4_ADMIN_ANALYTICS_AND_REST_API.md)
 - [`Phase 5: Web Dashboard & Interactive Visualizations`](docs/PHASE_5_WEB_DASHBOARD_AND_VISUALIZATIONS.md)
 - [`Phase 6: Verification, Packaging, Clean Minimalist UI & Deployment`](docs/PHASE_6_VERIFICATION_PACKAGING_AND_DEPLOYMENT.md)
+- [`Phase 7: Production Hardening, Containerization & DevOps`](docs/PHASE_7_PRODUCTION_HARDENING_CONTAINERIZATION_AND_DEVOPS.md)
 
 ---
 
@@ -193,13 +204,15 @@ Run all 6 automated test suites sequentially (62/62 tests passing 100%):
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
 | `GET` | `/api/health` | Healthcheck and timestamp |
+| `GET` | `/api/health/deep` | Deep health diagnostics (SQLite counts, JVM heap, uptime) |
+| `GET` | `/api/metrics` | Prometheus metrics exposition (`http_requests_total`, JVM stats) |
 | `GET` | `/api/recommendations?userId={id}&category={cat}` | Fetches personalized AI recommendations |
 | `GET` | `/api/search?q={query}&userId={id}` | Universal search across products, movies, places, food & web |
 | `GET` | `/api/compare?itemId={id}` | Multi-store product price comparison |
 | `GET` | `/api/movie?itemId={id}` | Direct download mirrors & streaming platform links |
 | `GET` | `/api/route?origin={orig}&destination={dest}` | Shortest path route, duration, distance & coordinates |
 | `GET` | `/api/food?itemId={id}` | Aggregated internet reviews, sentiment scores & top dishes |
-| `POST` | `/api/interaction` | Logs user interaction (LIKE, DISLIKE, CLICK, VIEW, RATE) |
+| `POST` | `/api/interaction` | Logs user interaction & triggers online reinforcement learning |
 | `GET` | `/api/user/{id}` | Fetches user profile and preferences |
 | `POST` | `/api/user/{id}/preferences` | Updates user preferences and invalidates cache |
 | `GET` | `/api/admin/settings` | Retrieves current algorithm parameters |
@@ -213,6 +226,8 @@ Run all 6 automated test suites sequentially (62/62 tests passing 100%):
 
 - [x] **Clean, Minimalist Responsive Web UI**: Spacious Tailwind layout, refinement sidebar, progressive disclosure "Why this?" accordion, and skeleton shimmer micro-interactions.
 - [x] **Interactive Feedback & Telemetry**: Thumbs up/down with live optimistic state and SQLite persistence.
+- [x] **Online Reinforcement Learning**: Dynamic real-time tag affinity adaptation upon user feedback.
+- [x] **Enterprise Security & Rate Limiting**: In-memory token bucket filter (120 req/min) and comprehensive HTTP security headers.
 - [x] **System Settings Management Form**: Allows admin to adjust recommendation criteria & algorithm parameters with instant confirmation.
 - [x] **Recommendation Effectiveness Analysis**: Performance reports, KPI statistics, interactive charts (CTR by category, timeline), and algorithmic improvement advice.
 - [x] **Personalized User Feed**: Uses hybrid collaborative and content-based AI matching with 1-sentence explanations.
@@ -222,4 +237,4 @@ Run all 6 automated test suites sequentially (62/62 tests passing 100%):
 - [x] **Shortest Path Place Routing**: Real-time turn-by-turn routing with distance, time, and interactive map.
 - [x] **Food Review & Sentiment Aggregator**: Sentiment analysis percentages and signature dishes.
 - [x] **Omnichannel Internet Search**: Real-time web synthesis for any query.
-- [x] **Complete Verification & Packaging**: 6 test suites (62 tests), self-contained zero-dependency runtime, and cross-platform one-click launchers.
+- [x] **Complete Verification & Packaging**: 7 test suites (72 tests), Docker containerization, GitHub Actions CI/CD workflow, and cross-platform one-click launchers.

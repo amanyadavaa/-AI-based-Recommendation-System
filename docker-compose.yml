@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  omnirecommend-ai:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: omnirecommend-ai:latest
+    container_name: omnirecommend-app
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - omni_data:/app/data
+    environment:
+      - PORT=8080
+      - JAVA_OPTS=-Xms256m -Xmx1024m -XX:+UseG1GC
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8080/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  omni_data:
+    driver: local
