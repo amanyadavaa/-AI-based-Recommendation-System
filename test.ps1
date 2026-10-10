@@ -1,6 +1,6 @@
-# OmniRecommend AI - Phase 1 Test Runner for PowerShell
+# OmniRecommend AI - Automated Test Runner for PowerShell
 Write-Host "==================================================================" -ForegroundColor Cyan
-Write-Host "      COMPILING & EXECUTING PHASE 1 AUTOMATED TEST SUITE          " -ForegroundColor Green
+Write-Host "      COMPILING & EXECUTING AUTOMATED TEST SUITES                 " -ForegroundColor Green
 Write-Host "==================================================================" -ForegroundColor Cyan
 
 if (-not (Test-Path "bin")) {
@@ -15,4 +15,14 @@ if ($LASTEXITCODE -ne 0) {
     Exit 1
 }
 
+Write-Host "`n[1/2] Running Phase 1 Test Suite..." -ForegroundColor Yellow
 java -cp bin com.guvi.recommend.test.Phase1TestSuite
+if ($LASTEXITCODE -ne 0) { Exit 1 }
+
+Write-Host "`n[2/2] Running Phase 2 Test Suite..." -ForegroundColor Yellow
+java -cp bin com.guvi.recommend.test.Phase2TestSuite
+if ($LASTEXITCODE -ne 0) { Exit 1 }
+
+Write-Host "`n==================================================================" -ForegroundColor Cyan
+Write-Host " ALL TEST SUITES (PHASE 1 & PHASE 2) PASSED SUCCESSFULLY!         " -ForegroundColor Green
+Write-Host "==================================================================" -ForegroundColor Cyan

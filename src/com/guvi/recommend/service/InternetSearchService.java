@@ -34,7 +34,8 @@ public class InternetSearchService {
         // Movie keywords
         if (lower.contains("movie") || lower.contains("film") || lower.contains("cinema") || lower.contains("watch") ||
                 lower.contains("download") || lower.contains("trailer") || lower.contains("season") || lower.contains("series") ||
-                lower.contains("actor") || lower.contains("inception") || lower.contains("matrix") || lower.contains("interstellar") ||
+                lower.contains("actor") || lower.contains("director") || lower.contains("oscar") || lower.contains("imdb") ||
+                lower.contains("inception") || lower.contains("matrix") || lower.contains("interstellar") || lower.contains("anime") ||
                 lower.contains("avatar") || lower.contains("oppenheimer") || lower.contains("batman") || lower.contains("avengers")) {
             return "MOVIE";
         }
@@ -44,7 +45,9 @@ public class InternetSearchService {
                 lower.contains("temple") || lower.contains("palace") || lower.contains("city") || lower.contains("hotel") ||
                 lower.contains("airport") || lower.contains("station") || lower.contains("route") || lower.contains("path") ||
                 lower.contains("distance") || lower.contains("paris") || lower.contains("london") || lower.contains("new york") ||
-                lower.contains("tokyo") || lower.contains("delhi") || lower.contains("monument") || lower.contains("destination")) {
+                lower.contains("tokyo") || lower.contains("delhi") || lower.contains("monument") || lower.contains("destination") ||
+                lower.contains("visit") || lower.contains("trip") || lower.contains("travel") || lower.contains("pyramid") ||
+                lower.contains("bridge") || lower.contains("colosseum") || lower.contains("taj mahal")) {
             return "PLACE";
         }
 
@@ -53,7 +56,8 @@ public class InternetSearchService {
                 lower.contains("restaurant") || lower.contains("cafe") || lower.contains("bistro") || lower.contains("taco") ||
                 lower.contains("curry") || lower.contains("biryani") || lower.contains("pasta") || lower.contains("dessert") ||
                 lower.contains("bakery") || lower.contains("steak") || lower.contains("ice cream") || lower.contains("cuisine") ||
-                lower.contains("dish") || lower.contains("recipe") || lower.contains("breakfast") || lower.contains("dining")) {
+                lower.contains("dish") || lower.contains("recipe") || lower.contains("breakfast") || lower.contains("dining") ||
+                lower.contains("ramen") || lower.contains("noodle") || lower.contains("bbq") || lower.contains("burrito")) {
             return "FOOD";
         }
 
@@ -62,11 +66,11 @@ public class InternetSearchService {
                 lower.contains("headphone") || lower.contains("shoes") || lower.contains("watch") || lower.contains("camera") ||
                 lower.contains("keyboard") || lower.contains("monitor") || lower.contains("sneaker") || lower.contains("tv") ||
                 lower.contains("gadget") || lower.contains("discount") || lower.contains("deal") || lower.contains("sale") ||
-                lower.contains("shirt") || lower.contains("bag") || lower.contains("tablet") || lower.contains("console")) {
+                lower.contains("shirt") || lower.contains("bag") || lower.contains("tablet") || lower.contains("console") ||
+                lower.contains("gpu") || lower.contains("chair") || lower.contains("airpods") || lower.contains("speaker")) {
             return "PRODUCT";
         }
 
-        // Default heuristic: If contains "vs" or "best" or brand, likely product or general
         return "WEB";
     }
 
