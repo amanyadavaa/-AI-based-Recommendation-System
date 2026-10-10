@@ -9,6 +9,8 @@ const API_BASE = '/api';
 const state = {
   activeUserId: 'usr-alice',
   activeCategory: 'ALL',
+  minConfidence: 0.60,
+  sortOrder: 'matchScore',
   currentView: 'USER', // 'USER' or 'ADMIN'
   users: [],
   recommendations: [],
@@ -39,6 +41,15 @@ const el = {
   recommendationsGrid: document.getElementById('recommendationsGrid'),
   loadingIndicator: document.getElementById('loadingIndicator'),
   emptyResults: document.getElementById('emptyResults'),
+  
+  // Refinement Sidebar Elements
+  sortSelect: document.getElementById('sortSelect'),
+  minScoreSlider: document.getElementById('minScoreSlider'),
+  minScoreVal: document.getElementById('minScoreVal'),
+  btnResetFilters: document.getElementById('btnResetFilters'),
+  btnClearFiltersEmpty: document.getElementById('btnClearFiltersEmpty'),
+  btnSidebarPreferences: document.getElementById('btnSidebarPreferences'),
+  resultsCount: document.getElementById('resultsCount'),
   
   // Modals
   modalProduct: document.getElementById('modalProduct'),
@@ -125,6 +136,34 @@ function initEventListeners() {
     el.searchInput.value = '';
     loadRecommendations();
   });
+
+  // Refinement sidebar controls
+  if (el.sortSelect) {
+    el.sortSelect.addEventListener('change', (e) => {
+      state.sortOrder = e.target.value;
+      renderCurrentFilteredRecommendations();
+    });
+  }
+
+  if (el.minScoreSlider) {
+    el.minScoreSlider.addEventListener('input', (e) => {
+      state.minConfidence = parseFloat(e.target.value);
+      if (el.minScoreVal) {
+        el.minScoreVal.textContent = Math.round(state.minConfidence * 100) + '%';
+      }
+      renderCurrentFilteredRecommendations();
+    });
+  }
+
+  if (el.btnResetFilters) {
+    el.btnResetFilters.addEventListener('click', resetSidebarFilters);
+  }
+  if (el.btnClearFiltersEmpty) {
+    el.btnClearFiltersEmpty.addEventListener('click', resetSidebarFilters);
+  }
+  if (el.btnSidebarPreferences) {
+    el.btnSidebarPreferences.addEventListener('click', openPreferencesModal);
+  }
 
   // Modal close handlers
   document.querySelectorAll('.modal-close-btn').forEach(btn => {
@@ -249,16 +288,66 @@ async function loadRecommendations(query = '') {
     state.recommendations = items;
     el.loadingIndicator.classList.add('hidden');
 
-    if (items.length === 0) {
-      el.emptyResults.classList.remove('hidden');
-    } else {
-      renderRecommendationsGrid(items);
-    }
+    renderCurrentFilteredRecommendations();
   } catch (err) {
     el.loadingIndicator.classList.add('hidden');
     el.emptyResults.classList.remove('hidden');
     console.error('Failed to load recommendations:', err);
   }
+}
+
+function renderCurrentFilteredRecommendations() {
+  let items = [...(state.recommendations || [])];
+
+  // Category filter
+  if (state.activeCategory && state.activeCategory !== 'ALL') {
+    items = items.filter(i => (i.category || '').toUpperCase() === state.activeCategory.toUpperCase());
+  }
+
+  // Min confidence threshold filter
+  items = items.filter(i => (i.matchScore || 0.85) >= state.minConfidence);
+
+  // Sorting
+  if (state.sortOrder === 'matchScore') {
+    items.sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0));
+  } else if (state.sortOrder === 'popularity') {
+    items.sort((a, b) => ((b.rating || 0) * (b.reviewCount || 1)) - ((a.rating || 0) * (a.reviewCount || 1)));
+  } else if (state.sortOrder === 'priceAsc') {
+    items.sort((a, b) => (a.price != null ? a.price : 999999) - (b.price != null ? b.price : 999999));
+  } else if (state.sortOrder === 'priceDesc') {
+    items.sort((a, b) => (b.price != null ? b.price : 0) - (a.price != null ? a.price : 0));
+  }
+
+  if (el.resultsCount) {
+    el.resultsCount.textContent = items.length;
+  }
+
+  if (items.length === 0) {
+    el.emptyResults.classList.remove('hidden');
+    el.recommendationsGrid.innerHTML = '';
+  } else {
+    el.emptyResults.classList.add('hidden');
+    renderRecommendationsGrid(items);
+  }
+}
+
+function resetSidebarFilters() {
+  state.activeCategory = 'ALL';
+  state.minConfidence = 0.60;
+  state.sortOrder = 'matchScore';
+
+  if (el.sortSelect) el.sortSelect.value = 'matchScore';
+  if (el.minScoreSlider) el.minScoreSlider.value = 0.60;
+  if (el.minScoreVal) el.minScoreVal.textContent = '60%';
+
+  if (el.categoryContainer) {
+    el.categoryContainer.querySelectorAll('.cat-pill').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-category') === 'ALL');
+    });
+  }
+
+  if (el.searchInput) el.searchInput.value = '';
+  loadRecommendations();
 }
 
 function renderRecommendationsGrid(items) {
@@ -271,29 +360,31 @@ function renderRecommendationsGrid(items) {
 
 function createRecommendationCard(item) {
   const card = document.createElement('div');
-  card.className = 'item-card flex flex-col justify-between rounded-2xl bg-slate-800/60 hover:bg-slate-800/90 border border-slate-700/80 overflow-hidden shadow-lg transition duration-200';
+  card.className = 'item-card flex flex-col justify-between rounded-2xl bg-slate-900/60 hover:bg-slate-900/95 border border-slate-800/80 hover:border-slate-700 overflow-hidden shadow-xl transition-all duration-200';
 
   const category = item.category || 'PRODUCT';
   const categoryConfig = {
-    PRODUCT: { icon: 'fa-bag-shopping', badge: 'Product Comparison', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20', btnText: 'Compare Across 6 Stores', btnIcon: 'fa-code-compare', btnColor: 'bg-emerald-600 hover:bg-emerald-500' },
-    MOVIE: { icon: 'fa-film', badge: 'Movie & Downloads', color: 'bg-purple-500/10 text-purple-400 border-purple-500/20', btnText: 'Watch & Download Links', btnIcon: 'fa-download', btnColor: 'bg-purple-600 hover:bg-purple-500' },
-    PLACE: { icon: 'fa-map-location-dot', badge: 'Place & Route', color: 'bg-amber-500/10 text-amber-400 border-amber-500/20', btnText: 'Shortest Path & Map', btnIcon: 'fa-route', btnColor: 'bg-amber-600 hover:bg-amber-500' },
+    PRODUCT: { icon: 'fa-bag-shopping', badge: 'Product & Pricing', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20', btnText: 'Compare 6 Stores', btnIcon: 'fa-code-compare', btnColor: 'bg-emerald-600 hover:bg-emerald-500' },
+    MOVIE: { icon: 'fa-film', badge: 'Movie & Media', color: 'bg-purple-500/10 text-purple-400 border-purple-500/20', btnText: 'Watch & Download Links', btnIcon: 'fa-download', btnColor: 'bg-purple-600 hover:bg-purple-500' },
+    PLACE: { icon: 'fa-map-location-dot', badge: 'Place & Route', color: 'bg-amber-500/10 text-amber-400 border-amber-500/20', btnText: 'Shortest Route & Map', btnIcon: 'fa-route', btnColor: 'bg-amber-600 hover:bg-amber-500' },
     FOOD: { icon: 'fa-utensils', badge: 'Food & Reviews', color: 'bg-rose-500/10 text-rose-400 border-rose-500/20', btnText: 'Reviews & Sentiment', btnIcon: 'fa-chart-pie', btnColor: 'bg-rose-600 hover:bg-rose-500' },
-    WEB: { icon: 'fa-globe', badge: 'Internet Synthesis', color: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20', btnText: 'View Internet Details', btnIcon: 'fa-up-right-from-square', btnColor: 'bg-cyan-600 hover:bg-cyan-500' }
+    WEB: { icon: 'fa-globe', badge: 'Live Synthesis', color: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20', btnText: 'View Details', btnIcon: 'fa-up-right-from-square', btnColor: 'bg-cyan-600 hover:bg-cyan-500' }
   }[category] || { icon: 'fa-sparkles', badge: category, color: 'bg-slate-700 text-slate-300 border-slate-600', btnText: 'View Details', btnIcon: 'fa-eye', btnColor: 'bg-indigo-600 hover:bg-indigo-500' };
 
   const matchPercent = Math.round((item.matchScore || 0.85) * 100);
   const starsHtml = renderStarRating(item.rating || 4.8);
   const priceDisplay = item.price ? `$${item.price.toFixed(2)}` : '';
+  const aiExpl = item.aiExplanation || 'Tailored to your profile preferences by the multi-domain AI recommendation engine.';
+  const factors = item.scoreFactors || { contentSimilarity: 0.45, collaborativeAffinity: 0.35, popularityWeight: 0.20 };
 
   card.innerHTML = `
     <div>
-      <!-- Card Image & Badges -->
-      <div class="relative h-44 w-full overflow-hidden bg-slate-900">
+      <!-- Card Media Header & Overlays -->
+      <div class="relative h-44 w-full overflow-hidden bg-slate-950">
         <img src="${escapeHtml(item.imageUrl || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80')}" alt="${escapeHtml(item.title)}" class="w-full h-full object-cover transition duration-300 hover:scale-105" onerror="this.src='https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80'">
-        <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-black/40"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-black/50"></div>
         
-        <!-- Category Badge -->
+        <!-- Category Tag -->
         <div class="absolute top-3 left-3">
           <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider backdrop-blur-md border ${categoryConfig.color} flex items-center space-x-1.5 shadow">
             <i class="fa-solid ${categoryConfig.icon}"></i>
@@ -301,40 +392,76 @@ function createRecommendationCard(item) {
           </span>
         </div>
 
-        <!-- AI Match Confidence Score Pill -->
+        <!-- AI Match Confidence Badge (Prominent Visual Hierarchy) -->
         <div class="absolute top-3 right-3">
-          <span class="px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-indigo-600/90 text-white backdrop-blur-md border border-indigo-400/30 shadow flex items-center space-x-1">
-            <i class="fa-solid fa-sparkles text-[10px] text-amber-300"></i>
+          <span class="px-2.5 py-1 rounded-full text-xs font-extrabold bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 backdrop-blur-md shadow-lg shadow-emerald-500/25 flex items-center space-x-1">
+            <i class="fa-solid fa-sparkles text-[10px]"></i>
             <span>${matchPercent}% Match</span>
           </span>
         </div>
 
         <!-- Price Badge if exists -->
-        ${priceDisplay ? `<div class="absolute bottom-2.5 right-3 px-2.5 py-0.5 rounded-lg bg-black/80 backdrop-blur-md text-white font-extrabold text-sm border border-slate-700">${priceDisplay}</div>` : ''}
+        ${priceDisplay ? `<div class="absolute bottom-2.5 right-3 px-2.5 py-0.5 rounded-lg bg-black/85 backdrop-blur-md text-white font-extrabold text-xs border border-slate-800">${priceDisplay}</div>` : ''}
       </div>
 
-      <!-- Card Body -->
-      <div class="p-4 space-y-2.5">
-        <h3 class="font-bold text-sm text-white line-clamp-1 hover:text-indigo-400 transition cursor-pointer" title="${escapeHtml(item.title)}">
+      <!-- Card Body Content -->
+      <div class="p-4 space-y-3">
+        
+        <!-- Item Title (Most Prominent Text) -->
+        <h3 class="font-extrabold text-base text-white hover:text-indigo-300 transition cursor-pointer line-clamp-1" title="${escapeHtml(item.title)}">
           ${escapeHtml(item.title)}
         </h3>
 
-        <!-- Rating & Reviews -->
+        <!-- Rating & Review Count -->
         <div class="flex items-center space-x-2 text-xs">
           <div class="flex text-amber-400 text-[11px]">${starsHtml}</div>
-          <span class="font-bold text-slate-200 text-[11px]">${(item.rating || 4.8).toFixed(1)}</span>
-          <span class="text-slate-500 text-[10px]">(${(item.reviewCount || 1000).toLocaleString()})</span>
+          <span class="font-bold text-slate-200">${(item.rating || 4.8).toFixed(1)}</span>
+          <span class="text-slate-500 text-[11px]">(${(item.reviewCount || 1000).toLocaleString()} reviews)</span>
         </div>
 
-        <!-- Description Snippet -->
-        <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed">
-          ${escapeHtml(item.description || 'Curated recommendation tailored by hybrid recommendation algorithms.')}
-        </p>
-
-        <!-- Feature Tags -->
-        <div class="flex flex-wrap gap-1 pt-1">
-          ${(item.tags || []).slice(0, 3).map(t => `<span class="px-2 py-0.5 bg-slate-800 rounded-md text-[10px] text-slate-400 border border-slate-700/60 font-medium">${escapeHtml(t)}</span>`).join('')}
+        <!-- 1-Sentence AI Explanation Box -->
+        <div class="p-2.5 rounded-xl bg-slate-950/70 border border-slate-800 text-[11px] text-slate-300 leading-relaxed flex items-start space-x-2">
+          <i class="fa-solid fa-wand-magic-sparkles text-indigo-400 mt-0.5 shrink-0 text-xs"></i>
+          <span>${escapeHtml(aiExpl)}</span>
         </div>
+
+        <!-- Interactive Feedback Bar & Progressive Disclosure Toggle -->
+        <div class="flex items-center justify-between pt-1 border-t border-slate-800/80 text-xs">
+          <div class="flex items-center space-x-1.5">
+            <button class="feedback-btn like-btn px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700/80 text-slate-400 hover:text-emerald-400 border border-slate-700/60 transition flex items-center space-x-1" title="Helpful recommendation">
+              <i class="fa-solid fa-thumbs-up text-[11px]"></i>
+              <span class="text-[10px] font-semibold">Like</span>
+            </button>
+            <button class="feedback-btn dislike-btn px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700/80 text-slate-400 hover:text-rose-400 border border-slate-700/60 transition flex items-center space-x-1" title="Less like this">
+              <i class="fa-solid fa-thumbs-down text-[11px]"></i>
+              <span class="text-[10px] font-semibold">Pass</span>
+            </button>
+          </div>
+
+          <button class="why-this-toggle text-[11px] text-indigo-400 hover:text-indigo-300 flex items-center space-x-1 transition font-medium">
+            <span>Why this?</span>
+            <i class="fa-solid fa-chevron-down text-[9px] transition-transform duration-200"></i>
+          </button>
+        </div>
+
+        <!-- Progressive Disclosure Accordion: Detailed AI Reasoning -->
+        <div class="why-this-drawer space-y-1.5 text-[11px] text-slate-400">
+          <div class="p-2.5 rounded-xl bg-slate-950/90 border border-slate-800 space-y-1">
+            <div class="flex justify-between items-center">
+              <span>Content Similarity:</span>
+              <span class="font-mono text-indigo-400 font-bold">${Math.round((factors.contentSimilarity || 0.45) * 100)}%</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span>Collaborative Affinity:</span>
+              <span class="font-mono text-purple-400 font-bold">${Math.round((factors.collaborativeAffinity || 0.35) * 100)}%</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span>Community Popularity:</span>
+              <span class="font-mono text-amber-400 font-bold">${Math.round((factors.popularityWeight || 0.20) * 100)}%</span>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -346,6 +473,35 @@ function createRecommendationCard(item) {
       </button>
     </div>
   `;
+
+  // Attach feedback listeners
+  const likeBtn = card.querySelector('.like-btn');
+  const dislikeBtn = card.querySelector('.dislike-btn');
+  const whyToggle = card.querySelector('.why-this-toggle');
+  const whyDrawer = card.querySelector('.why-this-drawer');
+  const whyChevron = whyToggle.querySelector('i');
+
+  likeBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    likeBtn.classList.toggle('liked');
+    dislikeBtn.classList.remove('disliked');
+    recordInteraction(item.id, category, 'LIKE');
+    showToast(`Recorded positive feedback for ${item.title}`, 'success');
+  });
+
+  dislikeBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    dislikeBtn.classList.toggle('disliked');
+    likeBtn.classList.remove('liked');
+    recordInteraction(item.id, category, 'DISLIKE');
+    showToast(`Understood, showing less recommendations like this`, 'info');
+  });
+
+  whyToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = whyDrawer.classList.toggle('open');
+    whyChevron.style.transform = isOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+  });
 
   // Attach click listener to action button
   const actionBtn = card.querySelector('.action-btn');

@@ -1,4 +1,4 @@
-/* Custom Styling for OmniRecommend AI */
+/* Custom Styling for OmniRecommend AI - Minimalist Modern UI */
 
 /* Smooth scroll & base transitions */
 html {
@@ -11,39 +11,33 @@ html {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0f172a;
+  background: #090d16;
 }
 ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #1e293b;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: #334155;
 }
 
 /* Tab button state */
 .tab-btn.active {
   background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
   color: #ffffff !important;
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
 }
 
-/* Category Filter Pills */
-.cat-pill {
-  background-color: rgba(30, 41, 59, 0.7);
-  border-color: rgba(51, 65, 85, 0.8);
-  color: #94a3b8;
+/* Category Filter Pills in Sidebar */
+.sidebar-cat-btn {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.cat-pill:hover {
-  background-color: rgba(51, 65, 85, 0.8);
+.sidebar-cat-btn.active {
+  background: rgba(99, 102, 241, 0.12);
+  border-color: rgba(99, 102, 241, 0.4);
   color: #ffffff;
-  border-color: rgba(99, 102, 241, 0.5);
-}
-.cat-pill.active {
-  background: linear-gradient(135deg, rgba(79, 70, 229, 0.25) 0%, rgba(99, 102, 241, 0.2) 100%);
-  border-color: #6366f1;
-  color: #ffffff;
-  box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+  font-weight: 600;
+  box-shadow: 0 0 16px rgba(99, 102, 241, 0.12);
 }
 
 /* Card hover animation */
@@ -51,8 +45,56 @@ html {
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .item-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(99, 102, 241, 0.3);
+  transform: translateY(-5px);
+  box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(99, 102, 241, 0.35);
+}
+
+/* Shimmer Loading Skeleton */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.8s infinite;
+}
+
+/* Interactive Feedback Buttons */
+.feedback-btn {
+  transition: all 0.2s ease-in-out;
+}
+.feedback-btn:hover {
+  transform: scale(1.08);
+}
+.feedback-btn.liked {
+  background-color: rgba(16, 185, 129, 0.2) !important;
+  color: #34d399 !important;
+  border-color: rgba(16, 185, 129, 0.4) !important;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
+}
+.feedback-btn.disliked {
+  background-color: rgba(244, 63, 94, 0.2) !important;
+  color: #fb7185 !important;
+  border-color: rgba(244, 63, 94, 0.4) !important;
+  box-shadow: 0 0 12px rgba(244, 63, 94, 0.25);
+}
+
+/* Why This Accordion Collapse/Expand */
+.why-this-drawer {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+}
+.why-this-drawer.open {
+  max-height: 300px;
+  opacity: 1;
 }
 
 /* Modal animation */
@@ -73,7 +115,7 @@ html {
 /* Custom range inputs */
 input[type="range"] {
   height: 6px;
-  background: #334155;
+  background: #1e293b;
   border-radius: 9999px;
 }
 
@@ -82,11 +124,11 @@ input[type="range"] {
   font-family: inherit;
 }
 .leaflet-popup-content-wrapper {
-  background: #1e293b;
+  background: #0f172a;
   color: #f1f5f9;
   border-radius: 0.75rem;
   border: 1px solid #334155;
 }
 .leaflet-popup-tip {
-  background: #1e293b;
+  background: #0f172a;
 }

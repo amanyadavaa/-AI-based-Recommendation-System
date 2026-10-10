@@ -111,118 +111,201 @@
   <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
     <!-- ========================================== -->
-    <!-- VIEW 1: USER DASHBOARD                     -->
+    <!-- VIEW 1: USER DASHBOARD (CLEAN & MINIMALIST)-->
     <!-- ========================================== -->
-    <div id="userDashboardView" class="space-y-6">
+    <div id="userDashboardView" class="space-y-8">
 
-      <!-- HERO & UNIVERSAL SEARCH SECTION -->
-      <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-950/60 via-slate-900 to-slate-900 border border-indigo-500/20 p-6 sm:p-8 shadow-2xl">
-        <div class="absolute -top-24 -right-24 w-80 h-80 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute -bottom-24 -left-24 w-80 h-80 bg-pink-600/10 rounded-full blur-3xl pointer-events-none"></div>
+      <!-- PROMINENT CENTRAL PROMPT / SEARCH BAR HERO -->
+      <div class="relative max-w-4xl mx-auto text-center space-y-4 pt-4 pb-2">
+        <div class="absolute -top-16 left-1/2 -translate-x-1/2 w-96 h-40 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
-        <div class="max-w-3xl mx-auto text-center space-y-4">
-          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/25 text-indigo-400 text-xs font-medium">
-            <i class="fa-solid fa-wand-magic-sparkles text-xs animate-pulse"></i>
-            <span>Hybrid AI Engine with Real-Time Web Synthesis</span>
-          </div>
+        <div class="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-slate-800/80 border border-slate-700/80 text-indigo-300 text-xs font-medium shadow-sm">
+          <i class="fa-solid fa-wand-magic-sparkles text-xs text-indigo-400"></i>
+          <span>Curated AI Intelligence & Live Internet Comparisons</span>
+        </div>
 
-          <h1 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
-            Discover & Compare <span class="bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 bg-clip-text text-transparent">Anything on the Internet</span>
-          </h1>
-          <p class="text-slate-400 text-sm sm:text-base">
-            Search products for multi-store price comparisons, movies for verified direct download links, places for shortest routes, food for internet reviews, or any query on the web.
-          </p>
+        <h1 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
+          What would you like to explore <span class="bg-gradient-to-r from-indigo-400 via-purple-300 to-emerald-400 bg-clip-text text-transparent">today?</span>
+        </h1>
+        <p class="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto">
+          Type conversational prompts or preferences to receive tailored multi-domain recommendations, instant price savings, verified direct media links, and shortest routes.
+        </p>
 
-          <!-- Omnichannel Search Input Bar -->
-          <div class="pt-2">
-            <form id="searchForm" class="relative flex items-center max-w-2xl mx-auto">
-              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-                <i class="fa-solid fa-magnifying-glass"></i>
-              </div>
-              <input 
-                type="text" 
-                id="searchInput" 
-                placeholder="Search products (e.g. Sony headphones), movies, places (e.g. Eiffel Tower), food..." 
-                class="w-full pl-11 pr-28 py-3.5 bg-slate-800/90 hover:bg-slate-800 focus:bg-slate-800 border border-slate-700 focus:border-indigo-500 rounded-xl text-sm text-white placeholder-slate-400 shadow-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition"
+        <!-- Conversational Prompt / Search Bar -->
+        <div class="pt-2">
+          <form id="searchForm" class="relative max-w-2xl mx-auto group">
+            <div class="absolute inset-y-0 left-0 pl-4.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-indigo-400 transition">
+              <i class="fa-solid fa-magnifying-glass text-base"></i>
+            </div>
+            <input 
+              type="text" 
+              id="searchInput" 
+              placeholder="Ask AI for anything... e.g. 'Sony noise-canceling headphones', 'Inception movie', 'Eiffel Tower route'..." 
+              class="w-full pl-12 pr-28 py-4 bg-slate-900/90 hover:bg-slate-900 focus:bg-slate-900 border border-slate-700/80 focus:border-indigo-500/80 rounded-2xl text-sm text-white placeholder-slate-400 shadow-2xl focus:outline-none focus:ring-4 focus:ring-indigo-500/15 transition duration-200"
+            >
+            <div class="absolute inset-y-0 right-2 flex items-center">
+              <button 
+                type="submit" 
+                class="h-10 px-5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 transition flex items-center space-x-1.5"
               >
-              <div class="absolute inset-y-0 right-1.5 flex items-center space-x-1">
-                <button 
-                  type="submit" 
-                  class="h-9 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md shadow-indigo-600/30 transition flex items-center space-x-1.5"
-                >
-                  <span>Search</span>
-                  <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                </button>
+                <span>Search</span>
+                <i class="fa-solid fa-arrow-right text-[11px]"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Quick Suggestion Chips -->
+        <div class="flex flex-wrap items-center justify-center gap-2 pt-1 text-xs text-slate-400">
+          <span class="text-slate-500 font-medium">Suggestions:</span>
+          <button class="quick-chip px-3 py-1 rounded-xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-indigo-500/50 text-slate-300 transition" data-q="Sony WH-1000XM5">🎧 Sony Headphones</button>
+          <button class="quick-chip px-3 py-1 rounded-xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-indigo-500/50 text-slate-300 transition" data-q="Inception">🎬 Inception Sci-Fi</button>
+          <button class="quick-chip px-3 py-1 rounded-xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-indigo-500/50 text-slate-300 transition" data-q="Eiffel Tower Paris">📍 Eiffel Tower Route</button>
+          <button class="quick-chip px-3 py-1 rounded-xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-indigo-500/50 text-slate-300 transition" data-q="Neapolitan Pizza">🍕 Neapolitan Pizza</button>
+        </div>
+      </div>
+
+      <!-- MAIN 2-COLUMN DASHBOARD LAYOUT: REFINEMENT SIDEBAR + CURATED GRID -->
+      <div class="flex flex-col lg:flex-row gap-8 items-start">
+
+        <!-- LEFT: REFINEMENT SIDEBAR -->
+        <aside id="refinementSidebar" class="w-full lg:w-72 shrink-0 space-y-6 bg-slate-900/60 backdrop-blur-md border border-slate-800/80 rounded-2xl p-5 shadow-xl">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+            <div class="flex items-center space-x-2">
+              <i class="fa-solid fa-sliders text-indigo-400 text-xs"></i>
+              <h3 class="text-xs font-bold text-white tracking-wider uppercase">Refinement Filter</h3>
+            </div>
+            <button id="btnResetFilters" class="text-[11px] text-slate-400 hover:text-indigo-400 transition font-medium">
+              Reset All
+            </button>
+          </div>
+
+          <!-- Category Filter Options -->
+          <div class="space-y-2">
+            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Domain Category</label>
+            <div class="space-y-1.5" id="categoryFilterContainer">
+              <button class="cat-pill sidebar-cat-btn active w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs text-left border border-slate-800 hover:border-slate-700 hover:bg-slate-800/50 text-slate-300 transition" data-category="ALL">
+                <span class="flex items-center space-x-2.5"><i class="fa-solid fa-sparkles text-indigo-400"></i><span>All For You</span></span>
+                <span class="text-[10px] text-slate-500 font-mono">Curated</span>
+              </button>
+              <button class="cat-pill sidebar-cat-btn w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs text-left border border-slate-800 hover:border-slate-700 hover:bg-slate-800/50 text-slate-300 transition" data-category="PRODUCT">
+                <span class="flex items-center space-x-2.5"><i class="fa-solid fa-bag-shopping text-emerald-400"></i><span>Products & Deals</span></span>
+                <span class="text-[10px] text-slate-500 font-mono">6 Stores</span>
+              </button>
+              <button class="cat-pill sidebar-cat-btn w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs text-left border border-slate-800 hover:border-slate-700 hover:bg-slate-800/50 text-slate-300 transition" data-category="MOVIE">
+                <span class="flex items-center space-x-2.5"><i class="fa-solid fa-film text-purple-400"></i><span>Movies & Downloads</span></span>
+                <span class="text-[10px] text-slate-500 font-mono">Vaults</span>
+              </button>
+              <button class="cat-pill sidebar-cat-btn w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs text-left border border-slate-800 hover:border-slate-700 hover:bg-slate-800/50 text-slate-300 transition" data-category="PLACE">
+                <span class="flex items-center space-x-2.5"><i class="fa-solid fa-map-location-dot text-amber-400"></i><span>Places & Routes</span></span>
+                <span class="text-[10px] text-slate-500 font-mono">OSRM</span>
+              </button>
+              <button class="cat-pill sidebar-cat-btn w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs text-left border border-slate-800 hover:border-slate-700 hover:bg-slate-800/50 text-slate-300 transition" data-category="FOOD">
+                <span class="flex items-center space-x-2.5"><i class="fa-solid fa-utensils text-rose-400"></i><span>Food & Reviews</span></span>
+                <span class="text-[10px] text-slate-500 font-mono">Sentiment</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Sort Order -->
+          <div class="space-y-2">
+            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Sort Order</label>
+            <select id="sortSelect" class="w-full p-2.5 bg-slate-800/90 border border-slate-700/80 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-indigo-500 cursor-pointer">
+              <option value="matchScore" selected>🎯 Highest AI Match Score</option>
+              <option value="popularity">🔥 Most Popular & Top Rated</option>
+              <option value="priceAsc">💲 Price: Low to High</option>
+              <option value="priceDesc">🏷️ Price: High to Low</option>
+            </select>
+          </div>
+
+          <!-- Minimum AI Match Score Slider -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Min Match Confidence</label>
+              <span id="minScoreVal" class="text-xs font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">60%</span>
+            </div>
+            <input type="range" id="minScoreSlider" min="0.4" max="0.95" step="0.05" value="0.60" class="w-full accent-emerald-500 cursor-pointer">
+            <p class="text-[10px] text-slate-500">Filters cards below this match percentage.</p>
+          </div>
+
+          <!-- Fine-Tune Preferences Button -->
+          <div class="pt-2 border-t border-slate-800">
+            <button id="btnSidebarPreferences" class="w-full py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700/80 text-slate-300 hover:text-white border border-slate-700 text-xs font-semibold flex items-center justify-center space-x-2 transition">
+              <i class="fa-solid fa-sliders text-indigo-400"></i>
+              <span>Customize Preferences</span>
+            </button>
+          </div>
+        </aside>
+
+        <!-- RIGHT: CURATED RECOMMENDATION FEED -->
+        <section class="flex-grow w-full space-y-5">
+
+          <!-- Results Header & Personalization Pill -->
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-slate-900/40 border border-slate-800/80 rounded-2xl px-5 py-3.5">
+            <div class="flex items-center space-x-2 text-xs">
+              <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span class="text-slate-400">Curated for <strong id="activeUserName" class="text-slate-200">Alice</strong></span>
+              <span class="text-slate-600">•</span>
+              <span class="text-slate-400"><strong id="resultsCount" class="text-indigo-400 font-mono">0</strong> items</span>
+            </div>
+
+            <div class="flex items-center space-x-2">
+              <button id="btnRefreshFeed" class="px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/80 text-xs font-medium flex items-center space-x-1.5 transition" title="Refresh Recommendations">
+                <i class="fa-solid fa-arrows-rotate text-xs"></i>
+                <span>Refresh</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Loading Skeleton Screens -->
+          <div id="loadingIndicator" class="hidden">
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div class="rounded-2xl bg-slate-900/60 border border-slate-800 p-4 space-y-4">
+                <div class="h-40 rounded-xl skeleton-shimmer"></div>
+                <div class="space-y-2">
+                  <div class="h-4 w-3/4 rounded skeleton-shimmer"></div>
+                  <div class="h-3 w-1/2 rounded skeleton-shimmer"></div>
+                </div>
+                <div class="h-10 rounded-xl skeleton-shimmer"></div>
               </div>
-            </form>
+              <div class="rounded-2xl bg-slate-900/60 border border-slate-800 p-4 space-y-4">
+                <div class="h-40 rounded-xl skeleton-shimmer"></div>
+                <div class="space-y-2">
+                  <div class="h-4 w-3/4 rounded skeleton-shimmer"></div>
+                  <div class="h-3 w-1/2 rounded skeleton-shimmer"></div>
+                </div>
+                <div class="h-10 rounded-xl skeleton-shimmer"></div>
+              </div>
+              <div class="rounded-2xl bg-slate-900/60 border border-slate-800 p-4 space-y-4">
+                <div class="h-40 rounded-xl skeleton-shimmer"></div>
+                <div class="space-y-2">
+                  <div class="h-4 w-3/4 rounded skeleton-shimmer"></div>
+                  <div class="h-3 w-1/2 rounded skeleton-shimmer"></div>
+                </div>
+                <div class="h-10 rounded-xl skeleton-shimmer"></div>
+              </div>
+            </div>
           </div>
 
-          <!-- Quick Search Chips -->
-          <div class="flex flex-wrap items-center justify-center gap-2 pt-2 text-xs text-slate-400">
-            <span class="text-slate-500">Quick queries:</span>
-            <button class="quick-chip px-2.5 py-1 rounded-lg bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-indigo-500/40 text-slate-300 transition" data-q="Sony WH-1000XM5">🛍️ Sony Headphones</button>
-            <button class="quick-chip px-2.5 py-1 rounded-lg bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-indigo-500/40 text-slate-300 transition" data-q="Inception">🎬 Inception Movie</button>
-            <button class="quick-chip px-2.5 py-1 rounded-lg bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-indigo-500/40 text-slate-300 transition" data-q="Eiffel Tower Paris">📍 Eiffel Tower Route</button>
-            <button class="quick-chip px-2.5 py-1 rounded-lg bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-indigo-500/40 text-slate-300 transition" data-q="Neapolitan Pizza">🍔 Neapolitan Pizza Reviews</button>
+          <!-- Dynamic Recommendation Cards Grid -->
+          <div id="recommendationsGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            <!-- Dynamic Recommendation Cards Injected Here via JavaScript -->
           </div>
-        </div>
-      </div>
 
-      <!-- CATEGORY FILTER PILLS & STATUS BAR -->
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-800 pb-4">
-        
-        <!-- Category Navigation Buttons -->
-        <div class="flex flex-wrap items-center gap-2" id="categoryFilterContainer">
-          <button class="cat-pill active px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center space-x-2 transition border" data-category="ALL">
-            <i class="fa-solid fa-sparkles text-indigo-400"></i>
-            <span>All For You</span>
-          </button>
-          <button class="cat-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center space-x-2 transition border" data-category="PRODUCT">
-            <i class="fa-solid fa-bag-shopping text-emerald-400"></i>
-            <span>Products & Comparison</span>
-          </button>
-          <button class="cat-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center space-x-2 transition border" data-category="MOVIE">
-            <i class="fa-solid fa-film text-purple-400"></i>
-            <span>Movies & Downloads</span>
-          </button>
-          <button class="cat-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center space-x-2 transition border" data-category="PLACE">
-            <i class="fa-solid fa-map-location-dot text-amber-400"></i>
-            <span>Places & Shortest Path</span>
-          </button>
-          <button class="cat-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center space-x-2 transition border" data-category="FOOD">
-            <i class="fa-solid fa-utensils text-rose-400"></i>
-            <span>Food & Reviews</span>
-          </button>
-        </div>
-
-        <!-- Personalization Info Pill -->
-        <div class="flex items-center space-x-2 text-xs text-slate-400">
-          <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-          <span>Feed personalized for <strong id="activeUserName" class="text-slate-200">Alice</strong></span>
-          <button id="btnRefreshFeed" class="ml-2 p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition" title="Refresh Recommendations">
-            <i class="fa-solid fa-rotate-right"></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- RECOMMENDATION CARDS GRID -->
-      <div>
-        <div id="loadingIndicator" class="hidden py-16 text-center space-y-3">
-          <div class="inline-block animate-spin w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full"></div>
-          <p class="text-sm text-slate-400">AI Engine is synthesizing personalized recommendations & real-time internet data...</p>
-        </div>
-
-        <div id="recommendationsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          <!-- Dynamic Recommendation Cards Injected Here via JavaScript -->
-        </div>
-
-        <div id="emptyResults" class="hidden py-16 text-center space-y-3">
-          <div class="w-16 h-16 rounded-full bg-slate-800 mx-auto flex items-center justify-center text-slate-500 text-2xl">
-            <i class="fa-solid fa-magnifying-glass"></i>
+          <!-- Empty State -->
+          <div id="emptyResults" class="hidden py-16 text-center space-y-3 bg-slate-900/40 border border-slate-800 rounded-2xl p-8">
+            <div class="w-16 h-16 rounded-full bg-slate-800 mx-auto flex items-center justify-center text-slate-500 text-2xl">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white">No items match your criteria</h3>
+            <p class="text-sm text-slate-400 max-w-sm mx-auto">Try lowering the minimum match score or clearing sidebar filters to see more recommendations.</p>
+            <button id="btnClearFiltersEmpty" class="mt-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow transition">
+              Reset Filters
+            </button>
           </div>
-          <h3 class="text-lg font-bold text-white">No items found</h3>
-          <p class="text-sm text-slate-400 max-w-sm mx-auto">Try adjusting your search terms or switch categories to discover more recommendations.</p>
-        </div>
+
+        </section>
+
       </div>
 
     </div>

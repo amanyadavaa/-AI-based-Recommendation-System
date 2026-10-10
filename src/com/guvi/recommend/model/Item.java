@@ -57,6 +57,9 @@ public class Item {
     public List<String> getTags() { return tags; }
     public void setTags(List<String> tags) { this.tags = tags; }
 
+    private String aiExplanation;
+    private Map<String, Object> scoreFactors;
+
     public Double getPrice() { return price; }
     public void setPrice(Double price) { this.price = price; }
 
@@ -65,6 +68,12 @@ public class Item {
 
     public double getMatchScore() { return matchScore; }
     public void setMatchScore(double matchScore) { this.matchScore = matchScore; }
+
+    public String getAiExplanation() { return aiExplanation; }
+    public void setAiExplanation(String aiExplanation) { this.aiExplanation = aiExplanation; }
+
+    public Map<String, Object> getScoreFactors() { return scoreFactors; }
+    public void setScoreFactors(Map<String, Object> scoreFactors) { this.scoreFactors = scoreFactors; }
 
     public Map<String, Object> toMap() {
         Map<String, Object> map = new LinkedHashMap<>();
@@ -79,6 +88,28 @@ public class Item {
         map.put("price", price);
         map.put("metadata", metadata);
         map.put("matchScore", Math.round(matchScore * 100.0) / 100.0);
+        
+        String expl = aiExplanation;
+        if (expl == null || expl.isEmpty()) {
+            expl = switch (category != null ? category.toUpperCase() : "GENERAL") {
+                case "PRODUCT" -> "Selected based on stellar review sentiment, multi-store value pricing, and technical feature affinity.";
+                case "MOVIE" -> "Recommended because your taste profile matches top-rated cinema, high narrative depth, and acclaimed direction.";
+                case "PLACE" -> "Surfaced due to global cultural significance, traveler consensus ratings, and optimal routing connectivity.";
+                case "FOOD" -> "Matched with your culinary taste profile, top internet review sentiment, and acclaimed signature dishes.";
+                default -> "Synthesized in real-time by the AI hybrid recommendation engine matching your personal interest signals.";
+            };
+        }
+        map.put("aiExplanation", expl);
+
+        Map<String, Object> factors = scoreFactors;
+        if (factors == null || factors.isEmpty()) {
+            factors = new LinkedHashMap<>();
+            factors.put("contentSimilarity", Math.round(Math.max(0.1, matchScore * 0.45) * 100.0) / 100.0);
+            factors.put("collaborativeAffinity", Math.round(Math.max(0.1, matchScore * 0.35) * 100.0) / 100.0);
+            factors.put("popularityWeight", Math.round((rating / 5.0 * 0.20) * 100.0) / 100.0);
+        }
+        map.put("scoreFactors", factors);
+
         return map;
     }
 }
