@@ -42,7 +42,7 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo.
-echo [4/4] Running Phase 4 Test Suite (Admin, Analytics & REST API)...
+echo [4/5] Running Phase 4 Test Suite (Admin, Analytics & REST API)...
 java -cp "bin;lib/*" com.guvi.recommend.test.Phase4TestSuite
 if %ERRORLEVEL% NEQ 0 (
     echo [ERROR] Phase 4 tests failed!
@@ -51,7 +51,16 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo.
+echo [5/5] Running Phase 5 Test Suite (Web Dashboard & Interactive UI)...
+java -cp "bin;lib/*" com.guvi.recommend.test.Phase5TestSuite
+if %ERRORLEVEL% NEQ 0 (
+    echo [ERROR] Phase 5 tests failed!
+    pause
+    exit /b 1
+)
+
+echo.
 echo ==================================================================
-echo  ALL TEST SUITES (PHASES 1, 2, 3 & 4) PASSED SUCCESSFULLY!
+echo  ALL TEST SUITES (PHASES 1, 2, 3, 4 & 5) PASSED SUCCESSFULLY!
 echo ==================================================================
 pause

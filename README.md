@@ -152,16 +152,26 @@ Open **[http://localhost:8080/](http://localhost:8080/)** in any web browser.
 
 ---
 
-## 🧪 Phase 1 Automated Verification Suite
-Run the Phase 1 test suite verifying JSON serialization, configuration normalization, and domain entity models:
+## 🧪 Automated Verification Test Suites (Phases 1, 2, 3, 4 & 5)
+Run all 5 automated test suites sequentially (52/52 tests):
 - **Windows Batch**: Double-click `test.bat`
 - **PowerShell**: `powershell -ExecutionPolicy Bypass -File .\test.ps1`
-- **Manual**:
+- **Manual Individual Execution**:
   ```powershell
-  javac -d bin (Get-ChildItem -Path src -Filter *.java -Recurse | Select-Object -ExpandProperty FullName)
-  java -cp bin com.guvi.recommend.test.Phase1TestSuite
+  javac -cp "bin;lib/*" -d bin (Get-ChildItem -Path src -Filter *.java -Recurse | Select-Object -ExpandProperty FullName)
+  java -cp "bin;lib/*" com.guvi.recommend.test.Phase1TestSuite
+  java -cp "bin;lib/*" com.guvi.recommend.test.Phase2TestSuite
+  java -cp "bin;lib/*" com.guvi.recommend.test.Phase3TestSuite
+  java -cp "bin;lib/*" com.guvi.recommend.test.Phase4TestSuite
+  java -cp "bin;lib/*" com.guvi.recommend.test.Phase5TestSuite
   ```
-- Detailed documentation: See [`docs/PHASE_1_REQUIREMENTS_AND_ARCHITECTURE.md`](docs/PHASE_1_REQUIREMENTS_AND_ARCHITECTURE.md).
+
+### 📚 Phase Architectural Documentation
+- [`Phase 1: Requirements & Architecture`](docs/PHASE_1_REQUIREMENTS_AND_ARCHITECTURE.md)
+- [`Phase 2: Core Domain Services & Web Scrapers`](docs/PHASE_2_CORE_DOMAIN_SERVICES.md)
+- [`Phase 3: OOP, SQLite JDBC & Desktop GUI`](docs/PHASE_3_OOP_JDBC_AND_GUI.md)
+- [`Phase 4: Admin Analytics & REST API Server`](docs/PHASE_4_ADMIN_ANALYTICS_AND_REST_API.md)
+- [`Phase 5: Web Dashboard & Interactive Visualizations`](docs/PHASE_5_WEB_DASHBOARD_AND_VISUALIZATIONS.md)
 
 ---
 
