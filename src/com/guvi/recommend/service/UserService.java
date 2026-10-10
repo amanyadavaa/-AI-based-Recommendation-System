@@ -10,8 +10,30 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class UserService {
+    public static class UserSession {
+        private final String token;
+        private final String userId;
+        private final String role;
+        private final long createdAt;
+        private final long expiresAt;
+
+        public UserSession(String token, String userId, String role, long validDurationMs) {
+            this.token = token;
+            this.userId = userId;
+            this.role = role;
+            this.createdAt = System.currentTimeMillis();
+            this.expiresAt = this.createdAt + validDurationMs;
+        }
+
+        public String getToken() { return token; }
+        public String getUserId() { return userId; }
+        public String getRole() { return role; }
+        public boolean isExpired() { return System.currentTimeMillis() > expiresAt; }
+    }
+
     private final Map<String, User> users = new ConcurrentHashMap<>();
     private final List<Interaction> interactions = new CopyOnWriteArrayList<>();
+    private final Map<String, UserSession> activeSessions = new ConcurrentHashMap<>();
 
     public UserService() {
         seedUsers();
@@ -20,24 +42,24 @@ public class UserService {
 
     private void seedUsers() {
         // Admin user
-        User admin = new User("usr-admin", "admin", "admin@omnirecommend.ai", "ADMIN");
+        User admin = new User("usr-admin", "admin", "admin@omnirecommend.ai", "ADMIN", "admin123");
         users.put(admin.getId(), admin);
 
         // Regular users
-        User alice = new User("usr-alice", "Alice", "alice@tech.org", "USER");
+        User alice = new User("usr-alice", "Alice", "alice@tech.org", "USER", "alice123");
         alice.getPreferences().put("preferredCategories", List.of("PRODUCT", "MOVIE"));
         alice.getPreferences().put("movieGenres", List.of("Sci-Fi", "Action", "Thriller"));
         alice.getPreferences().put("pricePreference", "MEDIUM");
         alice.getPreferences().put("currentLocation", "Eiffel Tower, Paris");
         users.put(alice.getId(), alice);
 
-        User bob = new User("usr-bob", "Bob", "bob@traveler.com", "USER");
+        User bob = new User("usr-bob", "Bob", "bob@traveler.com", "USER", "bob123");
         bob.getPreferences().put("preferredCategories", List.of("PLACE", "FOOD"));
         bob.getPreferences().put("dietaryPreference", "Vegetarian");
         bob.getPreferences().put("currentLocation", "Louvre Museum, Paris");
         users.put(bob.getId(), bob);
 
-        User charlie = new User("usr-charlie", "Charlie", "charlie@explorer.io", "USER");
+        User charlie = new User("usr-charlie", "Charlie", "charlie@explorer.io", "USER", "charlie123");
         charlie.getPreferences().put("preferredCategories", List.of("PRODUCT", "FOOD", "MOVIE"));
         charlie.getPreferences().put("pricePreference", "LOW");
         users.put(charlie.getId(), charlie);
@@ -79,6 +101,78 @@ public class UserService {
             }
         }
         return null;
+    }
+
+    /**
+     * Authenticates a user by User ID or Username with password verification.
+     * Standard users can also log in seamlessly by User ID.
+     */
+    public User authenticate(String identifier, String password) {
+        if (identifier == null || identifier.trim().isEmpty()) return null;
+        String trimmed = identifier.trim();
+
+        // 1. Try finding by ID
+        User user = users.get(trimmed);
+        if (user == null) {
+            // 2. Try finding by username
+            user = getUserByUsername(trimmed);
+        }
+        if (user == null) {
+            // 3. Try case-insensitive id match
+            for (User u : users.values()) {
+                if (u.getId().equalsIgnoreCase(trimmed)) {
+                    user = u;
+                    break;
+                }
+            }
+        }
+        if (user == null) return null;
+
+        // Verify credentials
+        if (user.verifyPassword(password)) {
+            return user;
+        }
+        return null;
+    }
+
+    /**
+     * Issues a secure session token valid for 24 hours.
+     */
+    public String createSession(User user) {
+        if (user == null) return null;
+        String token = "auth-" + UUID.randomUUID().toString();
+        UserSession session = new UserSession(token, user.getId(), user.getRole(), 86_400_000L);
+        activeSessions.put(token, session);
+        return token;
+    }
+
+    /**
+     * Validates a session token and returns the corresponding User if valid.
+     */
+    public User getSessionUser(String token) {
+        if (token == null || token.trim().isEmpty()) return null;
+        String cleanToken = token.trim();
+        if (cleanToken.startsWith("Bearer ")) {
+            cleanToken = cleanToken.substring(7).trim();
+        }
+        UserSession session = activeSessions.get(cleanToken);
+        if (session == null || session.isExpired()) {
+            if (session != null) activeSessions.remove(cleanToken);
+            return null;
+        }
+        return users.get(session.getUserId());
+    }
+
+    /**
+     * Invalidates an active session token.
+     */
+    public boolean invalidateSession(String token) {
+        if (token == null) return false;
+        String cleanToken = token.trim();
+        if (cleanToken.startsWith("Bearer ")) {
+            cleanToken = cleanToken.substring(7).trim();
+        }
+        return activeSessions.remove(cleanToken) != null;
     }
 
     public List<User> getAllUsers() {

@@ -7,7 +7,9 @@
 const API_BASE = '/api';
 
 const state = {
-  activeUserId: 'usr-alice',
+  activeUserId: localStorage.getItem('omni_userId') || 'usr-alice',
+  currentUser: JSON.parse(localStorage.getItem('omni_user') || 'null'),
+  authToken: localStorage.getItem('omni_token') || null,
   activeCategory: 'ALL',
   minConfidence: 0.60,
   sortOrder: 'matchScore',
@@ -27,6 +29,12 @@ const state = {
 const el = {
   userSelect: document.getElementById('userSelect'),
   activeUserName: document.getElementById('activeUserName'),
+  activeUserNameDisplay: document.getElementById('activeUserNameDisplay'),
+  activeUserIdDisplay: document.getElementById('activeUserIdDisplay'),
+  userRoleBadge: document.getElementById('userRoleBadge'),
+  userAvatarIcon: document.getElementById('userAvatarIcon'),
+  userProfileWidget: document.getElementById('userProfileWidget'),
+  btnOpenLoginModal: document.getElementById('btnOpenLoginModal'),
   btnUserMode: document.getElementById('btnUserMode'),
   btnAdminMode: document.getElementById('btnAdminMode'),
   btnOpenPreferences: document.getElementById('btnOpenPreferences'),
@@ -57,6 +65,24 @@ const el = {
   modalRoute: document.getElementById('modalRoute'),
   modalFood: document.getElementById('modalFood'),
   modalPreferences: document.getElementById('modalPreferences'),
+  modalUserLogin: document.getElementById('modalUserLogin'),
+  modalAdminLogin: document.getElementById('modalAdminLogin'),
+  
+  // User Login Form Elements
+  userLoginForm: document.getElementById('userLoginForm'),
+  loginUserIdInput: document.getElementById('loginUserIdInput'),
+  loginPasswordInput: document.getElementById('loginPasswordInput'),
+  loginErrorAlert: document.getElementById('loginErrorAlert'),
+  loginErrorMessage: document.getElementById('loginErrorMessage'),
+  btnLoginSubmit: document.getElementById('btnLoginSubmit'),
+  
+  // Admin Login Form Elements
+  adminLoginForm: document.getElementById('adminLoginForm'),
+  adminLoginIdInput: document.getElementById('adminLoginIdInput'),
+  adminLoginPasswordInput: document.getElementById('adminLoginPasswordInput'),
+  adminLoginErrorAlert: document.getElementById('adminLoginErrorAlert'),
+  adminLoginErrorMessage: document.getElementById('adminLoginErrorMessage'),
+  btnAdminLoginSubmit: document.getElementById('btnAdminLoginSubmit'),
   
   // Admin Form & Controls
   adminSettingsForm: document.getElementById('adminSettingsForm'),
@@ -69,6 +95,12 @@ const el = {
   settingsLastUpdated: document.getElementById('settingsLastUpdated'),
   userProfilesTableBody: document.getElementById('userProfilesTableBody'),
   aiSuggestionsList: document.getElementById('aiSuggestionsList'),
+  
+  // Global Toast
+  globalToast: document.getElementById('globalToast'),
+  globalToastMessage: document.getElementById('globalToastMessage'),
+  globalToastIcon: document.getElementById('globalToastIcon'),
+  btnCloseGlobalToast: document.getElementById('btnCloseGlobalToast'),
   
   // Preferences Form
   userPreferencesForm: document.getElementById('userPreferencesForm'),
@@ -85,6 +117,7 @@ const el = {
 // --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
   initEventListeners();
+  initAuthSession();
   loadUsers();
   loadRecommendations();
   loadAdminSettings();
@@ -96,14 +129,66 @@ function initEventListeners() {
   el.btnUserMode.addEventListener('click', () => switchView('USER'));
   el.btnAdminMode.addEventListener('click', () => switchView('ADMIN'));
 
-  // User switcher
+  // User switcher dropdown (kept in sync for backward compatibility)
   el.userSelect.addEventListener('change', (e) => {
     state.activeUserId = e.target.value;
     const selectedOption = e.target.options[e.target.selectedIndex];
-    el.activeUserName.textContent = selectedOption.text.split(' ')[0];
+    const username = selectedOption ? selectedOption.text.split(' ')[0] : state.activeUserId;
+    const matchedUser = state.users.find(u => u.id === state.activeUserId);
+    const role = matchedUser ? matchedUser.role : (state.activeUserId === 'usr-admin' ? 'ADMIN' : 'USER');
+    
+    state.currentUser = matchedUser || {
+      id: state.activeUserId,
+      username: username,
+      role: role
+    };
+    localStorage.setItem('omni_userId', state.activeUserId);
+    localStorage.setItem('omni_user', JSON.stringify(state.currentUser));
+
+    updateUserProfileDisplay(state.currentUser);
     loadRecommendations();
     loadAnalytics();
   });
+
+  // Open User ID Login Modal
+  if (el.btnOpenLoginModal) {
+    el.btnOpenLoginModal.addEventListener('click', openUserLoginModal);
+  }
+
+  // Quick 1-Click Persona selection buttons
+  document.querySelectorAll('.quick-persona-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-id');
+      if (el.loginUserIdInput) el.loginUserIdInput.value = id;
+      if (id === 'usr-admin') {
+        if (el.loginPasswordInput) el.loginPasswordInput.value = 'admin123';
+        performUserLogin(id, 'admin123');
+      } else {
+        if (el.loginPasswordInput) el.loginPasswordInput.value = '';
+        performUserLogin(id, '');
+      }
+    });
+  });
+
+  // User Login Form Submit
+  if (el.userLoginForm) {
+    el.userLoginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const id = el.loginUserIdInput.value.trim();
+      const pwd = el.loginPasswordInput.value;
+      performUserLogin(id, pwd);
+    });
+  }
+
+  // Admin Authentication Panel Form Submit
+  if (el.adminLoginForm) {
+    el.adminLoginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const id = el.adminLoginIdInput.value.trim();
+      const pwd = el.adminLoginPasswordInput.value;
+      performAdminLogin(id, pwd);
+    });
+  }
 
   // Search form
   el.searchForm.addEventListener('submit', (e) => {
@@ -207,6 +292,9 @@ function initEventListeners() {
   el.btnResetSettings.addEventListener('click', resetAdminSettings);
   el.btnRefreshAnalytics.addEventListener('click', loadAnalytics);
   el.btnCloseAdminToast.addEventListener('click', () => el.adminToast.classList.add('hidden'));
+  if (el.btnCloseGlobalToast && el.globalToast) {
+    el.btnCloseGlobalToast.addEventListener('click', () => el.globalToast.classList.add('hidden'));
+  }
 }
 
 function bindAdminSlider(inputId, valId) {
@@ -220,6 +308,14 @@ function bindAdminSlider(inputId, valId) {
 }
 
 function switchView(view) {
+  if (view === 'ADMIN') {
+    const isAuthedAdmin = state.currentUser && state.currentUser.role === 'ADMIN';
+    if (!isAuthedAdmin) {
+      openAdminLoginModal();
+      return;
+    }
+  }
+
   state.currentView = view;
   if (view === 'USER') {
     el.userDashboardView.classList.remove('hidden');
@@ -237,6 +333,160 @@ function switchView(view) {
   }
 }
 
+// --- AUTHENTICATION & USER SESSION MANAGEMENT ---
+async function initAuthSession() {
+  if (state.authToken) {
+    try {
+      const res = await fetch(`${API_BASE}/auth/me?token=${encodeURIComponent(state.authToken)}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.authenticated && data.user) {
+          state.currentUser = data.user;
+          state.activeUserId = data.user.id;
+          localStorage.setItem('omni_user', JSON.stringify(data.user));
+          localStorage.setItem('omni_userId', data.user.id);
+          updateUserProfileDisplay(data.user);
+          return;
+        }
+      }
+    } catch (err) {
+      console.warn('Session verification fallback:', err);
+    }
+  }
+
+  const initialId = state.activeUserId || 'usr-alice';
+  const initialUser = state.currentUser || {
+    id: initialId,
+    username: initialId === 'usr-admin' ? 'Admin' : (initialId === 'usr-bob' ? 'Bob' : (initialId === 'usr-charlie' ? 'Charlie' : 'Alice')),
+    role: initialId === 'usr-admin' ? 'ADMIN' : 'USER'
+  };
+  state.activeUserId = initialUser.id;
+  state.currentUser = initialUser;
+  updateUserProfileDisplay(initialUser);
+}
+
+function updateUserProfileDisplay(user) {
+  if (!user) return;
+  if (el.activeUserNameDisplay) el.activeUserNameDisplay.textContent = user.username;
+  if (el.activeUserIdDisplay) el.activeUserIdDisplay.textContent = user.id;
+  if (el.activeUserName) el.activeUserName.textContent = user.username;
+  if (el.userRoleBadge) {
+    el.userRoleBadge.textContent = user.role || 'USER';
+    if (user.role === 'ADMIN') {
+      el.userRoleBadge.className = 'text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30';
+    } else {
+      el.userRoleBadge.className = 'text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30';
+    }
+  }
+  if (el.userAvatarIcon) {
+    if (user.role === 'ADMIN') {
+      el.userAvatarIcon.className = 'w-7 h-7 rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center font-bold text-xs';
+      el.userAvatarIcon.innerHTML = '<i class="fa-solid fa-user-shield"></i>';
+    } else {
+      el.userAvatarIcon.className = 'w-7 h-7 rounded-lg bg-indigo-600/30 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-bold text-xs';
+      el.userAvatarIcon.innerHTML = '<i class="fa-solid fa-user"></i>';
+    }
+  }
+  if (el.userSelect) {
+    el.userSelect.value = user.id;
+  }
+}
+
+function openUserLoginModal() {
+  if (el.loginErrorAlert) el.loginErrorAlert.classList.add('hidden');
+  if (el.loginUserIdInput) el.loginUserIdInput.value = state.activeUserId || 'usr-alice';
+  if (el.loginPasswordInput) el.loginPasswordInput.value = '';
+  closeAllModals();
+  if (el.modalUserLogin) el.modalUserLogin.classList.remove('hidden');
+}
+
+function openAdminLoginModal() {
+  if (el.adminLoginErrorAlert) el.adminLoginErrorAlert.classList.add('hidden');
+  if (el.adminLoginIdInput) el.adminLoginIdInput.value = (state.currentUser && state.currentUser.role === 'ADMIN') ? state.currentUser.id : 'usr-admin';
+  if (el.adminLoginPasswordInput) el.adminLoginPasswordInput.value = '';
+  closeAllModals();
+  if (el.modalAdminLogin) el.modalAdminLogin.classList.remove('hidden');
+}
+
+async function performUserLogin(identifier, password = '') {
+  if (el.loginErrorAlert) el.loginErrorAlert.classList.add('hidden');
+  if (el.btnLoginSubmit) el.btnLoginSubmit.disabled = true;
+
+  try {
+    const res = await fetch(`${API_BASE}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ identifier, password })
+    });
+    const data = await res.json();
+    if (res.ok && data.success) {
+      state.authToken = data.token;
+      state.currentUser = data.user;
+      state.activeUserId = data.user.id;
+      localStorage.setItem('omni_token', data.token);
+      localStorage.setItem('omni_user', JSON.stringify(data.user));
+      localStorage.setItem('omni_userId', data.user.id);
+
+      updateUserProfileDisplay(data.user);
+      closeAllModals();
+      showToast(`Welcome back, ${data.user.username}! Feed refreshed for ${data.user.id}.`, 'success');
+      loadRecommendations();
+      loadAnalytics();
+    } else {
+      if (el.loginErrorAlert) {
+        el.loginErrorAlert.classList.remove('hidden');
+        if (el.loginErrorMessage) el.loginErrorMessage.textContent = data.message || 'Login failed. Please check your credentials.';
+      }
+    }
+  } catch (err) {
+    if (el.loginErrorAlert) {
+      el.loginErrorAlert.classList.remove('hidden');
+      if (el.loginErrorMessage) el.loginErrorMessage.textContent = 'Connection error during authentication: ' + err.message;
+    }
+  } finally {
+    if (el.btnLoginSubmit) el.btnLoginSubmit.disabled = false;
+  }
+}
+
+async function performAdminLogin(identifier, password) {
+  if (el.adminLoginErrorAlert) el.adminLoginErrorAlert.classList.add('hidden');
+  if (el.btnAdminLoginSubmit) el.btnAdminLoginSubmit.disabled = true;
+
+  try {
+    const res = await fetch(`${API_BASE}/auth/admin-login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ identifier, password })
+    });
+    const data = await res.json();
+    if (res.ok && data.success) {
+      state.authToken = data.token;
+      state.currentUser = data.user;
+      state.activeUserId = data.user.id;
+      localStorage.setItem('omni_token', data.token);
+      localStorage.setItem('omni_user', JSON.stringify(data.user));
+      localStorage.setItem('omni_userId', data.user.id);
+
+      updateUserProfileDisplay(data.user);
+      closeAllModals();
+      showToast('Admin identity verified! Access granted to Admin Control Panel.', 'success');
+      switchView('ADMIN');
+    } else {
+      if (el.adminLoginErrorAlert) {
+        el.adminLoginErrorAlert.classList.remove('hidden');
+        if (el.adminLoginErrorMessage) el.adminLoginErrorMessage.textContent = data.message || 'Access Denied: Invalid admin credentials.';
+      }
+    }
+  } catch (err) {
+    if (el.adminLoginErrorAlert) {
+      el.adminLoginErrorAlert.classList.remove('hidden');
+      if (el.adminLoginErrorMessage) el.adminLoginErrorMessage.textContent = 'Network error during admin authentication: ' + err.message;
+    }
+  } finally {
+    if (el.btnAdminLoginSubmit) el.btnAdminLoginSubmit.disabled = false;
+  }
+}
+
 // --- DATA FETCHING & RECOMMENDATIONS ---
 async function loadUsers() {
   try {
@@ -245,6 +495,11 @@ async function loadUsers() {
     if (data.users) {
       state.users = data.users;
       renderUserProfilesTable(data.users);
+      const matched = data.users.find(u => u.id === state.activeUserId);
+      if (matched) {
+        state.currentUser = Object.assign({}, matched, state.currentUser || {});
+        updateUserProfileDisplay(state.currentUser);
+      }
     }
   } catch (err) {
     console.error('Failed to load users:', err);
@@ -874,11 +1129,13 @@ async function savePreferences(e) {
 }
 
 function closeAllModals() {
-  el.modalProduct.classList.add('hidden');
-  el.modalMovie.classList.add('hidden');
-  el.modalRoute.classList.add('hidden');
-  el.modalFood.classList.add('hidden');
-  el.modalPreferences.classList.add('hidden');
+  if (el.modalProduct) el.modalProduct.classList.add('hidden');
+  if (el.modalMovie) el.modalMovie.classList.add('hidden');
+  if (el.modalRoute) el.modalRoute.classList.add('hidden');
+  if (el.modalFood) el.modalFood.classList.add('hidden');
+  if (el.modalPreferences) el.modalPreferences.classList.add('hidden');
+  if (el.modalUserLogin) el.modalUserLogin.classList.add('hidden');
+  if (el.modalAdminLogin) el.modalAdminLogin.classList.add('hidden');
 }
 
 // --- ADMIN DASHBOARD: SETTINGS & EFFECTIVENESS ANALYSIS ---
@@ -1147,19 +1404,38 @@ function renderTimelineChart(timeline) {
 }
 
 function showToast(message, type = 'success') {
-  el.adminToastMessage.textContent = message;
-  el.adminToast.classList.remove('hidden');
+  // Update admin toast if available
+  if (el.adminToastMessage && el.adminToast) {
+    el.adminToastMessage.textContent = message;
+    el.adminToast.classList.remove('hidden');
+    if (type === 'success') {
+      el.adminToast.className = 'p-4 rounded-xl border border-emerald-500/30 bg-emerald-950/40 text-emerald-300 flex items-center space-x-3 text-sm';
+    } else if (type === 'info') {
+      el.adminToast.className = 'p-4 rounded-xl border border-indigo-500/30 bg-indigo-950/40 text-indigo-300 flex items-center space-x-3 text-sm';
+    } else {
+      el.adminToast.className = 'p-4 rounded-xl border border-rose-500/30 bg-rose-950/40 text-rose-300 flex items-center space-x-3 text-sm';
+    }
+  }
 
-  if (type === 'success') {
-    el.adminToast.className = 'p-4 rounded-xl border border-emerald-500/30 bg-emerald-950/40 text-emerald-300 flex items-center space-x-3 text-sm';
-  } else if (type === 'info') {
-    el.adminToast.className = 'p-4 rounded-xl border border-indigo-500/30 bg-indigo-950/40 text-indigo-300 flex items-center space-x-3 text-sm';
-  } else {
-    el.adminToast.className = 'p-4 rounded-xl border border-rose-500/30 bg-rose-950/40 text-rose-300 flex items-center space-x-3 text-sm';
+  // Update global floating toast
+  if (el.globalToast && el.globalToastMessage) {
+    el.globalToastMessage.textContent = message;
+    el.globalToast.classList.remove('hidden');
+    if (type === 'success') {
+      el.globalToast.className = 'fixed bottom-6 right-6 z-50 max-w-sm p-4 rounded-xl shadow-2xl border border-emerald-500/30 bg-slate-900/95 text-emerald-300 flex items-center space-x-3 text-sm transition-all duration-300';
+      if (el.globalToastIcon) el.globalToastIcon.className = 'fa-solid fa-circle-check text-emerald-400 text-lg';
+    } else if (type === 'info') {
+      el.globalToast.className = 'fixed bottom-6 right-6 z-50 max-w-sm p-4 rounded-xl shadow-2xl border border-indigo-500/30 bg-slate-900/95 text-indigo-300 flex items-center space-x-3 text-sm transition-all duration-300';
+      if (el.globalToastIcon) el.globalToastIcon.className = 'fa-solid fa-circle-info text-indigo-400 text-lg';
+    } else {
+      el.globalToast.className = 'fixed bottom-6 right-6 z-50 max-w-sm p-4 rounded-xl shadow-2xl border border-rose-500/30 bg-slate-900/95 text-rose-300 flex items-center space-x-3 text-sm transition-all duration-300';
+      if (el.globalToastIcon) el.globalToastIcon.className = 'fa-solid fa-triangle-exclamation text-rose-400 text-lg';
+    }
   }
 
   setTimeout(() => {
-    el.adminToast.classList.add('hidden');
+    if (el.adminToast) el.adminToast.classList.add('hidden');
+    if (el.globalToast) el.globalToast.classList.add('hidden');
   }, 4000);
 }
 

@@ -7,19 +7,26 @@ public class User {
     private String username;
     private String email;
     private String role; // "ADMIN" or "USER"
+    private String password; // hashed/demo credentials
     private Map<String, Object> preferences;
     private long createdAt;
 
     public User() {
         this.preferences = new HashMap<>();
         this.createdAt = System.currentTimeMillis();
+        this.password = "password123";
     }
 
     public User(String id, String username, String email, String role) {
+        this(id, username, email, role, "ADMIN".equalsIgnoreCase(role) ? "admin123" : "password123");
+    }
+
+    public User(String id, String username, String email, String role, String password) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.role = role;
+        this.password = password != null ? password : ("ADMIN".equalsIgnoreCase(role) ? "admin123" : "password123");
         this.preferences = new HashMap<>();
         this.createdAt = System.currentTimeMillis();
         initDefaultPreferences();
@@ -53,6 +60,20 @@ public class User {
 
     public long getCreatedAt() { return createdAt; }
     public void setCreatedAt(long createdAt) { this.createdAt = createdAt; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
+    public boolean verifyPassword(String input) {
+        if ("ADMIN".equalsIgnoreCase(role)) {
+            return this.password != null && this.password.equals(input);
+        }
+        // For standard users, allow password match or quick ID login if no password supplied
+        if (input == null || input.trim().isEmpty()) {
+            return true;
+        }
+        return this.password != null && this.password.equals(input);
+    }
 
     public Map<String, Object> toMap() {
         Map<String, Object> map = new LinkedHashMap<>();

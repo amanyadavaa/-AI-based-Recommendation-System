@@ -66,29 +66,41 @@
       </div>
 
       <!-- Navigation & Role Switcher -->
-      <div class="flex items-center space-x-3 sm:space-x-4">
+      <div class="flex items-center space-x-2 sm:space-x-3">
         
-        <!-- Active User Selector -->
-        <div class="relative inline-block text-left">
-          <div class="flex items-center bg-slate-800/80 border border-slate-700 rounded-lg p-1">
-            <span class="text-xs text-slate-400 px-2 hidden md:inline">User:</span>
-            <select id="userSelect" class="bg-transparent text-xs font-medium text-slate-200 focus:outline-none cursor-pointer pr-2">
-              <option value="usr-alice" selected class="bg-slate-800">Alice (Tech & Movies)</option>
-              <option value="usr-bob" class="bg-slate-800">Bob (Travel & Food)</option>
-              <option value="usr-charlie" class="bg-slate-800">Charlie (Bargains)</option>
-            </select>
+        <!-- User ID Identity Widget & Switcher -->
+        <div id="userProfileWidget" class="flex items-center space-x-2 bg-slate-800/90 border border-slate-700/80 rounded-xl px-2.5 py-1 shadow-sm">
+          <div id="userAvatarIcon" class="w-7 h-7 rounded-lg bg-indigo-600/30 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-bold text-xs">
+            <i class="fa-solid fa-user"></i>
           </div>
+          <div class="flex flex-col text-left">
+            <div class="flex items-center space-x-1.5">
+              <span id="activeUserNameDisplay" class="text-xs font-bold text-white leading-tight">Alice</span>
+              <span id="userRoleBadge" class="text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">USER</span>
+            </div>
+            <span id="activeUserIdDisplay" class="text-[10px] font-mono text-slate-400 leading-tight">usr-alice</span>
+          </div>
+          <select id="userSelect" class="sr-only">
+            <option value="usr-alice" selected>Alice (Tech & Movies)</option>
+            <option value="usr-bob">Bob (Travel & Food)</option>
+            <option value="usr-charlie">Charlie (Bargains)</option>
+            <option value="usr-admin">Admin (System Administrator)</option>
+          </select>
+          <button id="btnOpenLoginModal" class="ml-1 px-2 py-1 rounded-lg bg-slate-700/60 hover:bg-slate-700 text-slate-200 hover:text-white transition text-xs flex items-center space-x-1 border border-slate-600/40" title="User ID Login / Switch Account">
+            <i class="fa-solid fa-right-to-bracket text-[11px] text-indigo-400"></i>
+            <span class="hidden md:inline text-[11px] font-semibold">Login ID</span>
+          </button>
         </div>
 
         <!-- Mode Toggle Tabs (User View vs Admin View) -->
         <div class="flex items-center p-1 bg-slate-800 rounded-xl border border-slate-700/80 shadow-inner">
-          <button id="btnUserMode" class="tab-btn active px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-2 transition-all">
+          <button id="btnUserMode" class="tab-btn active px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-all">
             <i class="fa-solid fa-compass"></i>
             <span>User View</span>
           </button>
-          <button id="btnAdminMode" class="tab-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-2 transition-all text-slate-400 hover:text-white">
-            <i class="fa-solid fa-sliders"></i>
-            <span>Admin View</span>
+          <button id="btnAdminMode" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-1.5 transition-all text-slate-400 hover:text-white" title="Admin Control & Telemetry Panel (Requires Admin Login)">
+            <i class="fa-solid fa-shield-halved text-amber-400"></i>
+            <span>Admin Panel</span>
           </button>
         </div>
 
@@ -942,6 +954,175 @@
         </div>
       </form>
     </div>
+  </div>
+
+  <!-- MODAL 6: USER ID LOGIN SYSTEM -->
+  <div id="modalUserLogin" class="fixed inset-0 z-50 hidden overflow-y-auto bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="relative bg-slate-900 border border-slate-700/80 rounded-2xl max-w-md w-full p-6 shadow-2xl text-slate-100">
+      
+      <!-- Modal Header -->
+      <div class="flex items-start justify-between pb-4 border-b border-slate-800">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center">
+            <i class="fa-solid fa-user-lock text-lg"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-white">User ID Login System</h3>
+            <p class="text-xs text-slate-400">Sign in to load your personalized recommendations</p>
+          </div>
+        </div>
+        <button id="btnCloseUserLogin" class="modal-close-btn text-slate-400 hover:text-white p-2">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Quick 1-Click Demo Profiles -->
+      <div class="mt-4 p-3 bg-slate-800/60 rounded-xl border border-slate-700/60">
+        <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block mb-2">1-Click Demo Personas:</span>
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <button type="button" class="quick-persona-btn text-left p-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700/80 hover:border-indigo-500/50 transition flex items-center space-x-2" data-id="usr-alice" data-name="Alice">
+            <span class="w-6 h-6 rounded-md bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-[10px]">A</span>
+            <div>
+              <p class="font-bold text-white leading-tight">Alice</p>
+              <p class="text-[10px] text-slate-400">Tech & Movies</p>
+            </div>
+          </button>
+          <button type="button" class="quick-persona-btn text-left p-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700/80 hover:border-indigo-500/50 transition flex items-center space-x-2" data-id="usr-bob" data-name="Bob">
+            <span class="w-6 h-6 rounded-md bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-[10px]">B</span>
+            <div>
+              <p class="font-bold text-white leading-tight">Bob</p>
+              <p class="text-[10px] text-slate-400">Travel & Food</p>
+            </div>
+          </button>
+          <button type="button" class="quick-persona-btn text-left p-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700/80 hover:border-indigo-500/50 transition flex items-center space-x-2" data-id="usr-charlie" data-name="Charlie">
+            <span class="w-6 h-6 rounded-md bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold text-[10px]">C</span>
+            <div>
+              <p class="font-bold text-white leading-tight">Charlie</p>
+              <p class="text-[10px] text-slate-400">Bargains</p>
+            </div>
+          </button>
+          <button type="button" class="quick-persona-btn text-left p-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700/80 hover:border-amber-500/50 transition flex items-center space-x-2" data-id="usr-admin" data-name="Admin">
+            <span class="w-6 h-6 rounded-md bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-[10px]">★</span>
+            <div>
+              <p class="font-bold text-white leading-tight">Admin</p>
+              <p class="text-[10px] text-slate-400">Administrator</p>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Login Form -->
+      <form id="userLoginForm" class="mt-4 space-y-3.5">
+        <div id="loginErrorAlert" class="hidden p-3 bg-rose-500/10 border border-rose-500/30 text-rose-300 rounded-xl text-xs flex items-center space-x-2">
+          <i class="fa-solid fa-circle-exclamation text-rose-400"></i>
+          <span id="loginErrorMessage">Invalid User ID</span>
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-xs font-bold text-slate-300">User ID or Username</label>
+          <div class="relative">
+            <input type="text" id="loginUserIdInput" required placeholder="e.g. usr-alice, usr-bob, Alice..." class="w-full pl-9 pr-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs placeholder:text-slate-500 focus:outline-none focus:border-indigo-500">
+            <i class="fa-solid fa-id-badge absolute left-3 top-2.5 text-slate-500 text-xs"></i>
+          </div>
+          <span class="text-[10px] text-slate-500">Enter registered ID or select a persona above.</span>
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-xs font-bold text-slate-300">Password <span class="text-slate-500 font-normal">(Optional for demo users)</span></label>
+          <div class="relative">
+            <input type="password" id="loginPasswordInput" placeholder="Enter password (optional)" class="w-full pl-9 pr-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs placeholder:text-slate-500 focus:outline-none focus:border-indigo-500">
+            <i class="fa-solid fa-lock absolute left-3 top-2.5 text-slate-500 text-xs"></i>
+          </div>
+        </div>
+
+        <div class="pt-2 flex items-center justify-end space-x-2 border-t border-slate-800">
+          <button type="button" class="modal-close-btn px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-slate-300 text-xs font-semibold transition">
+            Cancel
+          </button>
+          <button type="submit" id="btnLoginSubmit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-600/30 transition flex items-center space-x-1.5">
+            <i class="fa-solid fa-right-to-bracket"></i>
+            <span>Log In to Feed</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 7: ADMIN LOGIN PANEL FOR ADMINS -->
+  <div id="modalAdminLogin" class="fixed inset-0 z-50 hidden overflow-y-auto bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="relative bg-slate-900 border border-amber-500/30 rounded-2xl max-w-md w-full p-6 shadow-2xl shadow-amber-500/10 text-slate-100">
+      
+      <!-- Modal Header -->
+      <div class="flex items-start justify-between pb-4 border-b border-slate-800">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-500/15 text-amber-400 border border-amber-500/30 flex items-center justify-center shadow-lg shadow-amber-500/20">
+            <i class="fa-solid fa-shield-halved text-lg"></i>
+          </div>
+          <div>
+            <div class="flex items-center space-x-1.5">
+              <h3 class="text-lg font-bold text-white">Admin Authentication Panel</h3>
+              <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">RESTRICTED</span>
+            </div>
+            <p class="text-xs text-slate-400">Superuser credentials required for administrative console</p>
+          </div>
+        </div>
+        <button id="btnCloseAdminLogin" class="modal-close-btn text-slate-400 hover:text-white p-2">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Security Notice -->
+      <div class="mt-4 p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-xs text-amber-300 flex items-start space-x-2">
+        <i class="fa-solid fa-lock text-amber-400 mt-0.5"></i>
+        <div>
+          <span class="font-bold">Administrative Safeguard:</span> This console allows adjusting algorithm hyperparameter weights, algorithmic presets, and reviewing telemetry.
+          <p class="mt-1 font-mono text-[11px] text-amber-200">Default Demo Passcode: <span class="font-bold underline">admin123</span></p>
+        </div>
+      </div>
+
+      <!-- Admin Login Form -->
+      <form id="adminLoginForm" class="mt-4 space-y-3.5">
+        <div id="adminLoginErrorAlert" class="hidden p-3 bg-rose-500/10 border border-rose-500/30 text-rose-300 rounded-xl text-xs flex items-center space-x-2">
+          <i class="fa-solid fa-triangle-exclamation text-rose-400"></i>
+          <span id="adminLoginErrorMessage">Access Denied: Invalid admin passcode</span>
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-xs font-bold text-slate-300">Admin Account</label>
+          <div class="relative">
+            <input type="text" id="adminLoginIdInput" required value="usr-admin" placeholder="Admin username or ID" class="w-full pl-9 pr-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs placeholder:text-slate-500 focus:outline-none focus:border-amber-500">
+            <i class="fa-solid fa-user-shield absolute left-3 top-2.5 text-amber-500 text-xs"></i>
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-xs font-bold text-slate-300">Security Passcode</label>
+          <div class="relative">
+            <input type="password" id="adminLoginPasswordInput" required placeholder="Enter admin passcode (admin123)" class="w-full pl-9 pr-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs placeholder:text-slate-500 focus:outline-none focus:border-amber-500">
+            <i class="fa-solid fa-key absolute left-3 top-2.5 text-amber-500 text-xs"></i>
+          </div>
+        </div>
+
+        <div class="pt-2 flex items-center justify-end space-x-2 border-t border-slate-800">
+          <button type="button" class="modal-close-btn px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-slate-300 text-xs font-semibold transition">
+            Cancel
+          </button>
+          <button type="submit" id="btnAdminLoginSubmit" class="px-5 py-2 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-white rounded-xl text-xs font-bold shadow-lg shadow-amber-500/30 transition flex items-center space-x-1.5">
+            <i class="fa-solid fa-unlock"></i>
+            <span>Unlock Admin Panel</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- GLOBAL FLOATING TOAST NOTIFICATION -->
+  <div id="globalToast" class="fixed bottom-6 right-6 z-50 hidden max-w-sm p-4 rounded-xl shadow-2xl border text-sm flex items-center space-x-3 transition-all duration-300">
+    <i id="globalToastIcon" class="fa-solid fa-circle-check text-lg"></i>
+    <div id="globalToastMessage" class="flex-grow font-medium text-xs sm:text-sm"></div>
+    <button id="btnCloseGlobalToast" class="text-slate-400 hover:text-white p-1">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
   </div>
 
   <!-- FOOTER -->

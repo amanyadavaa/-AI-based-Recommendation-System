@@ -92,6 +92,14 @@ public class ApiHandler implements HttpHandler {
                 handleDeepHealth(exchange);
             } else if (path.equals("/api/metrics") && "GET".equals(method)) {
                 handlePrometheusMetrics(exchange);
+            } else if (path.equals("/api/auth/login") && "POST".equals(method)) {
+                handleUserLogin(exchange);
+            } else if (path.equals("/api/auth/admin-login") && "POST".equals(method)) {
+                handleAdminLogin(exchange);
+            } else if (path.equals("/api/auth/logout") && "POST".equals(method)) {
+                handleLogout(exchange);
+            } else if (path.equals("/api/auth/me") && "GET".equals(method)) {
+                handleGetCurrentUser(exchange, params);
             } else if (path.equals("/api/users") && "GET".equals(method)) {
                 handleGetUsers(exchange);
             } else if (path.startsWith("/api/user/") && path.endsWith("/preferences") && "POST".equals(method)) {
@@ -486,6 +494,81 @@ public class ApiHandler implements HttpHandler {
         exchange.sendResponseHeaders(200, bytes.length);
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(bytes);
+        }
+    }
+
+    private void handleUserLogin(HttpExchange exchange) throws IOException {
+        String body = readBody(exchange);
+        Map<String, Object> map = JsonUtil.parseMap(body);
+        String identifier = String.valueOf(map.getOrDefault("identifier", map.getOrDefault("userId", "")));
+        String password = map.containsKey("password") ? String.valueOf(map.get("password")) : null;
+
+        User user = userService.authenticate(identifier, password);
+        if (user != null) {
+            String token = userService.createSession(user);
+            sendJson(exchange, 200, Map.of(
+                    "success", true,
+                    "token", token,
+                    "user", user.toMap(),
+                    "message", "Successfully authenticated as " + user.getUsername()
+            ));
+        } else {
+            sendJson(exchange, 401, Map.of(
+                    "success", false,
+                    "error", "Authentication failed. Invalid User ID or credentials."
+            ));
+        }
+    }
+
+    private void handleAdminLogin(HttpExchange exchange) throws IOException {
+        String body = readBody(exchange);
+        Map<String, Object> map = JsonUtil.parseMap(body);
+        String identifier = String.valueOf(map.getOrDefault("identifier", map.getOrDefault("username", "admin")));
+        String password = String.valueOf(map.getOrDefault("password", ""));
+
+        User user = userService.authenticate(identifier, password);
+        if (user != null && "ADMIN".equalsIgnoreCase(user.getRole())) {
+            String token = userService.createSession(user);
+            sendJson(exchange, 200, Map.of(
+                    "success", true,
+                    "token", token,
+                    "user", user.toMap(),
+                    "message", "Administrator authorization verified. Welcome to Admin Control Panel."
+            ));
+        } else {
+            sendJson(exchange, 401, Map.of(
+                    "success", false,
+                    "error", "Access Denied: Invalid administrator credentials or insufficient privileges."
+            ));
+        }
+    }
+
+    private void handleLogout(HttpExchange exchange) throws IOException {
+        String authHeader = exchange.getRequestHeaders().getFirst("Authorization");
+        String body = readBody(exchange);
+        String token = authHeader;
+        if (body != null && !body.isEmpty()) {
+            try {
+                Map<String, Object> map = JsonUtil.parseMap(body);
+                if (map.containsKey("token")) {
+                    token = String.valueOf(map.get("token"));
+                }
+            } catch (Exception ignored) {}
+        }
+        boolean invalidated = userService.invalidateSession(token);
+        sendJson(exchange, 200, Map.of("success", true, "invalidated", invalidated, "message", "Session successfully terminated."));
+    }
+
+    private void handleGetCurrentUser(HttpExchange exchange, Map<String, String> params) throws IOException {
+        String token = exchange.getRequestHeaders().getFirst("Authorization");
+        if (token == null && params.containsKey("token")) {
+            token = params.get("token");
+        }
+        User user = userService.getSessionUser(token);
+        if (user != null) {
+            sendJson(exchange, 200, Map.of("authenticated", true, "user", user.toMap()));
+        } else {
+            sendJson(exchange, 401, Map.of("authenticated", false, "error", "No active session or session expired."));
         }
     }
 
