@@ -19,7 +19,9 @@ if %ERRORLEVEL% NEQ 0 (
 if not exist "bin" mkdir bin
 
 echo [1/2] Compiling Java source code...
-javac -cp "bin;lib/*" -d bin src\com\guvi\recommend\config\*.java src\com\guvi\recommend\db\*.java src\com\guvi\recommend\db\dao\*.java src\com\guvi\recommend\exception\*.java src\com\guvi\recommend\gui\*.java src\com\guvi\recommend\gui\components\*.java src\com\guvi\recommend\model\*.java src\com\guvi\recommend\service\*.java src\com\guvi\recommend\util\*.java src\com\guvi\recommend\web\*.java src\com\guvi\recommend\Main.java
+dir /s /b src\*.java > sources.txt
+javac -cp "bin;lib/*" -d bin @sources.txt
+del sources.txt
 if %ERRORLEVEL% NEQ 0 (
     echo [ERROR] Compilation failed!
     pause
