@@ -26,6 +26,16 @@ public class Interaction {
         this.timestamp = System.currentTimeMillis();
     }
 
+    public Interaction(String id, String userId, String itemId, String itemCategory, String type, Double ratingValue) {
+        this.id = id;
+        this.userId = userId;
+        this.itemId = itemId;
+        this.itemCategory = itemCategory;
+        this.type = type;
+        this.ratingValue = ratingValue;
+        this.timestamp = System.currentTimeMillis();
+    }
+
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
