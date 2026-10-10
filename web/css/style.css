@@ -1,8 +1,30 @@
-/* Custom Styling for OmniRecommend AI - Minimalist Modern UI */
+/* ==========================================================================
+   OmniRecommend AI - Ultra-Modern Minimalist Dashboard Stylesheet
+   Aesthetic: Linear & Vercel-inspired Deep Obsidian Dark Mode
+   Features: Glassmorphism, Ambient Mesh Gradients, Micro-Interactions
+   ========================================================================== */
 
 /* Smooth scroll & base transitions */
 html {
   scroll-behavior: smooth;
+  color-scheme: dark;
+}
+
+body {
+  background-color: #07090e;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.12) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.08) 0px, transparent 45%),
+    radial-gradient(at 50% 50%, rgba(147, 51, 234, 0.06) 0px, transparent 60%);
+  background-attachment: fixed;
+}
+
+/* Ambient Subtle Background Grid Pattern */
+.bg-ambient-grid {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
 }
 
 /* Custom Scrollbars */
@@ -11,7 +33,7 @@ html {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #090d16;
+  background: #07090e;
 }
 ::-webkit-scrollbar-thumb {
   background: #1e293b;
@@ -21,35 +43,69 @@ html {
   background: #334155;
 }
 
-/* Tab button state */
+/* Tab button state (User View vs Admin View) */
+.tab-btn {
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
 .tab-btn.active {
   background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
   color: #ffffff !important;
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 /* Category Filter Pills in Sidebar */
 .sidebar-cat-btn {
+  position: relative;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.sidebar-cat-btn.active {
-  background: rgba(99, 102, 241, 0.12);
+.sidebar-cat-btn:hover {
   border-color: rgba(99, 102, 241, 0.4);
-  color: #ffffff;
+  background: rgba(30, 41, 59, 0.6);
+  transform: translateX(2px);
+}
+.sidebar-cat-btn.active {
+  background: rgba(99, 102, 241, 0.15) !important;
+  border-color: rgba(99, 102, 241, 0.5) !important;
+  color: #ffffff !important;
   font-weight: 600;
-  box-shadow: 0 0 16px rgba(99, 102, 241, 0.12);
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.18), inset 0 0 12px rgba(99, 102, 241, 0.1);
 }
 
-/* Card hover animation */
+/* Quick Chips in Search Hero */
+.quick-chip {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.quick-chip:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px -2px rgba(0, 0, 0, 0.5), 0 0 12px rgba(99, 102, 241, 0.2);
+}
+
+/* Modern Card Hover Elevation & Glow */
 .item-card {
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  background: rgba(12, 16, 29, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
 }
 .item-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(99, 102, 241, 0.35);
+  transform: translateY(-6px);
+  border-color: rgba(99, 102, 241, 0.45);
+  box-shadow: 
+    0 24px 40px -12px rgba(0, 0, 0, 0.7),
+    0 0 30px -5px rgba(99, 102, 241, 0.18);
 }
 
-/* Shimmer Loading Skeleton */
+/* Card image overlay hover */
+.item-card .card-media-img {
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.item-card:hover .card-media-img {
+  transform: scale(1.06);
+}
+
+/* Shimmer Loading Skeleton Screen */
 @keyframes shimmer {
   0% {
     background-position: -200% 0;
@@ -60,32 +116,32 @@ html {
 }
 
 .skeleton-shimmer {
-  background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+  background: linear-gradient(90deg, #0f172a 25%, #1e293b 50%, #0f172a 75%);
   background-size: 200% 100%;
   animation: shimmer 1.8s infinite;
 }
 
-/* Interactive Feedback Buttons */
+/* Interactive Feedback Buttons (Thumbs up / Thumbs down) */
 .feedback-btn {
-  transition: all 0.2s ease-in-out;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .feedback-btn:hover {
-  transform: scale(1.08);
+  transform: scale(1.1);
 }
 .feedback-btn.liked {
-  background-color: rgba(16, 185, 129, 0.2) !important;
+  background-color: rgba(16, 185, 129, 0.25) !important;
   color: #34d399 !important;
-  border-color: rgba(16, 185, 129, 0.4) !important;
-  box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
+  border-color: rgba(16, 185, 129, 0.5) !important;
+  box-shadow: 0 0 14px rgba(16, 185, 129, 0.3);
 }
 .feedback-btn.disliked {
-  background-color: rgba(244, 63, 94, 0.2) !important;
+  background-color: rgba(244, 63, 94, 0.25) !important;
   color: #fb7185 !important;
-  border-color: rgba(244, 63, 94, 0.4) !important;
-  box-shadow: 0 0 12px rgba(244, 63, 94, 0.25);
+  border-color: rgba(244, 63, 94, 0.5) !important;
+  box-shadow: 0 0 14px rgba(244, 63, 94, 0.3);
 }
 
-/* Why This Accordion Collapse/Expand */
+/* Progressive Disclosure "Why this?" Drawer */
 .why-this-drawer {
   max-height: 0;
   opacity: 0;
@@ -93,30 +149,47 @@ html {
   transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
 }
 .why-this-drawer.open {
-  max-height: 300px;
+  max-height: 350px;
   opacity: 1;
 }
 
 /* Modal animation */
-@keyframes scaleIn {
+@keyframes modalScaleIn {
   from {
     opacity: 0;
-    transform: scale(0.96) translateY(8px);
+    transform: scale(0.95) translateY(10px);
   }
   to {
     opacity: 1;
     transform: scale(1) translateY(0);
   }
 }
-.animate-scaleIn {
-  animation: scaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+.modal-dialog {
+  animation: modalScaleIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Custom range inputs */
+/* Custom styled Range Sliders */
 input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
   height: 6px;
   background: #1e293b;
   border-radius: 9999px;
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #10b981;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+  transition: transform 0.15s ease;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
 }
 
 /* Leaflet map customization */
@@ -124,11 +197,12 @@ input[type="range"] {
   font-family: inherit;
 }
 .leaflet-popup-content-wrapper {
-  background: #0f172a;
+  background: #0b0f19;
   color: #f1f5f9;
   border-radius: 0.75rem;
-  border: 1px solid #334155;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6);
 }
 .leaflet-popup-tip {
-  background: #0f172a;
+  background: #0b0f19;
 }

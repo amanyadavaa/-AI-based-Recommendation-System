@@ -615,16 +615,16 @@ function renderRecommendationsGrid(items) {
 
 function createRecommendationCard(item) {
   const card = document.createElement('div');
-  card.className = 'item-card flex flex-col justify-between rounded-2xl bg-slate-900/60 hover:bg-slate-900/95 border border-slate-800/80 hover:border-slate-700 overflow-hidden shadow-xl transition-all duration-200';
+  card.className = 'item-card flex flex-col justify-between rounded-3xl bg-[#0c101d]/75 hover:bg-[#0f1424] border border-white/[0.08] hover:border-indigo-500/40 overflow-hidden shadow-xl transition-all duration-300 group';
 
   const category = item.category || 'PRODUCT';
   const categoryConfig = {
-    PRODUCT: { icon: 'fa-bag-shopping', badge: 'Product & Pricing', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20', btnText: 'Compare 6 Stores', btnIcon: 'fa-code-compare', btnColor: 'bg-emerald-600 hover:bg-emerald-500' },
-    MOVIE: { icon: 'fa-film', badge: 'Movie & Media', color: 'bg-purple-500/10 text-purple-400 border-purple-500/20', btnText: 'Watch & Download Links', btnIcon: 'fa-download', btnColor: 'bg-purple-600 hover:bg-purple-500' },
-    PLACE: { icon: 'fa-map-location-dot', badge: 'Place & Route', color: 'bg-amber-500/10 text-amber-400 border-amber-500/20', btnText: 'Shortest Route & Map', btnIcon: 'fa-route', btnColor: 'bg-amber-600 hover:bg-amber-500' },
-    FOOD: { icon: 'fa-utensils', badge: 'Food & Reviews', color: 'bg-rose-500/10 text-rose-400 border-rose-500/20', btnText: 'Reviews & Sentiment', btnIcon: 'fa-chart-pie', btnColor: 'bg-rose-600 hover:bg-rose-500' },
-    WEB: { icon: 'fa-globe', badge: 'Live Synthesis', color: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20', btnText: 'View Details', btnIcon: 'fa-up-right-from-square', btnColor: 'bg-cyan-600 hover:bg-cyan-500' }
-  }[category] || { icon: 'fa-sparkles', badge: category, color: 'bg-slate-700 text-slate-300 border-slate-600', btnText: 'View Details', btnIcon: 'fa-eye', btnColor: 'bg-indigo-600 hover:bg-indigo-500' };
+    PRODUCT: { icon: 'fa-bag-shopping', badge: 'Product & Pricing', color: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30', btnText: 'Compare 6 Stores', btnIcon: 'fa-code-compare', btnColor: 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 shadow-emerald-600/25' },
+    MOVIE: { icon: 'fa-film', badge: 'Movie & Media', color: 'bg-purple-500/15 text-purple-300 border-purple-500/30', btnText: 'Watch & Download Links', btnIcon: 'fa-download', btnColor: 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-purple-600/25' },
+    PLACE: { icon: 'fa-map-location-dot', badge: 'Place & Route', color: 'bg-amber-500/15 text-amber-300 border-amber-500/30', btnText: 'Shortest Route & Map', btnIcon: 'fa-route', btnColor: 'bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 shadow-amber-600/25' },
+    FOOD: { icon: 'fa-utensils', badge: 'Food & Reviews', color: 'bg-rose-500/15 text-rose-300 border-rose-500/30', btnText: 'Reviews & Sentiment', btnIcon: 'fa-chart-pie', btnColor: 'bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 shadow-rose-600/25' },
+    WEB: { icon: 'fa-globe', badge: 'Live Synthesis', color: 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30', btnText: 'View Details', btnIcon: 'fa-up-right-from-square', btnColor: 'bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 shadow-cyan-600/25' }
+  }[category] || { icon: 'fa-sparkles', badge: category, color: 'bg-slate-700 text-slate-300 border-slate-600', btnText: 'View Details', btnIcon: 'fa-eye', btnColor: 'bg-indigo-600 hover:bg-indigo-500 shadow-indigo-600/25' };
 
   const matchPercent = Math.round((item.matchScore || 0.85) * 100);
   const starsHtml = renderStarRating(item.rating || 4.8);
@@ -635,84 +635,99 @@ function createRecommendationCard(item) {
   card.innerHTML = `
     <div>
       <!-- Card Media Header & Overlays -->
-      <div class="relative h-44 w-full overflow-hidden bg-slate-950">
-        <img src="${escapeHtml(item.imageUrl || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80')}" alt="${escapeHtml(item.title)}" class="w-full h-full object-cover transition duration-300 hover:scale-105" onerror="this.src='https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80'">
-        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-black/50"></div>
+      <div class="relative h-48 w-full overflow-hidden bg-slate-950">
+        <img src="${escapeHtml(item.imageUrl || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80')}" alt="${escapeHtml(item.title)}" class="card-media-img w-full h-full object-cover transition duration-500 group-hover:scale-105" onerror="this.src='https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80'">
+        <div class="absolute inset-0 bg-gradient-to-t from-[#0c101d] via-[#0c101d]/20 to-black/40"></div>
         
         <!-- Category Tag -->
-        <div class="absolute top-3 left-3">
-          <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider backdrop-blur-md border ${categoryConfig.color} flex items-center space-x-1.5 shadow">
+        <div class="absolute top-3.5 left-3.5">
+          <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider backdrop-blur-md border ${categoryConfig.color} flex items-center space-x-1.5 shadow-md">
             <i class="fa-solid ${categoryConfig.icon}"></i>
             <span>${categoryConfig.badge}</span>
           </span>
         </div>
 
         <!-- AI Match Confidence Badge (Prominent Visual Hierarchy) -->
-        <div class="absolute top-3 right-3">
-          <span class="px-2.5 py-1 rounded-full text-xs font-extrabold bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 backdrop-blur-md shadow-lg shadow-emerald-500/25 flex items-center space-x-1">
-            <i class="fa-solid fa-sparkles text-[10px]"></i>
+        <div class="absolute top-3.5 right-3.5">
+          <span class="px-3 py-1 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/35 backdrop-blur-md shadow-lg shadow-emerald-500/10 flex items-center space-x-1.5">
+            <i class="fa-solid fa-sparkles text-[10px] text-emerald-400"></i>
             <span>${matchPercent}% Match</span>
           </span>
         </div>
 
         <!-- Price Badge if exists -->
-        ${priceDisplay ? `<div class="absolute bottom-2.5 right-3 px-2.5 py-0.5 rounded-lg bg-black/85 backdrop-blur-md text-white font-extrabold text-xs border border-slate-800">${priceDisplay}</div>` : ''}
+        ${priceDisplay ? `<div class="absolute bottom-3 right-3 px-3 py-1 rounded-xl bg-black/85 backdrop-blur-md text-white font-extrabold text-xs border border-white/10 shadow-lg">${priceDisplay}</div>` : ''}
       </div>
 
       <!-- Card Body Content -->
-      <div class="p-4 space-y-3">
+      <div class="p-5 space-y-3.5">
         
         <!-- Item Title (Most Prominent Text) -->
-        <h3 class="font-extrabold text-base text-white hover:text-indigo-300 transition cursor-pointer line-clamp-1" title="${escapeHtml(item.title)}">
+        <h3 class="font-extrabold text-base text-white group-hover:text-indigo-300 transition cursor-pointer line-clamp-1 leading-snug" title="${escapeHtml(item.title)}">
           ${escapeHtml(item.title)}
         </h3>
 
         <!-- Rating & Review Count -->
         <div class="flex items-center space-x-2 text-xs">
           <div class="flex text-amber-400 text-[11px]">${starsHtml}</div>
-          <span class="font-bold text-slate-200">${(item.rating || 4.8).toFixed(1)}</span>
+          <span class="font-bold text-slate-100">${(item.rating || 4.8).toFixed(1)}</span>
           <span class="text-slate-500 text-[11px]">(${(item.reviewCount || 1000).toLocaleString()} reviews)</span>
         </div>
 
         <!-- 1-Sentence AI Explanation Box -->
-        <div class="p-2.5 rounded-xl bg-slate-950/70 border border-slate-800 text-[11px] text-slate-300 leading-relaxed flex items-start space-x-2">
+        <div class="p-3 rounded-2xl bg-[#07090e]/80 border-l-2 border-indigo-500 border-y border-r border-white/[0.05] text-[11px] text-slate-300 leading-relaxed flex items-start space-x-2.5 shadow-inner">
           <i class="fa-solid fa-wand-magic-sparkles text-indigo-400 mt-0.5 shrink-0 text-xs"></i>
           <span>${escapeHtml(aiExpl)}</span>
         </div>
 
         <!-- Interactive Feedback Bar & Progressive Disclosure Toggle -->
-        <div class="flex items-center justify-between pt-1 border-t border-slate-800/80 text-xs">
+        <div class="flex items-center justify-between pt-1 border-t border-white/[0.06] text-xs">
           <div class="flex items-center space-x-1.5">
-            <button class="feedback-btn like-btn px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700/80 text-slate-400 hover:text-emerald-400 border border-slate-700/60 transition flex items-center space-x-1" title="Helpful recommendation">
+            <button class="feedback-btn like-btn px-3 py-1.5 rounded-xl bg-slate-800/60 hover:bg-slate-700/80 text-slate-400 hover:text-emerald-400 border border-white/[0.06] transition flex items-center space-x-1.5" title="Helpful recommendation">
               <i class="fa-solid fa-thumbs-up text-[11px]"></i>
               <span class="text-[10px] font-semibold">Like</span>
             </button>
-            <button class="feedback-btn dislike-btn px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700/80 text-slate-400 hover:text-rose-400 border border-slate-700/60 transition flex items-center space-x-1" title="Less like this">
+            <button class="feedback-btn dislike-btn px-3 py-1.5 rounded-xl bg-slate-800/60 hover:bg-slate-700/80 text-slate-400 hover:text-rose-400 border border-white/[0.06] transition flex items-center space-x-1.5" title="Less like this">
               <i class="fa-solid fa-thumbs-down text-[11px]"></i>
               <span class="text-[10px] font-semibold">Pass</span>
             </button>
           </div>
 
-          <button class="why-this-toggle text-[11px] text-indigo-400 hover:text-indigo-300 flex items-center space-x-1 transition font-medium">
+          <button class="why-this-toggle text-[11px] text-indigo-400 hover:text-indigo-300 flex items-center space-x-1.5 transition font-semibold">
             <span>Why this?</span>
             <i class="fa-solid fa-chevron-down text-[9px] transition-transform duration-200"></i>
           </button>
         </div>
 
-        <!-- Progressive Disclosure Accordion: Detailed AI Reasoning -->
-        <div class="why-this-drawer space-y-1.5 text-[11px] text-slate-400">
-          <div class="p-2.5 rounded-xl bg-slate-950/90 border border-slate-800 space-y-1">
-            <div class="flex justify-between items-center">
-              <span>Content Similarity:</span>
-              <span class="font-mono text-indigo-400 font-bold">${Math.round((factors.contentSimilarity || 0.45) * 100)}%</span>
+        <!-- Progressive Disclosure Accordion: Detailed AI Reasoning with Mini Progress Bars -->
+        <div class="why-this-drawer space-y-2 text-[11px] text-slate-400 pt-1">
+          <div class="p-3.5 rounded-2xl bg-[#07090e]/95 border border-white/[0.06] space-y-2.5 shadow-inner">
+            <div>
+              <div class="flex justify-between items-center mb-1 text-[10px]">
+                <span class="text-slate-400 font-medium">Content Similarity</span>
+                <span class="font-mono text-indigo-400 font-bold">${Math.round((factors.contentSimilarity || 0.45) * 100)}%</span>
+              </div>
+              <div class="w-full bg-slate-800/80 rounded-full h-1.5 overflow-hidden">
+                <div class="bg-indigo-500 h-1.5 rounded-full" style="width: ${Math.round((factors.contentSimilarity || 0.45) * 100)}%"></div>
+              </div>
             </div>
-            <div class="flex justify-between items-center">
-              <span>Collaborative Affinity:</span>
-              <span class="font-mono text-purple-400 font-bold">${Math.round((factors.collaborativeAffinity || 0.35) * 100)}%</span>
+            <div>
+              <div class="flex justify-between items-center mb-1 text-[10px]">
+                <span class="text-slate-400 font-medium">Collaborative Affinity</span>
+                <span class="font-mono text-purple-400 font-bold">${Math.round((factors.collaborativeAffinity || 0.35) * 100)}%</span>
+              </div>
+              <div class="w-full bg-slate-800/80 rounded-full h-1.5 overflow-hidden">
+                <div class="bg-purple-500 h-1.5 rounded-full" style="width: ${Math.round((factors.collaborativeAffinity || 0.35) * 100)}%"></div>
+              </div>
             </div>
-            <div class="flex justify-between items-center">
-              <span>Community Popularity:</span>
-              <span class="font-mono text-amber-400 font-bold">${Math.round((factors.popularityWeight || 0.20) * 100)}%</span>
+            <div>
+              <div class="flex justify-between items-center mb-1 text-[10px]">
+                <span class="text-slate-400 font-medium">Community Popularity</span>
+                <span class="font-mono text-amber-400 font-bold">${Math.round((factors.popularityWeight || 0.20) * 100)}%</span>
+              </div>
+              <div class="w-full bg-slate-800/80 rounded-full h-1.5 overflow-hidden">
+                <div class="bg-amber-500 h-1.5 rounded-full" style="width: ${Math.round((factors.popularityWeight || 0.20) * 100)}%"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -721,8 +736,8 @@ function createRecommendationCard(item) {
     </div>
 
     <!-- Action Button Footer -->
-    <div class="p-4 pt-0">
-      <button class="action-btn w-full py-2.5 px-3 rounded-xl ${categoryConfig.btnColor} text-white text-xs font-semibold shadow-md flex items-center justify-center space-x-2 transition duration-150">
+    <div class="p-5 pt-0">
+      <button class="action-btn w-full py-3 px-4 rounded-2xl ${categoryConfig.btnColor} text-white text-xs font-bold shadow-lg flex items-center justify-center space-x-2 transition duration-200">
         <i class="fa-solid ${categoryConfig.btnIcon}"></i>
         <span>${categoryConfig.btnText}</span>
       </button>
