@@ -414,12 +414,12 @@ async function openProductModal(itemId) {
     const data = await res.json();
 
     document.getElementById('mProdTitle').textContent = data.productName || 'Product Comparison';
-    document.getElementById('mProdBrand').textContent = `Brand: ${data.brand || 'Featured'} • Analyzed Across ${data.storeListings?.length || 6} Stores`;
+    document.getElementById('mProdBrand').textContent = `Brand: ${data.brand || 'Featured'} • ${data.priceTrend || ''} • Across ${data.storeListings?.length || 6} Stores`;
     document.getElementById('mProdLowestPrice').textContent = `$${(data.lowestPrice || 0).toFixed(2)}`;
     document.getElementById('mProdBestStore').textContent = `Best Deal at ${data.bestStore || 'Store'}`;
     document.getElementById('mProdAvgPrice').textContent = `$${(data.averagePrice || 0).toFixed(2)}`;
     document.getElementById('mProdHighPrice').textContent = `$${(data.highestPrice || 0).toFixed(2)}`;
-    document.getElementById('mProdSavings').textContent = `$${(data.maxSavings || 0).toFixed(2)}`;
+    document.getElementById('mProdSavings').textContent = `$${(data.maxSavings || 0).toFixed(2)} (${(data.savingsPercentage || 0).toFixed(1)}%)`;
 
     const tbody = document.getElementById('mProdListingsTable');
     tbody.innerHTML = '';

@@ -11,6 +11,9 @@ public class ProductComparison {
     private double highestPrice;
     private double averagePrice;
     private double maxSavings;
+    private double savingsPercentage;
+    private String priceTrend;
+    private String recommendationVerdict;
     private List<StoreListing> storeListings;
 
     public static class StoreListing {
@@ -90,6 +93,17 @@ public class ProductComparison {
         this.averagePrice = Math.round((sum / storeListings.size()) * 100.0) / 100.0;
         this.bestStore = best;
         this.maxSavings = Math.round((highestPrice - lowestPrice) * 100.0) / 100.0;
+        this.savingsPercentage = highestPrice > 0 ? Math.round(((highestPrice - lowestPrice) / highestPrice * 100.0) * 10.0) / 10.0 : 0.0;
+        if (savingsPercentage >= 15.0) {
+            this.priceTrend = "🔥 All-Time Low Deal";
+            this.recommendationVerdict = "Strong Buy: Save " + savingsPercentage + "% at " + bestStore;
+        } else if (savingsPercentage >= 8.0) {
+            this.priceTrend = "🏷️ Great Deal";
+            this.recommendationVerdict = "Recommended: Best Price at " + bestStore;
+        } else {
+            this.priceTrend = "⚖️ Fair Market Price";
+            this.recommendationVerdict = "Market Standard across retailers";
+        }
     }
 
     public String getProductId() { return productId; }
@@ -100,6 +114,9 @@ public class ProductComparison {
     public double getHighestPrice() { return highestPrice; }
     public double getAveragePrice() { return averagePrice; }
     public double getMaxSavings() { return maxSavings; }
+    public double getSavingsPercentage() { return savingsPercentage; }
+    public String getPriceTrend() { return priceTrend; }
+    public String getRecommendationVerdict() { return recommendationVerdict; }
     public List<StoreListing> getStoreListings() { return storeListings; }
 
     public Map<String, Object> toMap() {
@@ -112,6 +129,9 @@ public class ProductComparison {
         map.put("highestPrice", highestPrice);
         map.put("averagePrice", averagePrice);
         map.put("maxSavings", maxSavings);
+        map.put("savingsPercentage", savingsPercentage);
+        map.put("priceTrend", priceTrend);
+        map.put("recommendationVerdict", recommendationVerdict);
         List<Map<String, Object>> list = new ArrayList<>();
         for (StoreListing s : storeListings) {
             list.add(s.toMap());

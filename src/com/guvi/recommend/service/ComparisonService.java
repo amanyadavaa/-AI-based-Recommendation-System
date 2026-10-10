@@ -117,7 +117,11 @@ public class ComparisonService {
     }
 
     private String extractBrand(String title, List<String> tags) {
-        String[] knownBrands = {"Apple", "Sony", "Samsung", "Bose", "Nike", "Adidas", "Dell", "LG", "Logitech", "ASUS", "Canon"};
+        String[] knownBrands = {
+                "Apple", "Sony", "Samsung", "Bose", "Nike", "Adidas", "Dell", "LG",
+                "Logitech", "ASUS", "Canon", "HP", "Lenovo", "Microsoft", "Google",
+                "Nintendo", "PlayStation", "Xbox", "Puma", "Casio", "Rolex"
+        };
         String lower = title.toLowerCase();
         for (String b : knownBrands) {
             if (lower.contains(b.toLowerCase())) return b;
@@ -131,13 +135,16 @@ public class ComparisonService {
     private double estimatePriceFromQuery(String query) {
         String lower = query.toLowerCase();
         if (lower.contains("laptop") || lower.contains("macbook")) return 999.0;
-        if (lower.contains("phone") || lower.contains("iphone")) return 799.0;
-        if (lower.contains("headphone") || lower.contains("earbuds")) return 199.0;
-        if (lower.contains("watch")) return 249.0;
+        if (lower.contains("phone") || lower.contains("iphone") || lower.contains("pixel") || lower.contains("galaxy")) return 799.0;
+        if (lower.contains("tablet") || lower.contains("ipad")) return 499.0;
+        if (lower.contains("console") || lower.contains("ps5") || lower.contains("xbox") || lower.contains("switch")) return 449.0;
+        if (lower.contains("tv") || lower.contains("monitor")) return 429.0;
         if (lower.contains("camera")) return 649.0;
-        if (lower.contains("shoes") || lower.contains("sneaker")) return 119.0;
-        if (lower.contains("tv") || lower.contains("monitor")) return 449.0;
+        if (lower.contains("watch")) return 249.0;
+        if (lower.contains("headphone") || lower.contains("earbuds") || lower.contains("airpods")) return 199.0;
+        if (lower.contains("shoes") || lower.contains("sneaker") || lower.contains("boots")) return 119.0;
         if (lower.contains("keyboard") || lower.contains("mouse")) return 79.0;
+        if (lower.contains("speaker") || lower.contains("soundbar")) return 149.0;
         return 89.99;
     }
 }
