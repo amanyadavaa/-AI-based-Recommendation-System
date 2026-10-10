@@ -13,6 +13,7 @@ import java.util.*;
 public class RoutingService {
     private final HttpClient httpClient;
     private final Map<String, double[]> fallbackCoordinates = new HashMap<>();
+    private final Map<String, double[]> geocodeCache = new java.util.concurrent.ConcurrentHashMap<>();
 
     public RoutingService() {
         this.httpClient = HttpClient.newBuilder()
@@ -34,11 +35,22 @@ public class RoutingService {
         fallbackCoordinates.put("times square", new double[]{40.7580, -73.9855});
         fallbackCoordinates.put("central park", new double[]{40.7851, -73.9683});
         fallbackCoordinates.put("tokyo", new double[]{35.6762, 139.6503});
+        fallbackCoordinates.put("tokyo tower", new double[]{35.6586, 139.7454});
+        fallbackCoordinates.put("shibuya", new double[]{35.6595, 139.7005});
         fallbackCoordinates.put("delhi", new double[]{28.6139, 77.2090});
         fallbackCoordinates.put("taj mahal", new double[]{27.1751, 78.0421});
         fallbackCoordinates.put("mumbai", new double[]{19.0760, 72.8777});
         fallbackCoordinates.put("bangalore", new double[]{12.9716, 77.5946});
+        fallbackCoordinates.put("chennai", new double[]{13.0827, 80.2707});
+        fallbackCoordinates.put("hyderabad", new double[]{17.3850, 78.4867});
+        fallbackCoordinates.put("kolkata", new double[]{22.5726, 88.3639});
         fallbackCoordinates.put("sydney", new double[]{-33.8688, 151.2093});
+        fallbackCoordinates.put("rome", new double[]{41.9028, 12.4964});
+        fallbackCoordinates.put("colosseum", new double[]{41.8902, 12.4922});
+        fallbackCoordinates.put("dubai", new double[]{25.2048, 55.2708});
+        fallbackCoordinates.put("burj khalifa", new double[]{25.1972, 55.2744});
+        fallbackCoordinates.put("san francisco", new double[]{37.7749, -122.4194});
+        fallbackCoordinates.put("golden gate", new double[]{37.8199, -122.4783});
     }
 
     public RouteResult calculateShortestRoute(String origin, String destination) {
@@ -167,8 +179,13 @@ public class RoutingService {
 
     public double[] geocode(String place) {
         String lower = place.toLowerCase().trim();
+        if (geocodeCache.containsKey(lower)) {
+            return geocodeCache.get(lower);
+        }
+
         for (Map.Entry<String, double[]> entry : fallbackCoordinates.entrySet()) {
             if (lower.contains(entry.getKey())) {
+                geocodeCache.put(lower, entry.getValue());
                 return entry.getValue();
             }
         }
@@ -189,13 +206,17 @@ public class RoutingService {
                     Map<String, Object> item = (Map<String, Object>) list.get(0);
                     double lat = Double.parseDouble(String.valueOf(item.get("lat")));
                     double lon = Double.parseDouble(String.valueOf(item.get("lon")));
-                    return new double[]{lat, lon};
+                    double[] res = new double[]{lat, lon};
+                    geocodeCache.put(lower, res);
+                    return res;
                 }
             }
         } catch (Exception ignored) {}
 
         // Fallback default (Eiffel tower area)
-        return new double[]{48.8584, 2.2945};
+        double[] defaultCoords = new double[]{48.8584, 2.2945};
+        geocodeCache.put(lower, defaultCoords);
+        return defaultCoords;
     }
 
     private double haversineDistance(double lat1, double lon1, double lat2, double lon2) {
