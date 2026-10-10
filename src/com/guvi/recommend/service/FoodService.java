@@ -37,8 +37,8 @@ public class FoodService {
             dietary = List.of("Vegetarian Options", "Gluten-Free Crust Available", "Authentic Italian DOP");
             pros = List.of("Crispy leopard-spotted sourdough crust", "Imported buffalo mozzarella", "Rapid table service");
             cons = List.of("Peak hour wait time can reach 25 minutes");
-        } else if (lower.contains("sushi") || lower.contains("japanese")) {
-            bestDishes = List.of("Otoro Bluefin Nigiri", "Spicy Scallop Roll", "A5 Wagyu Foie Gras Roll", "Miso Black Cod");
+        } else if (lower.contains("sushi") || lower.contains("japanese") || lower.contains("ramen")) {
+            bestDishes = List.of("Otoro Bluefin Nigiri", "Spicy Scallop Roll", "A5 Wagyu Foie Gras Roll", "Rich Tonkotsu Black Garlic Ramen");
             dietary = List.of("Pescatarian Friendly", "Gluten-Free Tamari Available", "Wild-Caught Sustainable");
             pros = List.of("Melt-in-mouth fish freshness flown in daily", "Exceptional knife mastery by the chef", "Zen minimalist ambiance");
             cons = List.of("Premium pricing on omakase specials");
@@ -52,6 +52,16 @@ public class FoodService {
             dietary = List.of("100% Halal Options", "Extensive Pure Vegetarian Menu", "Jain Friendly Available");
             pros = List.of("Aromatic whole spices roasted in-house", "Velvety rich gravies with authentic depth", "Warm and hospitable service");
             cons = List.of("Mild options must be explicitly requested if sensitive to spice");
+        } else if (lower.contains("taco") || lower.contains("mexican") || lower.contains("burrito")) {
+            bestDishes = List.of("Slow-Braised Birria Tacos with Consomé", "Carne Asada Street Tacos", "Charred Sweet Corn Esquites", "Cinnamon Sugar House Churros");
+            dietary = List.of("Gluten-Free Corn Tortillas", "Vegetarian Black Bean Options");
+            pros = List.of("Rich flavorful consomé for taco dipping", "Zesty house-made salsa flight", "Fast casual dynamic vibe");
+            cons = List.of("Outdoor patio seating fills up rapidly on sunny weekends");
+        } else if (lower.contains("coffee") || lower.contains("cafe") || lower.contains("bakery")) {
+            bestDishes = List.of("Single-Origin Pour Over Ethiopian Yirgacheffe", "Velvet Oat Flat White", "Flaky Artisan Almond Croissant", "Avocado Sourdough Tartine");
+            dietary = List.of("Dairy-Free Milks (Oat, Almond, Soy)", "Vegan Pastries Available");
+            pros = List.of("Micro-roasted specialty specialty coffee beans", "Calm aesthetic for reading & laptop work", "Friendly barista recommendations");
+            cons = List.of("Limited power outlets for laptop charging during rush");
         } else {
             bestDishes = List.of("Chef's Signature Platter", "Slow-Cooked House Specialty", "Crispy Artisan Appetizer", "House Special Dessert");
             dietary = List.of("Vegetarian & Vegan Choices", "Gluten-Sensitive Accommodations", "Organic Sourced");
