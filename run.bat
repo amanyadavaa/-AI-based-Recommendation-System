@@ -1,8 +1,8 @@
 @echo off
-title OmniRecommend AI - GUVI Project 69
+title OmniRecommend AI - Universal Recommendation System
 cls
 echo ====================================================================
-echo    GUVI PROJECT #69: AI-BASED UNIVERSAL RECOMMENDATION SYSTEM
+echo    OMNIRECOMMEND AI: UNIVERSAL RECOMMENDATION SYSTEM
 echo ====================================================================
 echo.
 

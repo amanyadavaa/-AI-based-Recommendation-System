@@ -29,7 +29,7 @@ public class Main {
 
         try {
             System.out.println("==================================================================");
-            System.out.println("   GUVI PROJECT #69: AI-BASED UNIVERSAL RECOMMENDATION SYSTEM    ");
+            System.out.println("   OMNIRECOMMEND AI: UNIVERSAL RECOMMENDATION SYSTEM             ");
             System.out.println("==================================================================");
             System.out.println("Initializing system modules & services...");
 

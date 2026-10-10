@@ -2,7 +2,7 @@
 title OmniRecommend AI - Desktop GUI Application
 cls
 echo ====================================================================
-echo   GUVI PROJECT #69: OMNIRECOMMEND AI DESKTOP APPLICATION (SWING)
+echo   OMNIRECOMMEND AI: DESKTOP APPLICATION (SWING)
 echo ====================================================================
 echo.
 

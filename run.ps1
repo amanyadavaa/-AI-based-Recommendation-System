@@ -1,6 +1,6 @@
 # OmniRecommend AI Runner for PowerShell
 Write-Host "====================================================================" -ForegroundColor Cyan
-Write-Host "   GUVI PROJECT #69: AI-BASED UNIVERSAL RECOMMENDATION SYSTEM      " -ForegroundColor Green
+Write-Host "   OMNIRECOMMEND AI: UNIVERSAL RECOMMENDATION SYSTEM               " -ForegroundColor Green
 Write-Host "====================================================================" -ForegroundColor Cyan
 
 if (-not (Test-Path "bin")) {

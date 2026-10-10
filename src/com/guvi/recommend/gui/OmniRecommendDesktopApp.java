@@ -95,7 +95,7 @@ public class OmniRecommendDesktopApp extends JFrame {
     private JComboBox<String> dbTableSelect;
 
     public OmniRecommendDesktopApp() {
-        setTitle("OmniRecommend AI - Universal Recommendation & Comparison Platform (GUVI #69)");
+        setTitle("OmniRecommend AI - Universal Recommendation & Comparison Platform");
         setSize(1180, 780);
         setMinimumSize(new Dimension(980, 650));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -170,7 +170,7 @@ public class OmniRecommendDesktopApp extends JFrame {
         titleLbl.setFont(new Font("Segoe UI", Font.BOLD, 18));
         titleLbl.setForeground(Color.WHITE);
 
-        JLabel badgeLbl = new JLabel(" GUVI Project #69 ");
+        JLabel badgeLbl = new JLabel(" Enterprise AI v2.0 ");
         badgeLbl.setFont(new Font("Segoe UI", Font.BOLD, 10));
         badgeLbl.setForeground(new Color(99, 102, 241));
         badgeLbl.setBorder(BorderFactory.createLineBorder(new Color(99, 102, 241)));

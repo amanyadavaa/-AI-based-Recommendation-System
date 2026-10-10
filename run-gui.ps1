@@ -1,6 +1,6 @@
 # OmniRecommend AI Desktop GUI Runner for PowerShell
 Write-Host "====================================================================" -ForegroundColor Cyan
-Write-Host "   GUVI PROJECT #69: OMNIRECOMMEND AI DESKTOP APPLICATION (SWING)  " -ForegroundColor Green
+Write-Host "   OMNIRECOMMEND AI: DESKTOP APPLICATION (SWING)                   " -ForegroundColor Green
 Write-Host "====================================================================" -ForegroundColor Cyan
 
 if (-not (Test-Path "bin")) {
