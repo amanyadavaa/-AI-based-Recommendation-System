@@ -8,6 +8,8 @@ import com.guvi.recommend.db.dao.UserDao;
 import com.guvi.recommend.model.*;
 import com.guvi.recommend.service.*;
 import com.guvi.recommend.util.JsonUtil;
+import com.guvi.recommend.web.security.RateLimiter;
+import com.guvi.recommend.web.security.SecurityHeadersFilter;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -15,6 +17,7 @@ import java.io.*;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class ApiHandler implements HttpHandler {
     private final SystemConfig config;
@@ -31,6 +34,11 @@ public class ApiHandler implements HttpHandler {
     private final ItemDao itemDao = new ItemDao();
     private final InteractionDao interactionDao = new InteractionDao();
 
+    // Production Security & Metrics
+    private final RateLimiter rateLimiter = new RateLimiter(120);
+    private final AtomicLong requestCounter = new AtomicLong(0);
+    private final long serverStartTime = System.currentTimeMillis();
+
     public ApiHandler(SystemConfig config, UserService userService, RecommendationEngine recommendationEngine, ComparisonService comparisonService, MovieService movieService, RoutingService routingService, FoodService foodService) {
         this.config = config;
         this.userService = userService;
@@ -41,8 +49,17 @@ public class ApiHandler implements HttpHandler {
         this.foodService = foodService;
     }
 
+    public RateLimiter getRateLimiter() {
+        return rateLimiter;
+    }
+
     @Override
     public void handle(HttpExchange exchange) throws IOException {
+        requestCounter.incrementAndGet();
+
+        // Apply Enterprise Security Headers
+        SecurityHeadersFilter.applyHeaders(exchange.getResponseHeaders());
+
         // Set CORS headers
         exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
         exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
@@ -53,6 +70,17 @@ public class ApiHandler implements HttpHandler {
             return;
         }
 
+        // Token Bucket Rate Limiting (120 req/min)
+        String clientIp = exchange.getRemoteAddress() != null ? exchange.getRemoteAddress().getAddress().getHostAddress() : "client";
+        if (!rateLimiter.tryAcquire(clientIp)) {
+            exchange.getResponseHeaders().set("Retry-After", "60");
+            sendJson(exchange, 429, Map.of(
+                    "error", "Too Many Requests",
+                    "message", "Rate limit exceeded (120 requests/minute). Please retry after 60 seconds."
+            ));
+            return;
+        }
+
         String path = exchange.getRequestURI().getPath();
         String method = exchange.getRequestMethod().toUpperCase();
         Map<String, String> params = parseQueryParams(exchange.getRequestURI().getRawQuery());
@@ -60,6 +88,10 @@ public class ApiHandler implements HttpHandler {
         try {
             if (path.equals("/api/health")) {
                 sendJson(exchange, 200, Map.of("status", "UP", "time", System.currentTimeMillis()));
+            } else if (path.equals("/api/health/deep") && "GET".equals(method)) {
+                handleDeepHealth(exchange);
+            } else if (path.equals("/api/metrics") && "GET".equals(method)) {
+                handlePrometheusMetrics(exchange);
             } else if (path.equals("/api/users") && "GET".equals(method)) {
                 handleGetUsers(exchange);
             } else if (path.startsWith("/api/user/") && path.endsWith("/preferences") && "POST".equals(method)) {
@@ -269,7 +301,13 @@ public class ApiHandler implements HttpHandler {
             interactionDao.save(in);
         } catch (Exception ignored) {}
 
-        sendJson(exchange, 200, Map.of("success", true, "interactionId", in.getId()));
+        // Online Reinforcement Learning Feedback Loop
+        Item item = recommendationEngine.getItem(itemId);
+        if (item != null) {
+            userService.recordFeedbackReinforcement(userId, item, type);
+        }
+
+        sendJson(exchange, 200, Map.of("success", true, "interactionId", in.getId(), "onlineLearned", item != null));
     }
 
     private void handleUpdateAdminSettings(HttpExchange exchange) throws IOException {
@@ -370,6 +408,84 @@ public class ApiHandler implements HttpHandler {
             sendJson(exchange, 200, Map.of("interactions", res, "count", res.size(), "source", "SQLite JDBC"));
         } catch (Exception e) {
             sendJson(exchange, 500, Map.of("error", e.getMessage()));
+        }
+    }
+
+    private void handleDeepHealth(HttpExchange exchange) throws IOException {
+        long usedHeap = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+        long maxHeap = Runtime.getRuntime().maxMemory();
+        int activeThreads = Thread.activeCount();
+        boolean dbUp = dbManager.isJdbcAvailable();
+        long userCount = 0;
+        long itemCount = 0;
+        long interactionCount = 0;
+        try {
+            userCount = userDao.count();
+            itemCount = itemDao.count();
+            interactionCount = interactionDao.count();
+        } catch (Exception ignored) {}
+
+        Map<String, Object> report = new LinkedHashMap<>();
+        report.put("status", dbUp ? "HEALTHY" : "DEGRADED");
+        report.put("timestamp", System.currentTimeMillis());
+        report.put("uptimeMs", System.currentTimeMillis() - serverStartTime);
+        report.put("database", Map.of(
+                "connected", dbUp,
+                "engine", "SQLite 3",
+                "usersCount", userCount,
+                "itemsCount", itemCount,
+                "interactionsCount", interactionCount
+        ));
+        report.put("jvm", Map.of(
+                "usedHeapBytes", usedHeap,
+                "maxHeapBytes", maxHeap,
+                "activeThreads", activeThreads,
+                "availableProcessors", Runtime.getRuntime().availableProcessors()
+        ));
+        report.put("security", Map.of(
+                "rateLimiting", "ENABLED",
+                "rateLimitPerMinute", 120,
+                "trackedClients", rateLimiter.getClientCount()
+        ));
+        report.put("totalRequestsProcessed", requestCounter.get());
+
+        sendJson(exchange, 200, report);
+    }
+
+    private void handlePrometheusMetrics(HttpExchange exchange) throws IOException {
+        exchange.getResponseHeaders().set("Content-Type", "text/plain; version=0.0.4; charset=UTF-8");
+        long usedHeap = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+        long maxHeap = Runtime.getRuntime().maxMemory();
+        int activeThreads = Thread.activeCount();
+
+        String body = String.format("""
+            # HELP http_requests_total Total number of HTTP requests processed
+            # TYPE http_requests_total counter
+            http_requests_total %d
+            # HELP jvm_memory_used_bytes JVM memory used in bytes
+            # TYPE jvm_memory_used_bytes gauge
+            jvm_memory_used_bytes %d
+            # HELP jvm_memory_max_bytes JVM maximum available memory in bytes
+            # TYPE jvm_memory_max_bytes gauge
+            jvm_memory_max_bytes %d
+            # HELP jvm_active_threads Active JVM thread count
+            # TYPE jvm_active_threads gauge
+            jvm_active_threads %d
+            # HELP rate_limiter_clients_active Number of active client buckets tracked by the rate limiter
+            # TYPE rate_limiter_clients_active gauge
+            rate_limiter_clients_active %d
+            """,
+                requestCounter.get(),
+                usedHeap,
+                maxHeap,
+                activeThreads,
+                rateLimiter.getClientCount()
+        );
+
+        byte[] bytes = body.getBytes(StandardCharsets.UTF_8);
+        exchange.sendResponseHeaders(200, bytes.length);
+        try (OutputStream os = exchange.getResponseBody()) {
+            os.write(bytes);
         }
     }
 

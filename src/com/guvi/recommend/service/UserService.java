@@ -20,7 +20,7 @@ public class UserService {
 
     private void seedUsers() {
         // Admin user
-        User admin = new User("usr-admin", "admin", "admin@guvi.com", "ADMIN");
+        User admin = new User("usr-admin", "admin", "admin@omnirecommend.ai", "ADMIN");
         users.put(admin.getId(), admin);
 
         // Regular users
@@ -104,6 +104,42 @@ public class UserService {
     public void recordInteraction(Interaction interaction) {
         if (interaction != null) {
             interactions.add(interaction);
+        }
+    }
+
+    /**
+     * Online Reinforcement Learning: dynamically adjusts user tag and category affinities
+     * upon receiving explicit real-time feedback (LIKE, DISLIKE, PURCHASE).
+     */
+    public synchronized void recordFeedbackReinforcement(String userId, Item item, String type) {
+        if (userId == null || item == null || type == null) return;
+        User user = users.get(userId);
+        if (user == null) return;
+
+        Map<String, Object> prefs = user.getPreferences();
+        @SuppressWarnings("unchecked")
+        Map<String, Double> tagAffinities = (Map<String, Double>) prefs.computeIfAbsent("tagAffinities", k -> new ConcurrentHashMap<String, Double>());
+
+        double delta = 0.0;
+        if ("LIKE".equalsIgnoreCase(type) || "PURCHASE".equalsIgnoreCase(type)) {
+            delta = 0.15;
+            @SuppressWarnings("unchecked")
+            List<String> prefCats = (List<String>) prefs.get("preferredCategories");
+            if (prefCats != null && !prefCats.contains(item.getCategory())) {
+                List<String> updated = new ArrayList<>(prefCats);
+                updated.add(item.getCategory());
+                prefs.put("preferredCategories", updated);
+            }
+        } else if ("DISLIKE".equalsIgnoreCase(type)) {
+            delta = -0.20;
+        }
+
+        if (delta != 0.0 && item.getTags() != null) {
+            for (String tag : item.getTags()) {
+                double current = tagAffinities.getOrDefault(tag, 0.0);
+                double next = Math.max(-0.6, Math.min(1.0, current + delta));
+                tagAffinities.put(tag, next);
+            }
         }
     }
 

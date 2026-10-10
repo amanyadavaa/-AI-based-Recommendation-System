@@ -1,5 +1,6 @@
 package com.guvi.recommend.web;
 
+import com.guvi.recommend.web.security.SecurityHeadersFilter;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -17,6 +18,7 @@ public class StaticFileHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
+        SecurityHeadersFilter.applyHeaders(exchange.getResponseHeaders());
         Path target = resolveTarget(exchange.getRequestURI().getPath());
 
         if (!Files.exists(target)) {

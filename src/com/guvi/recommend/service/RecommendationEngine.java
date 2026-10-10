@@ -330,7 +330,20 @@ public class RecommendationEngine {
             else if ("HIGH".equalsIgnoreCase(tier) && price > 400) score += 0.15;
         }
 
-        return Math.min(1.0, score);
+        // Online Reinforcement Learning: Tag affinities learned dynamically from feedback
+        if (prefs.containsKey("tagAffinities") && item.getTags() != null) {
+            @SuppressWarnings("unchecked")
+            Map<String, Double> affinities = (Map<String, Double>) prefs.get("tagAffinities");
+            if (affinities != null && !affinities.isEmpty()) {
+                double tagBonus = 0.0;
+                for (String tag : item.getTags()) {
+                    tagBonus += affinities.getOrDefault(tag, 0.0);
+                }
+                score += Math.max(-0.4, Math.min(0.4, tagBonus));
+            }
+        }
+
+        return Math.max(0.05, Math.min(1.0, score));
     }
 
     private double computeCollaborativeScore(User user, Item item) {
