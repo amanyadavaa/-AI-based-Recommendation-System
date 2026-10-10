@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OmniRecommend AI - Universal Internet Recommendation System</title>
+  
+  <!-- Modern Font & Tailwind CSS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              800: '#3730a3',
+              900: '#312e81',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Leaflet CSS for Shortest Path Interactive Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-indigo-500 selection:text-white">
+
+  <!-- TOP NAVIGATION BAR -->
+  <header class="sticky top-0 z-40 backdrop-blur-md bg-slate-900/85 border-b border-slate-800 transition-all">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/25">
+          <i class="fa-solid fa-atom text-white text-lg"></i>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">OmniRecommend AI</span>
+            <span class="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">GUVI #69</span>
+          </div>
+          <p class="text-[11px] text-slate-400 hidden sm:block">Universal AI Recommendation & Internet Comparison Engine</p>
+        </div>
+      </div>
+
+      <!-- Navigation & Role Switcher -->
+      <div class="flex items-center space-x-3 sm:space-x-4">
+        
+        <!-- Active User Selector -->
+        <div class="relative inline-block text-left">
+          <div class="flex items-center bg-slate-800/80 border border-slate-700 rounded-lg p-1">
+            <span class="text-xs text-slate-400 px-2 hidden md:inline">User:</span>
+            <select id="userSelect" class="bg-transparent text-xs font-medium text-slate-200 focus:outline-none cursor-pointer pr-2">
+              <option value="usr-alice" selected class="bg-slate-800">Alice (Tech & Movies)</option>
+              <option value="usr-bob" class="bg-slate-800">Bob (Travel & Food)</option>
+              <option value="usr-charlie" class="bg-slate-800">Charlie (Bargains)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Mode Toggle Tabs (User View vs Admin View) -->
+        <div class="flex items-center p-1 bg-slate-800 rounded-xl border border-slate-700/80 shadow-inner">
+          <button id="btnUserMode" class="tab-btn active px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-2 transition-all">
+            <i class="fa-solid fa-compass"></i>
+            <span>User View</span>
+          </button>
+          <button id="btnAdminMode" class="tab-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center space-x-2 transition-all text-slate-400 hover:text-white">
+            <i class="fa-solid fa-sliders"></i>
+            <span>Admin View</span>
+          </button>
+        </div>
+
+        <!-- Preference Settings Modal Button -->
+        <button id="btnOpenPreferences" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition" title="Manage Preferences">
+          <i class="fa-solid fa-sliders"></i>
+        </button>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN APPLICATION CONTENT CONTAINER -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- ========================================== -->
+    <!-- VIEW 1: USER DASHBOARD                     -->
+    <!-- ========================================== -->
+    <div id="userDashboardView" class="space-y-6">
+
+      <!-- HERO & UNIVERSAL SEARCH SECTION -->
+      <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-950/60 via-slate-900 to-slate-900 border border-indigo-500/20 p-6 sm:p-8 shadow-2xl">
+        <div class="absolute -top-24 -right-24 w-80 h-80 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-24 -left-24 w-80 h-80 bg-pink-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="max-w-3xl mx-auto text-center space-y-4">
+          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/25 text-indigo-400 text-xs font-medium">
+            <i class="fa-solid fa-wand-magic-sparkles text-xs animate-pulse"></i>
+            <span>Hybrid AI Engine with Real-Time Web Synthesis</span>
+          </div>
+
+          <h1 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+            Discover & Compare <span class="bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 bg-clip-text text-transparent">Anything on the Internet</span>
+          </h1>
+          <p class="text-slate-400 text-sm sm:text-base">
+            Search products for multi-store price comparisons, movies for verified direct download links, places for shortest routes, food for internet reviews, or any query on the web.
+          </p>
+
+          <!-- Omnichannel Search Input Bar -->
+          <div class="pt-2">
+            <form id="searchForm" class="relative flex items-center max-w-2xl mx-auto">
+              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                <i class="fa-solid fa-magnifying-glass"></i>
+              </div>
+              <input 
+                type="text" 
+                id="searchInput" 
+                placeholder="Search products (e.g. Sony headphones), movies, places (e.g. Eiffel Tower), food..." 
+                class="w-full pl-11 pr-28 py-3.5 bg-slate-800/90 hover:bg-slate-800 focus:bg-slate-800 border border-slate-700 focus:border-indigo-500 rounded-xl text-sm text-white placeholder-slate-400 shadow-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition"
+              >
+              <div class="absolute inset-y-0 right-1.5 flex items-center space-x-1">
+                <button 
+                  type="submit" 
+                  class="h-9 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md shadow-indigo-600/30 transition flex items-center space-x-1.5"
+                >
+                  <span>Search</span>
+                  <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Quick Search Chips -->
+          <div class="flex flex-wrap items-center justify-center gap-2 pt-2 text-xs text-slate-400">
+            <span class="text-slate-500">Quick queries:</span>
+            <button class="quick-chip px-2.5 py-1 rounded-lg bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-indigo-500/40 text-slate-300 transition" data-q="Sony WH-1000XM5">🛍️ Sony Headphones</button>
+            <button class="quick-chip px-2.5 py-1 rounded-lg bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-indigo-500/40 text-slate-300 transition" data-q="Inception">🎬 Inception Movie</button>
+            <button class="quick-chip px-2.5 py-1 rounded-lg bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-indigo-500/40 text-slate-300 transition" data-q="Eiffel Tower Paris">📍 Eiffel Tower Route</button>
+            <button class="quick-chip px-2.5 py-1 rounded-lg bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-indigo-500/40 text-slate-300 transition" data-q="Neapolitan Pizza">🍔 Neapolitan Pizza Reviews</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- CATEGORY FILTER PILLS & STATUS BAR -->
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-800 pb-4">
+        
+        <!-- Category Navigation Buttons -->
+        <div class="flex flex-wrap items-center gap-2" id="categoryFilterContainer">
+          <button class="cat-pill active px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center space-x-2 transition border" data-category="ALL">
+            <i class="fa-solid fa-sparkles text-indigo-400"></i>
+            <span>All For You</span>
+          </button>
+          <button class="cat-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center space-x-2 transition border" data-category="PRODUCT">
+            <i class="fa-solid fa-bag-shopping text-emerald-400"></i>
+            <span>Products & Comparison</span>
+          </button>
+          <button class="cat-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center space-x-2 transition border" data-category="MOVIE">
+            <i class="fa-solid fa-film text-purple-400"></i>
+            <span>Movies & Downloads</span>
+          </button>
+          <button class="cat-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center space-x-2 transition border" data-category="PLACE">
+            <i class="fa-solid fa-map-location-dot text-amber-400"></i>
+            <span>Places & Shortest Path</span>
+          </button>
+          <button class="cat-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center space-x-2 transition border" data-category="FOOD">
+            <i class="fa-solid fa-utensils text-rose-400"></i>
+            <span>Food & Reviews</span>
+          </button>
+        </div>
+
+        <!-- Personalization Info Pill -->
+        <div class="flex items-center space-x-2 text-xs text-slate-400">
+          <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+          <span>Feed personalized for <strong id="activeUserName" class="text-slate-200">Alice</strong></span>
+          <button id="btnRefreshFeed" class="ml-2 p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition" title="Refresh Recommendations">
+            <i class="fa-solid fa-rotate-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- RECOMMENDATION CARDS GRID -->
+      <div>
+        <div id="loadingIndicator" class="hidden py-16 text-center space-y-3">
+          <div class="inline-block animate-spin w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full"></div>
+          <p class="text-sm text-slate-400">AI Engine is synthesizing personalized recommendations & real-time internet data...</p>
+        </div>
+
+        <div id="recommendationsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <!-- Dynamic Recommendation Cards Injected Here via JavaScript -->
+        </div>
+
+        <div id="emptyResults" class="hidden py-16 text-center space-y-3">
+          <div class="w-16 h-16 rounded-full bg-slate-800 mx-auto flex items-center justify-center text-slate-500 text-2xl">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </div>
+          <h3 class="text-lg font-bold text-white">No items found</h3>
+          <p class="text-sm text-slate-400 max-w-sm mx-auto">Try adjusting your search terms or switch categories to discover more recommendations.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VIEW 2: ADMIN DASHBOARD                    -->
+    <!-- ========================================== -->
+    <div id="adminDashboardView" class="hidden space-y-8">
+      
+      <!-- Admin Header Banner -->
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-6 rounded-2xl bg-slate-800/60 border border-slate-700">
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="px-2.5 py-0.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs font-bold uppercase tracking-wider">Admin Portal</span>
+            <h2 class="text-xl font-bold text-white">System Settings & Recommendation Effectiveness Analysis</h2>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-400 mt-1">Configure algorithm weights, analyze recommendation accuracy, CTR, and review user interactions.</p>
+        </div>
+
+        <!-- Admin Action Buttons -->
+        <div class="flex items-center space-x-3">
+          <button id="btnResetSettings" class="px-3.5 py-2 rounded-xl bg-slate-700/80 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold border border-slate-600 transition flex items-center space-x-1.5">
+            <i class="fa-solid fa-rotate-left"></i>
+            <span>Reset Defaults</span>
+          </button>
+          <button id="btnSaveAdminSettings" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 transition flex items-center space-x-1.5">
+            <i class="fa-solid fa-floppy-disk"></i>
+            <span>Save & Apply Settings</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Notification Toast Banner -->
+      <div id="adminToast" class="hidden p-4 rounded-xl border flex items-center space-x-3 text-sm transition-all duration-300">
+        <i id="adminToastIcon" class="fa-solid fa-circle-check text-lg"></i>
+        <div id="adminToastMessage" class="flex-grow font-medium"></div>
+        <button id="btnCloseAdminToast" class="text-slate-400 hover:text-white">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- SECTION A: SYSTEM SETTINGS MANAGEMENT FORM -->
+      <div class="bg-slate-800/40 border border-slate-700/80 rounded-2xl p-6 space-y-6">
+        <div class="flex items-center justify-between border-b border-slate-700/80 pb-4">
+          <div>
+            <h3 class="text-base font-bold text-white flex items-center space-x-2">
+              <i class="fa-solid fa-sliders text-indigo-400"></i>
+              <span>System Settings Management</span>
+            </h3>
+            <p class="text-xs text-slate-400">Tune the multi-objective AI recommendation parameters in real-time</p>
+          </div>
+          <div class="text-xs text-slate-400">
+            Last Updated: <span id="settingsLastUpdated" class="text-slate-200">Just now</span>
+          </div>
+        </div>
+
+        <!-- Presets Bar -->
+        <div class="flex flex-wrap items-center gap-2 text-xs">
+          <span class="text-slate-400 font-medium">Algorithm Presets:</span>
+          <button type="button" class="preset-btn px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition" data-preset="balanced">⚖️ Balanced Default</button>
+          <button type="button" class="preset-btn px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition" data-preset="discovery">🧭 Exploration & Discovery</button>
+          <button type="button" class="preset-btn px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition" data-preset="precision">🎯 High Precision</button>
+          <button type="button" class="preset-btn px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition" data-preset="deals">🏷️ Bargain Hunter</button>
+        </div>
+
+        <form id="adminSettingsForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          
+          <!-- Parameter 1: Content-Based Weight -->
+          <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700 space-y-3">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-semibold text-slate-200 flex items-center space-x-1.5">
+                <i class="fa-solid fa-tags text-indigo-400"></i>
+                <span>Content-Based Weight (W_content)</span>
+              </label>
+              <span id="valContentWeight" class="text-xs font-mono font-bold text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded">0.40</span>
+            </div>
+            <input type="range" id="inputContentWeight" min="0" max="1" step="0.05" value="0.40" class="w-full accent-indigo-500 cursor-pointer">
+            <p class="text-[11px] text-slate-400">Similarity matching against tags, category, and past user preferences.</p>
+          </div>
+
+          <!-- Parameter 2: Collaborative Filtering Weight -->
+          <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700 space-y-3">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-semibold text-slate-200 flex items-center space-x-1.5">
+                <i class="fa-solid fa-users text-purple-400"></i>
+                <span>Collaborative Weight (W_collab)</span>
+              </label>
+              <span id="valCollaborativeWeight" class="text-xs font-mono font-bold text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">0.35</span>
+            </div>
+            <input type="range" id="inputCollaborativeWeight" min="0" max="1" step="0.05" value="0.35" class="w-full accent-purple-500 cursor-pointer">
+            <p class="text-[11px] text-slate-400">User-to-user behavioral correlation from interactions & clicks.</p>
+          </div>
+
+          <!-- Parameter 3: Popularity & Trend Weight -->
+          <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700 space-y-3">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-semibold text-slate-200 flex items-center space-x-1.5">
+                <i class="fa-solid fa-fire text-amber-400"></i>
+                <span>Popularity Weight (W_pop)</span>
+              </label>
+              <span id="valPopularityWeight" class="text-xs font-mono font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">0.25</span>
+            </div>
+            <input type="range" id="inputPopularityWeight" min="0" max="1" step="0.05" value="0.25" class="w-full accent-amber-500 cursor-pointer">
+            <p class="text-[11px] text-slate-400">Bayesian rating score and internet review volume influence.</p>
+          </div>
+
+          <!-- Parameter 4: Exploration Rate (Epsilon-greedy) -->
+          <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700 space-y-3">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-semibold text-slate-200 flex items-center space-x-1.5">
+                <i class="fa-solid fa-compass text-pink-400"></i>
+                <span>Exploration Rate (ε-greedy)</span>
+              </label>
+              <span id="valExplorationRate" class="text-xs font-mono font-bold text-pink-400 bg-pink-500/10 px-2 py-0.5 rounded">0.15</span>
+            </div>
+            <input type="range" id="inputExplorationRate" min="0.0" max="0.5" step="0.05" value="0.15" class="w-full accent-pink-500 cursor-pointer">
+            <p class="text-[11px] text-slate-400">Injects novel items into feed to prevent echo-chambers and discover new niches.</p>
+          </div>
+
+          <!-- Parameter 5: Minimum Confidence Threshold -->
+          <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700 space-y-3">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-semibold text-slate-200 flex items-center space-x-1.5">
+                <i class="fa-solid fa-shield-halved text-emerald-400"></i>
+                <span>Min Confidence Threshold</span>
+              </label>
+              <span id="valMinConfidenceThreshold" class="text-xs font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">0.40</span>
+            </div>
+            <input type="range" id="inputMinConfidenceThreshold" min="0.1" max="0.8" step="0.05" value="0.40" class="w-full accent-emerald-500 cursor-pointer">
+            <p class="text-[11px] text-slate-400">Discard recommendations below this AI match confidence threshold.</p>
+          </div>
+
+          <!-- Parameter 6: Live Web Search Fallback Toggle -->
+          <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700 space-y-3 flex flex-col justify-between">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-semibold text-slate-200 flex items-center space-x-1.5">
+                <i class="fa-solid fa-globe text-cyan-400"></i>
+                <span>Live Internet Synthesis</span>
+              </label>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="inputEnableLiveWebSearch" checked class="sr-only peer">
+                <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+              </label>
+            </div>
+            <p class="text-[11px] text-slate-400">Enable real-time dynamic web fetching for queries not pre-cached in local catalog.</p>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- SECTION B: RECOMMENDATION EFFECTIVENESS ANALYSIS & CHARTS -->
+      <div class="space-y-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-base font-bold text-white flex items-center space-x-2">
+              <i class="fa-solid fa-chart-line text-emerald-400"></i>
+              <span>Recommendation Effectiveness Analysis</span>
+            </h3>
+            <p class="text-xs text-slate-400">Real-time performance reports, metrics and automated algorithmic improvements</p>
+          </div>
+          <button id="btnRefreshAnalytics" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-medium border border-slate-700 transition flex items-center space-x-1.5">
+            <i class="fa-solid fa-arrows-rotate"></i>
+            <span>Refresh Analytics</span>
+          </button>
+        </div>
+
+        <!-- KPI Summary Cards -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+          
+          <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700/80">
+            <p class="text-xs text-slate-400">Total Impressions</p>
+            <p id="kpiImpressions" class="text-xl font-extrabold text-white mt-1">-</p>
+            <p class="text-[10px] text-indigo-400 mt-1"><i class="fa-solid fa-eye"></i> Feed items served</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700/80">
+            <p class="text-xs text-slate-400">Total Clicks</p>
+            <p id="kpiClicks" class="text-xl font-extrabold text-white mt-1">-</p>
+            <p class="text-[10px] text-purple-400 mt-1"><i class="fa-solid fa-arrow-pointer"></i> Engaged clicks</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700/80">
+            <p class="text-xs text-slate-400">Overall CTR</p>
+            <p id="kpiCtr" class="text-xl font-extrabold text-emerald-400 mt-1">-%</p>
+            <p class="text-[10px] text-emerald-400 mt-1"><i class="fa-solid fa-chart-simple"></i> Click-through rate</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700/80">
+            <p class="text-xs text-slate-400">Conversion Rate</p>
+            <p id="kpiConversion" class="text-xl font-extrabold text-amber-400 mt-1">-%</p>
+            <p class="text-[10px] text-amber-400 mt-1"><i class="fa-solid fa-bag-shopping"></i> Purchase / Save</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700/80">
+            <p class="text-xs text-slate-400">Precision@5</p>
+            <p id="kpiPrecision" class="text-xl font-extrabold text-indigo-400 mt-1">-</p>
+            <p class="text-[10px] text-indigo-400 mt-1"><i class="fa-solid fa-bullseye"></i> Top-5 accuracy</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700/80">
+            <p class="text-xs text-slate-400">Diversity Score</p>
+            <p id="kpiDiversity" class="text-xl font-extrabold text-pink-400 mt-1">-%</p>
+            <p class="text-[10px] text-pink-400 mt-1"><i class="fa-solid fa-network-wired"></i> Cross-domain</p>
+          </div>
+
+        </div>
+
+        <!-- Interactive Charts Grid (Chart.js) -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          
+          <!-- Chart 1: CTR by Category -->
+          <div class="p-5 rounded-2xl bg-slate-800/50 border border-slate-700/80 space-y-4">
+            <div class="flex items-center justify-between">
+              <h4 class="text-sm font-bold text-white flex items-center space-x-2">
+                <i class="fa-solid fa-chart-column text-indigo-400"></i>
+                <span>Click-Through Rate (CTR) by Category</span>
+              </h4>
+              <span class="text-[11px] text-slate-400">Performance %</span>
+            </div>
+            <div class="h-64 relative">
+              <canvas id="chartCategoryCtr"></canvas>
+            </div>
+          </div>
+
+          <!-- Chart 2: Timeline Impressions vs Clicks -->
+          <div class="p-5 rounded-2xl bg-slate-800/50 border border-slate-700/80 space-y-4">
+            <div class="flex items-center justify-between">
+              <h4 class="text-sm font-bold text-white flex items-center space-x-2">
+                <i class="fa-solid fa-wave-square text-emerald-400"></i>
+                <span>7-Day Engagement Timeline</span>
+              </h4>
+              <span class="text-[11px] text-slate-400">Impressions vs Clicks</span>
+            </div>
+            <div class="h-64 relative">
+              <canvas id="chartTimeline"></canvas>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Automated AI Optimization Suggestions & Reports -->
+        <div class="p-5 rounded-2xl bg-gradient-to-r from-indigo-950/40 via-slate-800/60 to-slate-800/40 border border-indigo-500/20 space-y-3">
+          <h4 class="text-sm font-bold text-white flex items-center space-x-2">
+            <i class="fa-solid fa-robot text-indigo-400"></i>
+            <span>AI Automated Optimization Suggestions</span>
+          </h4>
+          <div id="aiSuggestionsList" class="space-y-2 text-xs text-slate-300">
+            <!-- Dynamic suggestions injected here -->
+          </div>
+        </div>
+
+        <!-- User Profiles Management Table -->
+        <div class="p-5 rounded-2xl bg-slate-800/50 border border-slate-700/80 space-y-4">
+          <div class="flex items-center justify-between">
+            <h4 class="text-sm font-bold text-white flex items-center space-x-2">
+              <i class="fa-solid fa-users text-purple-400"></i>
+              <span>User Profiles Management</span>
+            </h4>
+            <span class="text-xs text-slate-400">Active Test Users</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-300">
+              <thead class="bg-slate-800/80 text-slate-400 uppercase font-semibold border-b border-slate-700">
+                <tr>
+                  <th class="px-4 py-3">User ID</th>
+                  <th class="px-4 py-3">Username</th>
+                  <th class="px-4 py-3">Email</th>
+                  <th class="px-4 py-3">Role</th>
+                  <th class="px-4 py-3">Favorite Categories</th>
+                  <th class="px-4 py-3">Location Anchor</th>
+                </tr>
+              </thead>
+              <tbody id="userProfilesTableBody" class="divide-y divide-slate-700/60">
+                <!-- User rows injected here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- MODAL 1: PRODUCT MULTI-STORE COMPARISON    -->
+  <!-- ========================================== -->
+  <div id="modalProduct" class="fixed inset-0 z-50 hidden overflow-y-auto bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="relative bg-slate-900 border border-slate-700 rounded-2xl max-w-3xl w-full p-6 shadow-2xl space-y-6 animate-scaleIn">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-code-compare"></i>
+          </div>
+          <div>
+            <h3 id="mProdTitle" class="text-lg font-bold text-white">Product Comparison</h3>
+            <p id="mProdBrand" class="text-xs text-slate-400">Multi-Site Price & Stock Checker</p>
+          </div>
+        </div>
+        <button class="modal-close-btn text-slate-400 hover:text-white p-2">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Price Highlights Bar -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+          <p class="text-[11px] text-emerald-400 font-semibold">Best Price Found</p>
+          <p id="mProdLowestPrice" class="text-lg font-extrabold text-white mt-0.5">$0.00</p>
+          <p id="mProdBestStore" class="text-[10px] text-slate-400">at Store</p>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-800/80 border border-slate-700">
+          <p class="text-[11px] text-slate-400">Average Web Price</p>
+          <p id="mProdAvgPrice" class="text-lg font-extrabold text-slate-200 mt-0.5">$0.00</p>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-800/80 border border-slate-700">
+          <p class="text-[11px] text-slate-400">Highest Store Price</p>
+          <p id="mProdHighPrice" class="text-lg font-extrabold text-slate-200 mt-0.5">$0.00</p>
+        </div>
+        <div class="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
+          <p class="text-[11px] text-indigo-400 font-semibold">Max Price Savings</p>
+          <p id="mProdSavings" class="text-lg font-extrabold text-indigo-300 mt-0.5">$0.00</p>
+        </div>
+      </div>
+
+      <!-- Comparison Listings Table -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs text-slate-300">
+          <thead class="bg-slate-800/80 text-slate-400 uppercase font-semibold border-b border-slate-700">
+            <tr>
+              <th class="px-4 py-2.5">Retailer</th>
+              <th class="px-4 py-2.5">Price</th>
+              <th class="px-4 py-2.5">Rating</th>
+              <th class="px-4 py-2.5">Delivery & Stock</th>
+              <th class="px-4 py-2.5 text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody id="mProdListingsTable" class="divide-y divide-slate-800">
+            <!-- Listings injected here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL 2: MOVIE DOWNLOAD & STREAMING LINKS  -->
+  <!-- ========================================== -->
+  <div id="modalMovie" class="fixed inset-0 z-50 hidden overflow-y-auto bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="relative bg-slate-900 border border-slate-700 rounded-2xl max-w-3xl w-full p-6 shadow-2xl space-y-6 animate-scaleIn">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-film"></i>
+          </div>
+          <div>
+            <h3 id="mMovTitle" class="text-lg font-bold text-white">Movie Title</h3>
+            <p id="mMovSubtitle" class="text-xs text-slate-400">Year • Genre • Duration</p>
+          </div>
+        </div>
+        <button class="modal-close-btn text-slate-400 hover:text-white p-2">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Ratings & Cast Info -->
+      <div class="flex flex-wrap items-center gap-4 text-xs">
+        <span class="px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 font-bold flex items-center space-x-1">
+          <i class="fa-solid fa-star"></i>
+          <span id="mMovImdb">IMDb: 8.8</span>
+        </span>
+        <span class="px-2.5 py-1 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 font-bold flex items-center space-x-1">
+          <i class="fa-solid fa-fire"></i>
+          <span id="mMovRt">Rotten Tomatoes: 93%</span>
+        </span>
+        <span id="mMovCast" class="text-slate-400">Cast: Leonardo DiCaprio, Tom Hardy</span>
+      </div>
+
+      <p id="mMovSynopsis" class="text-xs sm:text-sm text-slate-300 leading-relaxed bg-slate-800/40 p-3.5 rounded-xl border border-slate-800"></p>
+
+      <!-- Section: Verified Direct Download Links -->
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-purple-400 flex items-center space-x-2">
+          <i class="fa-solid fa-download"></i>
+          <span>Direct Download Mirrors (Free & Verified Public Vaults)</span>
+        </h4>
+        <div id="mMovDownloadLinks" class="space-y-2">
+          <!-- Download Links injected here -->
+        </div>
+      </div>
+
+      <!-- Section: Official Streaming Providers -->
+      <div class="space-y-3">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-indigo-400 flex items-center space-x-2">
+          <i class="fa-solid fa-play"></i>
+          <span>Official Streaming Platforms</span>
+        </h4>
+        <div id="mMovStreamingLinks" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <!-- Streaming platforms injected here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL 3: SHORTEST PATH & ROUTE MAP         -->
+  <!-- ========================================== -->
+  <div id="modalRoute" class="fixed inset-0 z-50 hidden overflow-y-auto bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="relative bg-slate-900 border border-slate-700 rounded-2xl max-w-4xl w-full p-6 shadow-2xl space-y-6 animate-scaleIn">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-route"></i>
+          </div>
+          <div>
+            <h3 id="mRouteTitle" class="text-lg font-bold text-white">Shortest Path Navigation</h3>
+            <p class="text-xs text-slate-400">OSRM Geodesic Engine & Turn-by-Turn Route</p>
+          </div>
+        </div>
+        <button class="modal-close-btn text-slate-400 hover:text-white p-2">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Origin & Destination Inputs -->
+      <form id="routeRecalculateForm" class="grid grid-cols-1 sm:grid-cols-12 gap-3 bg-slate-800/40 p-3 rounded-xl border border-slate-800">
+        <div class="sm:col-span-5">
+          <label class="text-[10px] uppercase font-semibold text-slate-400 block mb-1">Starting Point</label>
+          <input type="text" id="routeInputOrigin" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-xs text-white focus:outline-none focus:border-amber-500" value="Notre Dame, Paris">
+        </div>
+        <div class="sm:col-span-5">
+          <label class="text-[10px] uppercase font-semibold text-slate-400 block mb-1">Destination</label>
+          <input type="text" id="routeInputDest" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-xs text-white focus:outline-none focus:border-amber-500" value="Eiffel Tower, Paris">
+        </div>
+        <div class="sm:col-span-2 flex items-end">
+          <button type="submit" class="w-full py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-xs font-semibold shadow transition">
+            Recalculate
+          </button>
+        </div>
+      </form>
+
+      <!-- Key Routing Metrics -->
+      <div class="grid grid-cols-3 gap-3">
+        <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-center">
+          <p class="text-[10px] text-amber-400 font-semibold">Shortest Distance</p>
+          <p id="mRouteDistance" class="text-lg font-extrabold text-white mt-0.5">0.0 km</p>
+        </div>
+        <div class="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-center">
+          <p class="text-[10px] text-indigo-400 font-semibold">Driving Duration</p>
+          <p id="mRouteDuration" class="text-lg font-extrabold text-white mt-0.5">0 min</p>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center">
+          <a id="mRouteGoogleLink" href="#" target="_blank" class="px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-xs font-semibold flex items-center space-x-1.5 transition">
+            <i class="fa-brands fa-google text-amber-400"></i>
+            <span>Google Maps</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Interactive Route Map Container (Leaflet.js) -->
+      <div class="rounded-xl overflow-hidden border border-slate-700 h-64 bg-slate-800" id="routeMapContainer">
+        <div id="routeMap" class="w-full h-full"></div>
+      </div>
+
+      <!-- Turn-by-Turn Steps Accordion -->
+      <div class="space-y-2">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Step-by-Step Directions</h4>
+        <div id="mRouteStepsList" class="max-h-40 overflow-y-auto space-y-1.5 pr-1">
+          <!-- Steps injected here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL 4: FOOD INTERNET REVIEWS & SENTIMENT -->
+  <!-- ========================================== -->
+  <div id="modalFood" class="fixed inset-0 z-50 hidden overflow-y-auto bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="relative bg-slate-900 border border-slate-700 rounded-2xl max-w-3xl w-full p-6 shadow-2xl space-y-6 animate-scaleIn">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-utensils"></i>
+          </div>
+          <div>
+            <h3 id="mFoodTitle" class="text-lg font-bold text-white">Food / Restaurant Name</h3>
+            <p id="mFoodCuisine" class="text-xs text-slate-400">Cuisine • Price Tier</p>
+          </div>
+        </div>
+        <button class="modal-close-btn text-slate-400 hover:text-white p-2">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Review Sentiment Breakdown Bar -->
+      <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700 space-y-3">
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-bold text-white flex items-center space-x-1">
+            <i class="fa-solid fa-chart-pie text-rose-400"></i>
+            <span>Internet Sentiment Analysis (Aggregated from Google, Yelp, TripAdvisor)</span>
+          </span>
+          <span id="mFoodOverallRating" class="font-bold text-amber-400">★ 4.9 (18k+ reviews)</span>
+        </div>
+
+        <!-- Multi-segment Progress Bar -->
+        <div class="w-full h-3 rounded-full overflow-hidden flex bg-slate-700">
+          <div id="mFoodPosBar" class="bg-emerald-500 h-full" style="width: 85%" title="Positive"></div>
+          <div id="mFoodNeuBar" class="bg-amber-400 h-full" style="width: 10%" title="Neutral"></div>
+          <div id="mFoodNegBar" class="bg-rose-500 h-full" style="width: 5%" title="Negative"></div>
+        </div>
+
+        <div class="flex items-center justify-between text-[11px] text-slate-400">
+          <span class="text-emerald-400 font-semibold"><i class="fa-solid fa-thumbs-up"></i> <span id="mFoodPosTxt">85% Positive</span></span>
+          <span class="text-amber-400 font-semibold"><i class="fa-solid fa-minus"></i> <span id="mFoodNeuTxt">10% Neutral</span></span>
+          <span class="text-rose-400 font-semibold"><i class="fa-solid fa-thumbs-down"></i> <span id="mFoodNegTxt">5% Critical</span></span>
+        </div>
+      </div>
+
+      <!-- Best Recommended Dishes & Pros/Cons -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+        <div class="p-3.5 rounded-xl bg-slate-800/40 border border-slate-800 space-y-2">
+          <h4 class="font-bold text-amber-400 flex items-center space-x-1.5">
+            <i class="fa-solid fa-crown"></i>
+            <span>Top Recommended Signature Dishes</span>
+          </h4>
+          <ul id="mFoodDishesList" class="space-y-1 text-slate-300">
+            <!-- Dishes injected here -->
+          </ul>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-slate-800/40 border border-slate-800 space-y-2">
+          <h4 class="font-bold text-emerald-400 flex items-center space-x-1.5">
+            <i class="fa-solid fa-check"></i>
+            <span>Internet Review Consensus</span>
+          </h4>
+          <ul id="mFoodProsList" class="space-y-1 text-slate-300">
+            <!-- Pros injected here -->
+          </ul>
+        </div>
+      </div>
+
+      <!-- Sample Verified Reviews Feed -->
+      <div class="space-y-2">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Verified Internet Reviews</h4>
+        <div id="mFoodReviewsList" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+          <!-- Reviews injected here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL 5: USER PREFERENCES SETTINGS         -->
+  <!-- ========================================== -->
+  <div id="modalPreferences" class="fixed inset-0 z-50 hidden overflow-y-auto bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="relative bg-slate-900 border border-slate-700 rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-6 animate-scaleIn">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center text-lg">
+            <i class="fa-solid fa-sliders"></i>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-white">Preference Settings</h3>
+            <p class="text-xs text-slate-400">Customize your recommendation profile</p>
+          </div>
+        </div>
+        <button class="modal-close-btn text-slate-400 hover:text-white p-2">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <form id="userPreferencesForm" class="space-y-4 text-xs">
+        
+        <!-- Preferred Categories -->
+        <div class="space-y-1.5">
+          <label class="font-bold text-slate-200">Interests & Categories</label>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="flex items-center space-x-2 bg-slate-800 p-2.5 rounded-lg cursor-pointer border border-slate-700">
+              <input type="checkbox" name="prefCat" value="PRODUCT" checked class="rounded accent-indigo-500">
+              <span>🛍️ Products & Deals</span>
+            </label>
+            <label class="flex items-center space-x-2 bg-slate-800 p-2.5 rounded-lg cursor-pointer border border-slate-700">
+              <input type="checkbox" name="prefCat" value="MOVIE" checked class="rounded accent-indigo-500">
+              <span>🎬 Movies & Shows</span>
+            </label>
+            <label class="flex items-center space-x-2 bg-slate-800 p-2.5 rounded-lg cursor-pointer border border-slate-700">
+              <input type="checkbox" name="prefCat" value="PLACE" checked class="rounded accent-indigo-500">
+              <span>📍 Places & Travel</span>
+            </label>
+            <label class="flex items-center space-x-2 bg-slate-800 p-2.5 rounded-lg cursor-pointer border border-slate-700">
+              <input type="checkbox" name="prefCat" value="FOOD" checked class="rounded accent-indigo-500">
+              <span>🍔 Food & Dining</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Price Range Preference -->
+        <div class="space-y-1.5">
+          <label class="font-bold text-slate-200">Price Tolerance</label>
+          <select id="prefPriceSelect" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-indigo-500">
+            <option value="LOW">Budget Friendly (Under $50)</option>
+            <option value="MEDIUM" selected>Mid-Range & Best Value ($50 - $400)</option>
+            <option value="HIGH">Premium & Luxury ($400+)</option>
+          </select>
+        </div>
+
+        <!-- Dietary Preference -->
+        <div class="space-y-1.5">
+          <label class="font-bold text-slate-200">Dietary Preference (for Food suggestions)</label>
+          <select id="prefDietarySelect" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-indigo-500">
+            <option value="All" selected>All Cuisines</option>
+            <option value="Vegetarian">Vegetarian</option>
+            <option value="Vegan">Vegan</option>
+            <option value="Halal">Halal</option>
+            <option value="Gluten-Free">Gluten-Free</option>
+          </select>
+        </div>
+
+        <!-- Current Location Anchor for Shortest Path calculation -->
+        <div class="space-y-1.5">
+          <label class="font-bold text-slate-200">Current Location Anchor (Origin for Shortest Paths)</label>
+          <input type="text" id="prefLocationInput" value="Paris, France" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-indigo-500">
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="pt-4 border-t border-slate-800 flex items-center justify-end space-x-3">
+          <button type="button" class="modal-close-btn px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-slate-300 font-semibold transition">
+            Cancel
+          </button>
+          <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-semibold shadow-lg shadow-indigo-600/30 transition">
+            Save Preferences
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="mt-auto border-t border-slate-800/80 bg-slate-900/60 py-6 text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center space-x-2">
+        <span class="font-bold text-slate-400">GUVI Geek Network Pvt. Ltd.</span>
+        <span>•</span>
+        <span>Project #69: AI-based Recommendation System</span>
+      </div>
+      <div>
+        <span>Pure Java Embedded Server & Microservices Engine</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Leaflet JS for Maps -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  
+  <!-- Chart.js for Admin Analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Application Logic JS -->
+  <script src="js/app.js"></script>
+</body>
+</html>

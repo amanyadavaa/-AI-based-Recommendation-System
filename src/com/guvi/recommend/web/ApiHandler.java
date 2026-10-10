@@ -1,0 +1,300 @@
+package com.guvi.recommend.web;
+
+import com.guvi.recommend.config.SystemConfig;
+import com.guvi.recommend.model.*;
+import com.guvi.recommend.service.*;
+import com.guvi.recommend.util.JsonUtil;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+
+import java.io.*;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+
+public class ApiHandler implements HttpHandler {
+    private final SystemConfig config;
+    private final UserService userService;
+    private final RecommendationEngine recommendationEngine;
+    private final ComparisonService comparisonService;
+    private final MovieService movieService;
+    private final RoutingService routingService;
+    private final FoodService foodService;
+
+    public ApiHandler(SystemConfig config, UserService userService, RecommendationEngine recommendationEngine, ComparisonService comparisonService, MovieService movieService, RoutingService routingService, FoodService foodService) {
+        this.config = config;
+        this.userService = userService;
+        this.recommendationEngine = recommendationEngine;
+        this.comparisonService = comparisonService;
+        this.movieService = movieService;
+        this.routingService = routingService;
+        this.foodService = foodService;
+    }
+
+    @Override
+    public void handle(HttpExchange exchange) throws IOException {
+        // Set CORS headers
+        exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
+        exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+        if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+            exchange.sendResponseHeaders(204, -1);
+            return;
+        }
+
+        String path = exchange.getRequestURI().getPath();
+        String method = exchange.getRequestMethod().toUpperCase();
+        Map<String, String> params = parseQueryParams(exchange.getRequestURI().getRawQuery());
+
+        try {
+            if (path.equals("/api/health")) {
+                sendJson(exchange, 200, Map.of("status", "UP", "time", System.currentTimeMillis()));
+            } else if (path.equals("/api/users") && "GET".equals(method)) {
+                handleGetUsers(exchange);
+            } else if (path.startsWith("/api/user/") && path.endsWith("/preferences") && "POST".equals(method)) {
+                handleUpdatePreferences(exchange, path);
+            } else if (path.startsWith("/api/user/") && "GET".equals(method)) {
+                handleGetUser(exchange, path);
+            } else if (path.equals("/api/recommendations") && "GET".equals(method)) {
+                handleGetRecommendations(exchange, params);
+            } else if (path.equals("/api/search") && "GET".equals(method)) {
+                handleSearch(exchange, params);
+            } else if (path.equals("/api/compare") && "GET".equals(method)) {
+                handleCompare(exchange, params);
+            } else if (path.equals("/api/movie") && "GET".equals(method)) {
+                handleMovie(exchange, params);
+            } else if (path.equals("/api/route") && "GET".equals(method)) {
+                handleRoute(exchange, params);
+            } else if (path.equals("/api/food") && "GET".equals(method)) {
+                handleFood(exchange, params);
+            } else if (path.equals("/api/interaction") && "POST".equals(method)) {
+                handleRecordInteraction(exchange);
+            } else if (path.equals("/api/admin/settings") && "GET".equals(method)) {
+                sendJson(exchange, 200, config.toMap());
+            } else if (path.equals("/api/admin/settings") && "POST".equals(method)) {
+                handleUpdateAdminSettings(exchange);
+            } else if (path.equals("/api/admin/reset") && "POST".equals(method)) {
+                config.resetToDefaults();
+                sendJson(exchange, 200, Map.of("success", true, "message", "System settings successfully reset to defaults.", "settings", config.toMap()));
+            } else if (path.equals("/api/admin/analytics") && "GET".equals(method)) {
+                handleGetAnalytics(exchange);
+            } else {
+                sendJson(exchange, 404, Map.of("error", "Endpoint not found: " + path));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            sendJson(exchange, 500, Map.of("error", "Internal Server Error", "message", e.getMessage() != null ? e.getMessage() : "Unknown error"));
+        }
+    }
+
+    private void handleGetUsers(HttpExchange exchange) throws IOException {
+        List<User> list = userService.getAllUsers();
+        List<Map<String, Object>> res = new ArrayList<>();
+        for (User u : list) res.add(u.toMap());
+        sendJson(exchange, 200, Map.of("users", res));
+    }
+
+    private void handleGetUser(HttpExchange exchange, String path) throws IOException {
+        String userId = path.substring("/api/user/".length());
+        User u = userService.getUser(userId);
+        if (u != null) {
+            sendJson(exchange, 200, u.toMap());
+        } else {
+            sendJson(exchange, 404, Map.of("error", "User not found"));
+        }
+    }
+
+    private void handleUpdatePreferences(HttpExchange exchange, String path) throws IOException {
+        // /api/user/{id}/preferences
+        String userId = path.substring("/api/user/".length(), path.length() - "/preferences".length());
+        String body = readBody(exchange);
+        Map<String, Object> prefs = JsonUtil.parseMap(body);
+
+        boolean updated = userService.updatePreferences(userId, prefs);
+        if (updated) {
+            User u = userService.getUser(userId);
+            sendJson(exchange, 200, Map.of(
+                    "success", true,
+                    "message", "User preferences updated successfully.",
+                    "user", u != null ? u.toMap() : Collections.emptyMap()
+            ));
+        } else {
+            sendJson(exchange, 404, Map.of("error", "User not found for update"));
+        }
+    }
+
+    private void handleGetRecommendations(HttpExchange exchange, Map<String, String> params) throws IOException {
+        String userId = params.getOrDefault("userId", "usr-alice");
+        String category = params.getOrDefault("category", "ALL");
+
+        List<Item> recommendations = recommendationEngine.getPersonalizedRecommendations(userId, category);
+        List<Map<String, Object>> resList = new ArrayList<>();
+        for (Item it : recommendations) {
+            resList.add(it.toMap());
+        }
+
+        sendJson(exchange, 200, Map.of(
+                "userId", userId,
+                "category", category,
+                "count", resList.size(),
+                "recommendations", resList
+        ));
+    }
+
+    private void handleSearch(HttpExchange exchange, Map<String, String> params) throws IOException {
+        String q = params.getOrDefault("q", "");
+        String userId = params.getOrDefault("userId", "usr-alice");
+        String category = params.getOrDefault("category", "ALL");
+
+        List<Item> results = recommendationEngine.search(q, userId, category);
+        List<Map<String, Object>> resList = new ArrayList<>();
+        for (Item it : results) {
+            resList.add(it.toMap());
+        }
+
+        sendJson(exchange, 200, Map.of(
+                "query", q,
+                "category", category,
+                "count", resList.size(),
+                "results", resList
+        ));
+    }
+
+    private void handleCompare(HttpExchange exchange, Map<String, String> params) throws IOException {
+        String itemId = params.get("itemId");
+        String query = params.get("query");
+
+        ProductComparison comp;
+        if (itemId != null) {
+            Item item = recommendationEngine.getItem(itemId);
+            if (item != null) {
+                comp = comparisonService.compareProduct(item);
+            } else {
+                comp = comparisonService.compareByQuery(itemId);
+            }
+        } else if (query != null) {
+            comp = comparisonService.compareByQuery(query);
+        } else {
+            comp = comparisonService.compareByQuery("Wireless Noise Canceling Headphones");
+        }
+
+        sendJson(exchange, 200, comp.toMap());
+    }
+
+    private void handleMovie(HttpExchange exchange, Map<String, String> params) throws IOException {
+        String itemId = params.get("itemId");
+        String title = params.get("title");
+
+        MovieDetails details;
+        if (itemId != null) {
+            Item item = recommendationEngine.getItem(itemId);
+            if (item != null) {
+                details = movieService.getMovieDetails(item);
+            } else {
+                details = movieService.getMovieDetailsByTitle(itemId);
+            }
+        } else if (title != null) {
+            details = movieService.getMovieDetailsByTitle(title);
+        } else {
+            details = movieService.getMovieDetailsByTitle("Inception");
+        }
+
+        sendJson(exchange, 200, details.toMap());
+    }
+
+    private void handleRoute(HttpExchange exchange, Map<String, String> params) throws IOException {
+        String origin = params.getOrDefault("origin", "Paris, France");
+        String destination = params.getOrDefault("destination", "Eiffel Tower, Paris");
+
+        RouteResult route = routingService.calculateShortestRoute(origin, destination);
+        sendJson(exchange, 200, route.toMap());
+    }
+
+    private void handleFood(HttpExchange exchange, Map<String, String> params) throws IOException {
+        String itemId = params.get("itemId");
+        String name = params.get("name");
+
+        FoodReview review;
+        if (itemId != null) {
+            Item item = recommendationEngine.getItem(itemId);
+            if (item != null) {
+                review = foodService.getFoodReview(item);
+            } else {
+                review = foodService.getFoodReviewByName(itemId);
+            }
+        } else if (name != null) {
+            review = foodService.getFoodReviewByName(name);
+        } else {
+            review = foodService.getFoodReviewByName("Neapolitan Pizza Margherita");
+        }
+
+        sendJson(exchange, 200, review.toMap());
+    }
+
+    private void handleRecordInteraction(HttpExchange exchange) throws IOException {
+        String body = readBody(exchange);
+        Map<String, Object> map = JsonUtil.parseMap(body);
+
+        String userId = String.valueOf(map.getOrDefault("userId", "usr-alice"));
+        String itemId = String.valueOf(map.getOrDefault("itemId", "unknown"));
+        String category = String.valueOf(map.getOrDefault("category", "PRODUCT"));
+        String type = String.valueOf(map.getOrDefault("type", "CLICK"));
+        Double rating = map.get("rating") instanceof Number ? ((Number) map.get("rating")).doubleValue() : null;
+
+        Interaction in = new Interaction(userId, itemId, category, type, rating);
+        userService.recordInteraction(in);
+
+        sendJson(exchange, 200, Map.of("success", true, "interactionId", in.getId()));
+    }
+
+    private void handleUpdateAdminSettings(HttpExchange exchange) throws IOException {
+        String body = readBody(exchange);
+        Map<String, Object> map = JsonUtil.parseMap(body);
+
+        config.updateFromMap(map, "Admin");
+
+        sendJson(exchange, 200, Map.of(
+                "success", true,
+                "message", "System settings successfully updated and applied to AI recommendation algorithms.",
+                "settings", config.toMap()
+        ));
+    }
+
+    private void handleGetAnalytics(HttpExchange exchange) throws IOException {
+        RecommendationMetrics metrics = userService.calculateMetrics(config);
+        sendJson(exchange, 200, metrics.toMap());
+    }
+
+    private void sendJson(HttpExchange exchange, int status, Object data) throws IOException {
+        byte[] bytes = JsonUtil.toJson(data).getBytes(StandardCharsets.UTF_8);
+        exchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
+        exchange.sendResponseHeaders(status, bytes.length);
+        try (OutputStream os = exchange.getResponseBody()) {
+            os.write(bytes);
+        }
+    }
+
+    private String readBody(HttpExchange exchange) throws IOException {
+        try (InputStream is = exchange.getRequestBody()) {
+            return new String(is.readAllBytes(), StandardCharsets.UTF_8);
+        }
+    }
+
+    private Map<String, String> parseQueryParams(String query) {
+        Map<String, String> map = new HashMap<>();
+        if (query == null || query.isEmpty()) return map;
+        String[] pairs = query.split("&");
+        for (String pair : pairs) {
+            int idx = pair.indexOf("=");
+            if (idx > 0) {
+                String key = URLDecoder.decode(pair.substring(0, idx), StandardCharsets.UTF_8);
+                String val = (idx < pair.length() - 1) ? URLDecoder.decode(pair.substring(idx + 1), StandardCharsets.UTF_8) : "";
+                map.put(key, val);
+            } else if (idx == -1 && !pair.isEmpty()) {
+                map.put(URLDecoder.decode(pair, StandardCharsets.UTF_8), "");
+            }
+        }
+        return map;
+    }
+}
