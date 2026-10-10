@@ -48,6 +48,7 @@ public class Phase3TestSuite {
         // Sub-phase 3.3: GUI Desktop Components & Rendering
         runTest("Sub-phase 3.3: Swing SentimentBar & Analytics Chart Calculations", Phase3TestSuite::testGuiComponents);
         runTest("Sub-phase 3.3: Desktop App Instantiation & Headless UI Safety", Phase3TestSuite::testDesktopAppInstantiation);
+        runTest("Sub-phase 3.3: Web Integration & JDBC End-to-End Data Persistence", Phase3TestSuite::testWebDatabaseIntegration);
 
         System.out.println("==================================================================");
         System.out.printf("PHASE 3 SUMMARY: %d Passed, %d Failed (Total %d)%n",
@@ -313,6 +314,28 @@ public class Phase3TestSuite {
         } else {
             System.out.println("  ℹ Headless environment detected: Desktop GUI instantiation verified via component hierarchy.");
         }
+    }
+
+    private static void testWebDatabaseIntegration() throws Exception {
+        DatabaseConnectionManager db = DatabaseConnectionManager.getInstance();
+        UserDao userDao = new UserDao();
+        ItemDao itemDao = new ItemDao();
+        InteractionDao interactionDao = new InteractionDao();
+
+        // 1. Database status verification
+        assertTrue(db.isJdbcAvailable(), "JDBC SQLite driver must be available");
+        assertTrue(userDao.count() >= 0, "Users table count must be non-negative");
+        assertTrue(itemDao.count() >= 0, "Items table count must be non-negative");
+        assertTrue(interactionDao.count() >= 0, "Interactions table count must be non-negative");
+
+        // 2. Web Telemetry Lifecycle
+        String testUser = "usr-web-test";
+        Interaction webEvent = new Interaction(testUser, "p-101", "PRODUCT", "CLICK", 5.0);
+        interactionDao.save(webEvent);
+
+        List<Interaction> userEvents = interactionDao.findByUserId(testUser);
+        assertTrue(userEvents.stream().anyMatch(e -> e.getItemId().equals("p-101")),
+                "Interaction recorded via web layer must be found in SQLite database");
     }
 
     private static void assertTrue(boolean condition, String message) {

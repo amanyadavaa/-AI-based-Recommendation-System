@@ -1,6 +1,10 @@
 package com.guvi.recommend.web;
 
 import com.guvi.recommend.config.SystemConfig;
+import com.guvi.recommend.db.DatabaseConnectionManager;
+import com.guvi.recommend.db.dao.InteractionDao;
+import com.guvi.recommend.db.dao.ItemDao;
+import com.guvi.recommend.db.dao.UserDao;
 import com.guvi.recommend.model.*;
 import com.guvi.recommend.service.*;
 import com.guvi.recommend.util.JsonUtil;
@@ -20,6 +24,12 @@ public class ApiHandler implements HttpHandler {
     private final MovieService movieService;
     private final RoutingService routingService;
     private final FoodService foodService;
+
+    // Database DAOs (JDBC Integration)
+    private final DatabaseConnectionManager dbManager = DatabaseConnectionManager.getInstance();
+    private final UserDao userDao = new UserDao();
+    private final ItemDao itemDao = new ItemDao();
+    private final InteractionDao interactionDao = new InteractionDao();
 
     public ApiHandler(SystemConfig config, UserService userService, RecommendationEngine recommendationEngine, ComparisonService comparisonService, MovieService movieService, RoutingService routingService, FoodService foodService) {
         this.config = config;
@@ -79,6 +89,14 @@ public class ApiHandler implements HttpHandler {
                 sendJson(exchange, 200, Map.of("success", true, "message", "System settings successfully reset to defaults.", "settings", config.toMap()));
             } else if (path.equals("/api/admin/analytics") && "GET".equals(method)) {
                 handleGetAnalytics(exchange);
+            } else if (path.equals("/api/database/status") && "GET".equals(method)) {
+                handleDatabaseStatus(exchange);
+            } else if (path.equals("/api/database/users") && "GET".equals(method)) {
+                handleDatabaseUsers(exchange);
+            } else if (path.equals("/api/database/items") && "GET".equals(method)) {
+                handleDatabaseItems(exchange);
+            } else if (path.equals("/api/database/interactions") && "GET".equals(method)) {
+                handleDatabaseInteractions(exchange);
             } else {
                 sendJson(exchange, 404, Map.of("error", "Endpoint not found: " + path));
             }
@@ -244,6 +262,9 @@ public class ApiHandler implements HttpHandler {
 
         Interaction in = new Interaction(userId, itemId, category, type, rating);
         userService.recordInteraction(in);
+        try {
+            interactionDao.save(in);
+        } catch (Exception ignored) {}
 
         sendJson(exchange, 200, Map.of("success", true, "interactionId", in.getId()));
     }
@@ -264,6 +285,57 @@ public class ApiHandler implements HttpHandler {
     private void handleGetAnalytics(HttpExchange exchange) throws IOException {
         RecommendationMetrics metrics = userService.calculateMetrics(config);
         sendJson(exchange, 200, metrics.toMap());
+    }
+
+    private void handleDatabaseStatus(HttpExchange exchange) throws IOException {
+        try {
+            long usersCount = userDao.count();
+            long itemsCount = itemDao.count();
+            long interactionsCount = interactionDao.count();
+            Map<String, Object> resp = new LinkedHashMap<>();
+            resp.put("jdbcAvailable", dbManager.isJdbcAvailable());
+            resp.put("dbUrl", dbManager.getDbUrl());
+            resp.put("driver", "org.sqlite.JDBC");
+            resp.put("usersCount", usersCount);
+            resp.put("itemsCount", itemsCount);
+            resp.put("interactionsCount", interactionsCount);
+            sendJson(exchange, 200, resp);
+        } catch (Exception e) {
+            sendJson(exchange, 500, Map.of("error", e.getMessage()));
+        }
+    }
+
+    private void handleDatabaseUsers(HttpExchange exchange) throws IOException {
+        try {
+            List<User> list = userDao.findAll();
+            List<Map<String, Object>> res = new ArrayList<>();
+            for (User u : list) res.add(u.toMap());
+            sendJson(exchange, 200, Map.of("users", res, "count", res.size(), "source", "SQLite JDBC"));
+        } catch (Exception e) {
+            sendJson(exchange, 500, Map.of("error", e.getMessage()));
+        }
+    }
+
+    private void handleDatabaseItems(HttpExchange exchange) throws IOException {
+        try {
+            List<Item> list = itemDao.findAll();
+            List<Map<String, Object>> res = new ArrayList<>();
+            for (Item it : list) res.add(it.toMap());
+            sendJson(exchange, 200, Map.of("items", res, "count", res.size(), "source", "SQLite JDBC"));
+        } catch (Exception e) {
+            sendJson(exchange, 500, Map.of("error", e.getMessage()));
+        }
+    }
+
+    private void handleDatabaseInteractions(HttpExchange exchange) throws IOException {
+        try {
+            List<Interaction> list = interactionDao.findAll();
+            List<Map<String, Object>> res = new ArrayList<>();
+            for (Interaction in : list) res.add(in.toMap());
+            sendJson(exchange, 200, Map.of("interactions", res, "count", res.size(), "source", "SQLite JDBC"));
+        } catch (Exception e) {
+            sendJson(exchange, 500, Map.of("error", e.getMessage()));
+        }
     }
 
     private void sendJson(HttpExchange exchange, int status, Object data) throws IOException {

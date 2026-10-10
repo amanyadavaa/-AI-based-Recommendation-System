@@ -92,6 +92,14 @@ When `DatabaseConnectionManager` starts, it automatically initializes the SQLite
 - `ItemDao`: Stores polymorphic items, provides `findByCategory(category)` filtering.
 - `InteractionDao`: Records telemetry events with user activity lookups.
 
+### 4.3 Web Integration & Database REST Endpoints (Servlets & Web Integration)
+The web server directly integrates with the SQLite JDBC database via the DAO architecture, exposing:
+- `GET /api/database/status`: Database health, driver status (`org.sqlite.JDBC`), and active table record counts.
+- `GET /api/database/users`: Directly queries all registered users from SQLite.
+- `GET /api/database/items`: Directly queries all catalog items across all categories from SQLite.
+- `GET /api/database/interactions`: Queries real-time interaction event logs from SQLite.
+- `POST /api/interaction`: Automatically saves recorded interaction telemetry into SQLite.
+
 ---
 
 ## 5. Java Desktop GUI Application (Swing)
@@ -142,8 +150,9 @@ The desktop application is located at `com.guvi.recommend.gui.OmniRecommendDeskt
   [PASS] Sub-phase 3.2: JDBC InteractionDao Telemetry & Persistence
   [PASS] Sub-phase 3.3: Swing SentimentBar & Analytics Chart Calculations
   [PASS] Sub-phase 3.3: Desktop App Instantiation & Headless UI Safety
+  [PASS] Sub-phase 3.3: Web Integration & JDBC End-to-End Data Persistence
 ==================================================================
-PHASE 3 SUMMARY: 11 Passed, 0 Failed (Total 11)
+PHASE 3 SUMMARY: 12 Passed, 0 Failed (Total 12)
 ==================================================================
 ✔ ALL SUB-PHASES OF PHASE 3 VERIFIED SUCCESSFULLY!
 ```

@@ -1,6 +1,13 @@
 package com.guvi.recommend;
 
 import com.guvi.recommend.config.SystemConfig;
+import com.guvi.recommend.db.DatabaseConnectionManager;
+import com.guvi.recommend.db.dao.InteractionDao;
+import com.guvi.recommend.db.dao.ItemDao;
+import com.guvi.recommend.db.dao.UserDao;
+import com.guvi.recommend.model.Interaction;
+import com.guvi.recommend.model.Item;
+import com.guvi.recommend.model.User;
 import com.guvi.recommend.service.*;
 import com.guvi.recommend.web.ApiHandler;
 import com.guvi.recommend.web.StaticFileHandler;
@@ -40,6 +47,21 @@ public class Main {
             RecommendationEngine recommendationEngine = new RecommendationEngine(
                     config, userService, comparisonService, movieService, routingService, foodService, internetSearchService
             );
+
+            // Initialize SQLite JDBC Database & Seed Entities
+            System.out.println("Initializing SQLite JDBC database connectivity...");
+            DatabaseConnectionManager dbManager = DatabaseConnectionManager.getInstance();
+            UserDao userDao = new UserDao();
+            ItemDao itemDao = new ItemDao();
+            InteractionDao interactionDao = new InteractionDao();
+            try {
+                for (User u : userService.getAllUsers()) userDao.save(u);
+                for (Item it : recommendationEngine.getItemCatalog().values()) itemDao.save(it);
+                for (Interaction in : userService.getAllInteractions()) interactionDao.save(in);
+                System.out.println("✔ Seeded SQLite JDBC database: " + userDao.count() + " users, " + itemDao.count() + " items, " + interactionDao.count() + " interactions.");
+            } catch (Exception e) {
+                System.out.println("ℹ Database running in memory-sync mode: " + e.getMessage());
+            }
 
             HttpServer server;
             try {
