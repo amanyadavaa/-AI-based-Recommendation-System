@@ -86,7 +86,10 @@ public class ApiHandler implements HttpHandler {
                 handleUpdateAdminSettings(exchange);
             } else if (path.equals("/api/admin/reset") && "POST".equals(method)) {
                 config.resetToDefaults();
+                config.saveToDb();
                 sendJson(exchange, 200, Map.of("success", true, "message", "System settings successfully reset to defaults.", "settings", config.toMap()));
+            } else if (path.equals("/api/admin/preset") && "POST".equals(method)) {
+                handleApplyPreset(exchange, params);
             } else if (path.equals("/api/admin/analytics") && "GET".equals(method)) {
                 handleGetAnalytics(exchange);
             } else if (path.equals("/api/database/status") && "GET".equals(method)) {
@@ -274,12 +277,44 @@ public class ApiHandler implements HttpHandler {
         Map<String, Object> map = JsonUtil.parseMap(body);
 
         config.updateFromMap(map, "Admin");
+        config.saveToDb();
 
         sendJson(exchange, 200, Map.of(
                 "success", true,
                 "message", "System settings successfully updated and applied to AI recommendation algorithms.",
                 "settings", config.toMap()
         ));
+    }
+
+    private void handleApplyPreset(HttpExchange exchange, Map<String, String> params) throws IOException {
+        String preset = params.get("name");
+        if (preset == null || preset.isEmpty()) {
+            String body = readBody(exchange);
+            if (!body.isEmpty()) {
+                Map<String, Object> map = JsonUtil.parseMap(body);
+                if (map.containsKey("preset")) preset = String.valueOf(map.get("preset"));
+                else if (map.containsKey("name")) preset = String.valueOf(map.get("name"));
+            }
+        }
+        if (preset == null || preset.isEmpty()) {
+            preset = "BALANCED_DEFAULTS";
+        }
+
+        boolean ok = config.applyPreset(preset, "Admin");
+        if (ok) {
+            config.saveToDb();
+            sendJson(exchange, 200, Map.of(
+                    "success", true,
+                    "preset", preset,
+                    "message", "Successfully applied preset: " + preset,
+                    "settings", config.toMap()
+            ));
+        } else {
+            sendJson(exchange, 400, Map.of(
+                    "success", false,
+                    "error", "Invalid preset name. Supported presets: ACCURACY_OPTIMIZED, EXPLORATION_DISCOVERY, BALANCED_DEFAULTS, HIGH_DIVERSITY"
+            ));
+        }
     }
 
     private void handleGetAnalytics(HttpExchange exchange) throws IOException {
