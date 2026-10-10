@@ -86,8 +86,8 @@ public class RoutingService {
                     if (routes != null && !routes.isEmpty()) {
                         @SuppressWarnings("unchecked")
                         Map<String, Object> route = (Map<String, Object>) routes.get(0);
-                        double distanceKm = ((Number) route.get("distance")).doubleValue() / 1000.0;
-                        double durationMin = ((Number) route.get("duration")).doubleValue() / 60.0;
+                        double distanceKm = Math.max(0.5, ((Number) route.get("distance")).doubleValue() / 1000.0);
+                        double durationMin = Math.max(1.0, ((Number) route.get("duration")).doubleValue() / 60.0);
 
                         List<RouteResult.RouteStep> steps = new ArrayList<>();
                         List<?> legs = (List<?>) route.get("legs");
@@ -148,8 +148,8 @@ public class RoutingService {
     }
 
     private RouteResult computeFallbackRoute(String origin, double[] orig, String dest, double[] destCoords) {
-        double distKm = haversineDistance(orig[0], orig[1], destCoords[0], destCoords[1]);
-        double durationMin = (distKm / 45.0) * 60.0; // average 45 km/h urban driving
+        double distKm = Math.max(0.5, haversineDistance(orig[0], orig[1], destCoords[0], destCoords[1]));
+        double durationMin = Math.max(1.0, (distKm / 45.0) * 60.0); // average 45 km/h urban driving
 
         List<RouteResult.RouteStep> steps = new ArrayList<>();
         steps.add(new RouteResult.RouteStep("Start from " + origin + " heading towards destination corridor", distKm * 300, durationMin * 20, "start"));
