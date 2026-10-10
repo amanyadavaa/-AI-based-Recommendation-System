@@ -760,7 +760,26 @@ function setSlider(inputId, valId, value) {
   }
 }
 
-function applyAlgorithmPreset(preset) {
+async function applyAlgorithmPreset(preset) {
+  try {
+    const res = await fetch(`${API_BASE}/admin/preset`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ preset: preset })
+    });
+    const data = await res.json();
+    if (data.success && data.settings) {
+      bindAdminValuesToInputs(data.settings);
+      showToast(`Applied preset: ${preset.toUpperCase()} (Saved to SQLite)`, 'info');
+      loadAnalytics();
+      loadRecommendations();
+      return;
+    }
+  } catch (err) {
+    console.warn('Backend preset API failed, applying locally:', err);
+  }
+
+  // Local fallback
   if (preset === 'balanced') {
     setSlider('inputContentWeight', 'valContentWeight', 0.40);
     setSlider('inputCollaborativeWeight', 'valCollaborativeWeight', 0.35);
@@ -768,17 +787,23 @@ function applyAlgorithmPreset(preset) {
     setSlider('inputExplorationRate', 'valExplorationRate', 0.15);
     setSlider('inputMinConfidenceThreshold', 'valMinConfidenceThreshold', 0.40);
   } else if (preset === 'discovery') {
-    setSlider('inputContentWeight', 'valContentWeight', 0.25);
-    setSlider('inputCollaborativeWeight', 'valCollaborativeWeight', 0.45);
-    setSlider('inputPopularityWeight', 'valPopularityWeight', 0.30);
-    setSlider('inputExplorationRate', 'valExplorationRate', 0.35);
-    setSlider('inputMinConfidenceThreshold', 'valMinConfidenceThreshold', 0.30);
-  } else if (preset === 'precision') {
-    setSlider('inputContentWeight', 'valContentWeight', 0.60);
+    setSlider('inputContentWeight', 'valContentWeight', 0.30);
     setSlider('inputCollaborativeWeight', 'valCollaborativeWeight', 0.25);
-    setSlider('inputPopularityWeight', 'valPopularityWeight', 0.15);
+    setSlider('inputPopularityWeight', 'valPopularityWeight', 0.45);
+    setSlider('inputExplorationRate', 'valExplorationRate', 0.30);
+    setSlider('inputMinConfidenceThreshold', 'valMinConfidenceThreshold', 0.30);
+  } else if (preset === 'precision' || preset === 'accuracy') {
+    setSlider('inputContentWeight', 'valContentWeight', 0.55);
+    setSlider('inputCollaborativeWeight', 'valCollaborativeWeight', 0.35);
+    setSlider('inputPopularityWeight', 'valPopularityWeight', 0.10);
     setSlider('inputExplorationRate', 'valExplorationRate', 0.05);
     setSlider('inputMinConfidenceThreshold', 'valMinConfidenceThreshold', 0.60);
+  } else if (preset === 'diversity') {
+    setSlider('inputContentWeight', 'valContentWeight', 0.25);
+    setSlider('inputCollaborativeWeight', 'valCollaborativeWeight', 0.50);
+    setSlider('inputPopularityWeight', 'valPopularityWeight', 0.25);
+    setSlider('inputExplorationRate', 'valExplorationRate', 0.25);
+    setSlider('inputMinConfidenceThreshold', 'valMinConfidenceThreshold', 0.35);
   } else if (preset === 'deals') {
     setSlider('inputContentWeight', 'valContentWeight', 0.30);
     setSlider('inputCollaborativeWeight', 'valCollaborativeWeight', 0.30);

@@ -17,17 +17,7 @@ public class StaticFileHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        String path = exchange.getRequestURI().getPath();
-        if (path == null || path.equals("/") || path.isEmpty()) {
-            path = "/index.html";
-        }
-
-        // Prevent path traversal
-        Path target = rootDir.resolve(path.substring(1)).normalize();
-        if (!target.startsWith(rootDir) || !Files.exists(target) || Files.isDirectory(target)) {
-            // Fall back to index.html for SPA routing
-            target = rootDir.resolve("index.html");
-        }
+        Path target = resolveTarget(exchange.getRequestURI().getPath());
 
         if (!Files.exists(target)) {
             String notFound = "404 Not Found";
@@ -49,7 +39,18 @@ public class StaticFileHandler implements HttpHandler {
         }
     }
 
-    private String getMimeType(String filename) {
+    public Path resolveTarget(String path) {
+        if (path == null || path.equals("/") || path.isEmpty()) {
+            path = "/index.html";
+        }
+        Path target = rootDir.resolve(path.startsWith("/") ? path.substring(1) : path).normalize();
+        if (!target.startsWith(rootDir) || !Files.exists(target) || Files.isDirectory(target)) {
+            target = rootDir.resolve("index.html");
+        }
+        return target;
+    }
+
+    public String getMimeType(String filename) {
         String lower = filename.toLowerCase();
         if (lower.endsWith(".html") || lower.endsWith(".htm")) return "text/html; charset=UTF-8";
         if (lower.endsWith(".css")) return "text/css; charset=UTF-8";

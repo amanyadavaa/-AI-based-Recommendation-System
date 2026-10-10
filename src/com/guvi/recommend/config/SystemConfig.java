@@ -63,28 +63,28 @@ public class SystemConfig {
     public synchronized boolean applyPreset(String presetName, String updatedBy) {
         if (presetName == null) return false;
         switch (presetName.toUpperCase()) {
-            case "ACCURACY_OPTIMIZED":
+            case "ACCURACY_OPTIMIZED", "ACCURACY", "PRECISION":
                 this.contentWeight = 0.60;
                 this.collaborativeWeight = 0.35;
                 this.popularityWeight = 0.05;
                 this.explorationRate = 0.05;
                 this.minConfidenceThreshold = 0.60;
                 break;
-            case "EXPLORATION_DISCOVERY":
+            case "EXPLORATION_DISCOVERY", "EXPLORATION", "DISCOVERY":
                 this.contentWeight = 0.20;
                 this.collaborativeWeight = 0.30;
                 this.popularityWeight = 0.20;
                 this.explorationRate = 0.40;
                 this.minConfidenceThreshold = 0.30;
                 break;
-            case "BALANCED_DEFAULTS":
+            case "BALANCED_DEFAULTS", "BALANCED", "DEFAULT":
                 this.contentWeight = 0.40;
                 this.collaborativeWeight = 0.35;
                 this.popularityWeight = 0.25;
                 this.explorationRate = 0.15;
                 this.minConfidenceThreshold = 0.40;
                 break;
-            case "HIGH_DIVERSITY":
+            case "HIGH_DIVERSITY", "DIVERSITY", "DEALS":
                 this.contentWeight = 0.30;
                 this.collaborativeWeight = 0.20;
                 this.popularityWeight = 0.20;
@@ -184,6 +184,10 @@ public class SystemConfig {
     public double getExplorationRate() { return explorationRate; }
     public double getMinConfidenceThreshold() { return minConfidenceThreshold; }
     public boolean isEnableLiveWebSearch() { return enableLiveWebSearch; }
+    public void setEnableLiveWebSearch(boolean enableLiveWebSearch) {
+        this.enableLiveWebSearch = enableLiveWebSearch;
+        this.lastUpdatedAt = System.currentTimeMillis();
+    }
     public int getMaxRecommendationsPerQuery() { return maxRecommendationsPerQuery; }
     public int getDefaultSearchRadiusKm() { return defaultSearchRadiusKm; }
     public String getActiveRoutingEngine() { return activeRoutingEngine; }
