@@ -152,6 +152,19 @@ Open **[http://localhost:8080/](http://localhost:8080/)** in any web browser.
 
 ---
 
+## 🧪 Phase 1 Automated Verification Suite
+Run the Phase 1 test suite verifying JSON serialization, configuration normalization, and domain entity models:
+- **Windows Batch**: Double-click `test.bat`
+- **PowerShell**: `powershell -ExecutionPolicy Bypass -File .\test.ps1`
+- **Manual**:
+  ```powershell
+  javac -d bin (Get-ChildItem -Path src -Filter *.java -Recurse | Select-Object -ExpandProperty FullName)
+  java -cp bin com.guvi.recommend.test.Phase1TestSuite
+  ```
+- Detailed documentation: See [`docs/PHASE_1_REQUIREMENTS_AND_ARCHITECTURE.md`](docs/PHASE_1_REQUIREMENTS_AND_ARCHITECTURE.md).
+
+---
+
 ## 👥 Default User Profiles for Testing
 
 | Profile | Role | Stated Interests | Location Anchor |
