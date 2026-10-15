@@ -21,6 +21,12 @@ public class Main {
 
     public static void main(String[] args) {
         int port = DEFAULT_PORT;
+        String envPort = System.getenv("PORT");
+        if (envPort != null && !envPort.isBlank()) {
+            try {
+                port = Integer.parseInt(envPort.trim());
+            } catch (Exception ignored) {}
+        }
         if (args.length > 0) {
             try {
                 port = Integer.parseInt(args[0]);
