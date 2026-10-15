@@ -75,11 +75,22 @@ public class Item {
     public Map<String, Object> getScoreFactors() { return scoreFactors; }
     public void setScoreFactors(Map<String, Object> scoreFactors) { this.scoreFactors = scoreFactors; }
 
+    private String type;
+
+    public String getType() {
+        if (type != null && !type.isEmpty()) return type;
+        if ("PRODUCT".equalsIgnoreCase(category)) return "PRODUCT";
+        return "CONTENT";
+    }
+
+    public void setType(String type) { this.type = type; }
+
     public Map<String, Object> toMap() {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("id", id);
         map.put("title", title);
         map.put("category", category);
+        map.put("type", getType());
         map.put("description", description);
         map.put("rating", rating);
         map.put("reviewCount", reviewCount);
@@ -104,9 +115,25 @@ public class Item {
         Map<String, Object> factors = scoreFactors;
         if (factors == null || factors.isEmpty()) {
             factors = new LinkedHashMap<>();
-            factors.put("contentSimilarity", Math.round(Math.max(0.1, matchScore * 0.45) * 100.0) / 100.0);
-            factors.put("collaborativeAffinity", Math.round(Math.max(0.1, matchScore * 0.35) * 100.0) / 100.0);
-            factors.put("popularityWeight", Math.round((rating / 5.0 * 0.20) * 100.0) / 100.0);
+            double cSim = Math.round(Math.max(0.1, matchScore * 0.45) * 100.0) / 100.0;
+            double cAff = Math.round(Math.max(0.1, matchScore * 0.35) * 100.0) / 100.0;
+            double pPop = Math.round((rating / 5.0 * 0.20) * 100.0) / 100.0;
+            factors.put("contentSimilarity", cSim);
+            factors.put("collaborativeAffinity", cAff);
+            factors.put("popularityWeight", pPop);
+            factors.put("contentMatchPercent", (int) Math.round(cSim * 100));
+            factors.put("behavioralMatchPercent", (int) Math.round(cAff * 100));
+            factors.put("trendingBoostPercent", (int) Math.round(pPop * 100));
+        } else {
+            if (!factors.containsKey("contentMatchPercent") && factors.containsKey("contentSimilarity")) {
+                factors.put("contentMatchPercent", (int) Math.round(((Number) factors.get("contentSimilarity")).doubleValue() * 100));
+            }
+            if (!factors.containsKey("behavioralMatchPercent") && factors.containsKey("collaborativeAffinity")) {
+                factors.put("behavioralMatchPercent", (int) Math.round(((Number) factors.get("collaborativeAffinity")).doubleValue() * 100));
+            }
+            if (!factors.containsKey("trendingBoostPercent") && factors.containsKey("popularityWeight")) {
+                factors.put("trendingBoostPercent", (int) Math.round(((Number) factors.get("popularityWeight")).doubleValue() * 100));
+            }
         }
         map.put("scoreFactors", factors);
 

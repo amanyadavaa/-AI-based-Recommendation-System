@@ -66,6 +66,12 @@ public class RoutingService {
             origin = "Origin Location (" + origin + ")";
         }
 
+        double approxDist = haversineDistance(originCoords[0], originCoords[1], destCoords[0], destCoords[1]);
+        if (approxDist > 800) {
+            // Geodesic corridor calculation for transcontinental routes
+            return computeFallbackRoute(origin, originCoords, destination, destCoords);
+        }
+
         try {
             // Try live OSRM routing API: lon,lat;lon,lat
             String osrmUrl = String.format(Locale.US,
@@ -73,8 +79,8 @@ public class RoutingService {
                     originCoords[1], originCoords[0], destCoords[1], destCoords[0]);
 
             HttpRequest req = HttpRequest.newBuilder(URI.create(osrmUrl))
-                    .header("User-Agent", "AIRecommendationApp/1.0 (GUVI Project)")
-                    .timeout(Duration.ofSeconds(4))
+                    .header("User-Agent", "AIRecommendationApp/1.0 (Recommendation System Engine)")
+                    .timeout(Duration.ofSeconds(2))
                     .GET()
                     .build();
 
@@ -194,8 +200,8 @@ public class RoutingService {
             String encoded = URLEncoder.encode(place, StandardCharsets.UTF_8);
             String url = "https://nominatim.openstreetmap.org/search?format=json&q=" + encoded + "&limit=1";
             HttpRequest req = HttpRequest.newBuilder(URI.create(url))
-                    .header("User-Agent", "AIRecommendationApp/1.0 (GUVI Project)")
-                    .timeout(Duration.ofSeconds(3))
+                    .header("User-Agent", "AIRecommendationApp/1.0 (Recommendation System Engine)")
+                    .timeout(Duration.ofSeconds(2))
                     .GET()
                     .build();
             HttpResponse<String> resp = httpClient.send(req, HttpResponse.BodyHandlers.ofString());

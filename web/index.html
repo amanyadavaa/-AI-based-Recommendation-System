@@ -74,6 +74,34 @@
       <!-- Navigation & Role Switcher -->
       <div class="flex items-center space-x-2 sm:space-x-3">
         
+        <!-- Quick Persona Switcher Pills (1-Click Instant Persona Switching) -->
+        <div id="quickPersonaSwitcher" class="hidden lg:flex items-center space-x-1 p-1 bg-[#0c101d] rounded-2xl border border-white/[0.08]">
+          <button type="button" class="persona-pill active px-2.5 py-1 rounded-xl text-xs font-semibold flex items-center space-x-1.5 border border-transparent text-slate-300 hover:text-white" data-persona="usr-alice" title="Alice - Tech & AI Enthusiast">
+            <span class="w-5 h-5 rounded-lg bg-indigo-500/20 text-indigo-300 flex items-center justify-center font-bold text-[10px]">A</span>
+            <span>Alice</span>
+          </button>
+          <button type="button" class="persona-pill px-2.5 py-1 rounded-xl text-xs font-semibold flex items-center space-x-1.5 border border-transparent text-slate-300 hover:text-white" data-persona="usr-bob" title="Bob - Travel, Gastronomy & Culture">
+            <span class="w-5 h-5 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center font-bold text-[10px]">B</span>
+            <span>Bob</span>
+          </button>
+          <button type="button" class="persona-pill px-2.5 py-1 rounded-xl text-xs font-semibold flex items-center space-x-1.5 border border-transparent text-slate-300 hover:text-white" data-persona="usr-charlie" title="Charlie - Bargain Hunter & Deals">
+            <span class="w-5 h-5 rounded-lg bg-purple-500/20 text-purple-300 flex items-center justify-center font-bold text-[10px]">C</span>
+            <span>Charlie</span>
+          </button>
+          <button type="button" class="persona-pill px-2.5 py-1 rounded-xl text-xs font-semibold flex items-center space-x-1.5 border border-transparent text-slate-300 hover:text-white" data-persona="usr-david" title="David - Data Science & ML">
+            <span class="w-5 h-5 rounded-lg bg-cyan-500/20 text-cyan-300 flex items-center justify-center font-bold text-[10px]">D</span>
+            <span>David</span>
+          </button>
+          <button type="button" class="persona-pill px-2.5 py-1 rounded-xl text-xs font-semibold flex items-center space-x-1.5 border border-transparent text-slate-300 hover:text-white" data-persona="usr-eva" title="Eva - Cold Start New User">
+            <span class="w-5 h-5 rounded-lg bg-amber-500/20 text-amber-300 flex items-center justify-center font-bold text-[10px]">E</span>
+            <span>Eva</span>
+          </button>
+          <button type="button" class="persona-pill px-2.5 py-1 rounded-xl text-xs font-semibold flex items-center space-x-1.5 border border-transparent text-slate-300 hover:text-white" data-persona="usr-admin" title="Admin - System Administrator">
+            <span class="w-5 h-5 rounded-lg bg-rose-500/20 text-rose-300 flex items-center justify-center font-bold text-[10px]"><i class="fa-solid fa-shield-halved text-[9px]"></i></span>
+            <span>Admin</span>
+          </button>
+        </div>
+
         <!-- User ID Identity Widget & Switcher -->
         <div id="userProfileWidget" class="flex items-center space-x-2 bg-[#0c101d]/90 border border-white/[0.08] hover:border-indigo-500/40 rounded-2xl px-3 py-1 shadow-lg shadow-black/40 transition duration-200">
           <div id="userAvatarIcon" class="w-7 h-7 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 flex items-center justify-center font-bold text-xs">
@@ -90,6 +118,8 @@
             <option value="usr-alice" selected>Alice (Tech & Movies)</option>
             <option value="usr-bob">Bob (Travel & Food)</option>
             <option value="usr-charlie">Charlie (Bargains)</option>
+            <option value="usr-david">David (Data Science & AI)</option>
+            <option value="usr-eva">Eva (Cold-Start New User)</option>
             <option value="usr-admin">Admin (System Administrator)</option>
           </select>
           <button id="btnOpenLoginModal" class="ml-1 px-2 py-1 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-200 hover:text-white transition text-xs flex items-center space-x-1 border border-white/[0.08]" title="User ID Login / Switch Account">
@@ -286,6 +316,28 @@
             </div>
           </div>
 
+          <!-- Product vs Learning/Media Content Type Toggle -->
+          <div class="flex flex-wrap items-center justify-between gap-3 bg-[#0c101d]/80 backdrop-blur-xl border border-white/[0.07] rounded-2xl p-1.5 shadow-inner">
+            <div class="flex items-center space-x-1 w-full sm:w-auto" id="typeFilterContainer">
+              <button type="button" class="type-filter-btn active flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-semibold border border-transparent text-slate-300 transition-all flex items-center justify-center space-x-1.5" data-type="ALL">
+                <i class="fa-solid fa-sparkles text-indigo-400"></i>
+                <span>All Recommendations</span>
+              </button>
+              <button type="button" class="type-filter-btn flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-semibold border border-transparent text-slate-400 hover:text-white transition-all flex items-center justify-center space-x-1.5" data-type="PRODUCT">
+                <i class="fa-solid fa-bag-shopping text-emerald-400"></i>
+                <span>🛍️ Products</span>
+              </button>
+              <button type="button" class="type-filter-btn flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-semibold border border-transparent text-slate-400 hover:text-white transition-all flex items-center justify-center space-x-1.5" data-type="CONTENT">
+                <i class="fa-solid fa-graduation-cap text-purple-400"></i>
+                <span>📚 Learning & Media</span>
+              </button>
+            </div>
+            <div class="text-[11px] text-slate-400 hidden sm:flex items-center space-x-2 px-3">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              <span>Dynamic Multi-Objective Hybrid Engine</span>
+            </div>
+          </div>
+
           <!-- Loading Skeleton Screens -->
           <div id="loadingIndicator" class="hidden">
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -342,7 +394,7 @@
     <!-- ========================================== -->
     <!-- VIEW 2: ADMIN DASHBOARD                    -->
     <!-- ========================================== -->
-    <div id="adminDashboardView" class="hidden space-y-8">
+    <div id="adminDashboardView" class="hidden space-y-6">
       
       <!-- Admin Header Banner -->
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-6 rounded-2xl bg-slate-800/60 border border-slate-700">
@@ -376,224 +428,360 @@
         </button>
       </div>
 
-      <!-- SECTION A: SYSTEM SETTINGS MANAGEMENT FORM -->
-      <div class="bg-slate-800/40 border border-slate-700/80 rounded-2xl p-6 space-y-6">
-        <div class="flex items-center justify-between border-b border-slate-700/80 pb-4">
-          <div>
-            <h3 class="text-base font-bold text-white flex items-center space-x-2">
-              <i class="fa-solid fa-sliders text-indigo-400"></i>
-              <span>System Settings Management</span>
-            </h3>
-            <p class="text-xs text-slate-400">Tune the multi-objective AI recommendation parameters in real-time</p>
-          </div>
-          <div class="text-xs text-slate-400">
-            Last Updated: <span id="settingsLastUpdated" class="text-slate-200">Just now</span>
-          </div>
-        </div>
-
-        <!-- Presets Bar -->
-        <div class="flex flex-wrap items-center gap-2 text-xs">
-          <span class="text-slate-400 font-medium">Algorithm Presets:</span>
-          <button type="button" class="preset-btn px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition" data-preset="balanced">⚖️ Balanced Default</button>
-          <button type="button" class="preset-btn px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition" data-preset="discovery">🧭 Exploration & Discovery</button>
-          <button type="button" class="preset-btn px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition" data-preset="precision">🎯 High Precision</button>
-          <button type="button" class="preset-btn px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition" data-preset="diversity">🌐 High Diversity</button>
-        </div>
-
-        <form id="adminSettingsForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          
-          <!-- Parameter 1: Content-Based Weight -->
-          <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700 space-y-3">
-            <div class="flex items-center justify-between">
-              <label class="text-xs font-semibold text-slate-200 flex items-center space-x-1.5">
-                <i class="fa-solid fa-tags text-indigo-400"></i>
-                <span>Content-Based Weight (W_content)</span>
-              </label>
-              <span id="valContentWeight" class="text-xs font-mono font-bold text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded">0.40</span>
-            </div>
-            <input type="range" id="inputContentWeight" min="0" max="1" step="0.05" value="0.40" class="w-full accent-indigo-500 cursor-pointer">
-            <p class="text-[11px] text-slate-400">Similarity matching against tags, category, and past user preferences.</p>
-          </div>
-
-          <!-- Parameter 2: Collaborative Filtering Weight -->
-          <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700 space-y-3">
-            <div class="flex items-center justify-between">
-              <label class="text-xs font-semibold text-slate-200 flex items-center space-x-1.5">
-                <i class="fa-solid fa-users text-purple-400"></i>
-                <span>Collaborative Weight (W_collab)</span>
-              </label>
-              <span id="valCollaborativeWeight" class="text-xs font-mono font-bold text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">0.35</span>
-            </div>
-            <input type="range" id="inputCollaborativeWeight" min="0" max="1" step="0.05" value="0.35" class="w-full accent-purple-500 cursor-pointer">
-            <p class="text-[11px] text-slate-400">User-to-user behavioral correlation from interactions & clicks.</p>
-          </div>
-
-          <!-- Parameter 3: Popularity & Trend Weight -->
-          <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700 space-y-3">
-            <div class="flex items-center justify-between">
-              <label class="text-xs font-semibold text-slate-200 flex items-center space-x-1.5">
-                <i class="fa-solid fa-fire text-amber-400"></i>
-                <span>Popularity Weight (W_pop)</span>
-              </label>
-              <span id="valPopularityWeight" class="text-xs font-mono font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">0.25</span>
-            </div>
-            <input type="range" id="inputPopularityWeight" min="0" max="1" step="0.05" value="0.25" class="w-full accent-amber-500 cursor-pointer">
-            <p class="text-[11px] text-slate-400">Bayesian rating score and internet review volume influence.</p>
-          </div>
-
-          <!-- Parameter 4: Exploration Rate (Epsilon-greedy) -->
-          <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700 space-y-3">
-            <div class="flex items-center justify-between">
-              <label class="text-xs font-semibold text-slate-200 flex items-center space-x-1.5">
-                <i class="fa-solid fa-compass text-pink-400"></i>
-                <span>Exploration Rate (ε-greedy)</span>
-              </label>
-              <span id="valExplorationRate" class="text-xs font-mono font-bold text-pink-400 bg-pink-500/10 px-2 py-0.5 rounded">0.15</span>
-            </div>
-            <input type="range" id="inputExplorationRate" min="0.0" max="0.5" step="0.05" value="0.15" class="w-full accent-pink-500 cursor-pointer">
-            <p class="text-[11px] text-slate-400">Injects novel items into feed to prevent echo-chambers and discover new niches.</p>
-          </div>
-
-          <!-- Parameter 5: Minimum Confidence Threshold -->
-          <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700 space-y-3">
-            <div class="flex items-center justify-between">
-              <label class="text-xs font-semibold text-slate-200 flex items-center space-x-1.5">
-                <i class="fa-solid fa-shield-halved text-emerald-400"></i>
-                <span>Min Confidence Threshold</span>
-              </label>
-              <span id="valMinConfidenceThreshold" class="text-xs font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">0.40</span>
-            </div>
-            <input type="range" id="inputMinConfidenceThreshold" min="0.1" max="0.8" step="0.05" value="0.40" class="w-full accent-emerald-500 cursor-pointer">
-            <p class="text-[11px] text-slate-400">Discard recommendations below this AI match confidence threshold.</p>
-          </div>
-
-          <!-- Parameter 6: Live Web Search Fallback Toggle -->
-          <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700 space-y-3 flex flex-col justify-between">
-            <div class="flex items-center justify-between">
-              <label class="text-xs font-semibold text-slate-200 flex items-center space-x-1.5">
-                <i class="fa-solid fa-globe text-cyan-400"></i>
-                <span>Live Internet Synthesis</span>
-              </label>
-              <label class="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" id="inputEnableLiveWebSearch" checked class="sr-only peer">
-                <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
-              </label>
-            </div>
-            <p class="text-[11px] text-slate-400">Enable real-time dynamic web fetching for queries not pre-cached in local catalog.</p>
-          </div>
-
-        </form>
+      <!-- Admin 3-Tab Subnavigation -->
+      <div class="flex flex-wrap items-center p-1.5 bg-[#0c101d] rounded-2xl border border-white/[0.08] shadow-inner text-xs font-semibold gap-1.5">
+        <button id="btnAdminTabSettings" type="button" class="admin-tab-btn active px-4 py-2.5 rounded-xl transition-all flex items-center space-x-2 text-white">
+          <i class="fa-solid fa-sliders text-indigo-400"></i>
+          <span>1. System Settings & Presets</span>
+        </button>
+        <button id="btnAdminTabAnalytics" type="button" class="admin-tab-btn px-4 py-2.5 rounded-xl transition-all text-slate-400 hover:text-white flex items-center space-x-2">
+          <i class="fa-solid fa-chart-line text-emerald-400"></i>
+          <span>2. Effectiveness Analytics & AI Advisor</span>
+        </button>
+        <button id="btnAdminTabCatalog" type="button" class="admin-tab-btn px-4 py-2.5 rounded-xl transition-all text-slate-400 hover:text-white flex items-center space-x-2">
+          <i class="fa-solid fa-database text-purple-400"></i>
+          <span>3. User Profiles & Catalog Management</span>
+        </button>
       </div>
 
-      <!-- SECTION B: RECOMMENDATION EFFECTIVENESS ANALYSIS & CHARTS -->
-      <div class="space-y-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <h3 class="text-base font-bold text-white flex items-center space-x-2">
-              <i class="fa-solid fa-chart-line text-emerald-400"></i>
-              <span>Recommendation Effectiveness Analysis</span>
-            </h3>
-            <p class="text-xs text-slate-400">Real-time performance reports, metrics and automated algorithmic improvements</p>
+      <!-- ============================================== -->
+      <!-- TAB 1: SYSTEM SETTINGS MANAGEMENT & AUDIT LOG -->
+      <!-- ============================================== -->
+      <div id="adminTabSettingsContent" class="space-y-6">
+        <div class="bg-slate-800/40 border border-slate-700/80 rounded-2xl p-6 space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-slate-700/80 pb-4">
+            <div>
+              <h3 class="text-base font-bold text-white flex items-center space-x-2">
+                <i class="fa-solid fa-sliders text-indigo-400"></i>
+                <span>System Settings Management</span>
+              </h3>
+              <p class="text-xs text-slate-400">Tune the multi-objective AI recommendation parameters in real-time</p>
+            </div>
+            <div class="text-xs text-slate-400">
+              Last Updated: <span id="settingsLastUpdated" class="text-slate-200">Just now</span>
+            </div>
           </div>
-          <button id="btnRefreshAnalytics" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-medium border border-slate-700 transition flex items-center space-x-1.5">
-            <i class="fa-solid fa-arrows-rotate"></i>
-            <span>Refresh Analytics</span>
-          </button>
+
+          <!-- Primary Algorithm Mode Selector -->
+          <div class="p-4 rounded-xl bg-slate-800/70 border border-slate-700 space-y-2">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-semibold text-white flex items-center space-x-2">
+                <i class="fa-solid fa-microchip text-indigo-400"></i>
+                <span>Primary Recommendation Algorithm Mode</span>
+              </label>
+              <span id="activeModeBadge" class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">HYBRID ACTIVE</span>
+            </div>
+            <select id="selectAlgorithmMode" class="w-full p-2.5 bg-[#07090e] border border-white/[0.12] rounded-xl text-xs text-slate-200 focus:outline-none focus:border-indigo-500 cursor-pointer">
+              <option value="HYBRID" selected>🔀 Hybrid Ensemble (Content + Collaborative + Popularity / Trending)</option>
+              <option value="CONTENT_ONLY">🎯 Content-Based Filtering Only (User Feature Vector Similarity)</option>
+              <option value="COLLABORATIVE_ONLY">👥 Collaborative Filtering Only (User-Item Interaction Matrix)</option>
+              <option value="POPULARITY_ONLY">🔥 Popularity & Trending Cold-Start Only</option>
+            </select>
+            <p class="text-[11px] text-slate-400">Dynamically switches the core mathematical ranking pipeline executed on each query.</p>
+          </div>
+
+          <!-- Presets Bar -->
+          <div class="flex flex-wrap items-center gap-2 text-xs">
+            <span class="text-slate-400 font-medium">Algorithm Presets:</span>
+            <button type="button" class="preset-btn px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition" data-preset="balanced">⚖️ Balanced Default</button>
+            <button type="button" class="preset-btn px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition" data-preset="discovery">🧭 Exploration & Discovery</button>
+            <button type="button" class="preset-btn px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition" data-preset="precision">🎯 High Precision</button>
+            <button type="button" class="preset-btn px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition" data-preset="diversity">🌐 High Diversity</button>
+          </div>
+
+          <form id="adminSettingsForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            
+            <!-- Parameter 1: Content-Based Weight -->
+            <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700 space-y-3">
+              <div class="flex items-center justify-between">
+                <label class="text-xs font-semibold text-slate-200 flex items-center space-x-1.5">
+                  <i class="fa-solid fa-tags text-indigo-400"></i>
+                  <span>Content-Based Weight (W_content)</span>
+                </label>
+                <span id="valContentWeight" class="text-xs font-mono font-bold text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded">0.40</span>
+              </div>
+              <input type="range" id="inputContentWeight" min="0" max="1" step="0.05" value="0.40" class="w-full accent-indigo-500 cursor-pointer">
+              <p class="text-[11px] text-slate-400">Similarity matching against tags, category, and past user preferences.</p>
+            </div>
+
+            <!-- Parameter 2: Collaborative Filtering Weight -->
+            <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700 space-y-3">
+              <div class="flex items-center justify-between">
+                <label class="text-xs font-semibold text-slate-200 flex items-center space-x-1.5">
+                  <i class="fa-solid fa-users text-purple-400"></i>
+                  <span>Collaborative Weight (W_collab)</span>
+                </label>
+                <span id="valCollaborativeWeight" class="text-xs font-mono font-bold text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">0.35</span>
+              </div>
+              <input type="range" id="inputCollaborativeWeight" min="0" max="1" step="0.05" value="0.35" class="w-full accent-purple-500 cursor-pointer">
+              <p class="text-[11px] text-slate-400">User-to-user behavioral correlation from interactions & clicks.</p>
+            </div>
+
+            <!-- Parameter 3: Popularity & Trend Weight -->
+            <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700 space-y-3">
+              <div class="flex items-center justify-between">
+                <label class="text-xs font-semibold text-slate-200 flex items-center space-x-1.5">
+                  <i class="fa-solid fa-fire text-amber-400"></i>
+                  <span>Popularity Weight (W_pop)</span>
+                </label>
+                <span id="valPopularityWeight" class="text-xs font-mono font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">0.25</span>
+              </div>
+              <input type="range" id="inputPopularityWeight" min="0" max="1" step="0.05" value="0.25" class="w-full accent-amber-500 cursor-pointer">
+              <p class="text-[11px] text-slate-400">Bayesian rating score and internet review volume influence.</p>
+            </div>
+
+            <!-- Parameter 4: Exploration Rate (Epsilon-greedy) -->
+            <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700 space-y-3">
+              <div class="flex items-center justify-between">
+                <label class="text-xs font-semibold text-slate-200 flex items-center space-x-1.5">
+                  <i class="fa-solid fa-compass text-pink-400"></i>
+                  <span>Exploration Rate (ε-greedy)</span>
+                </label>
+                <span id="valExplorationRate" class="text-xs font-mono font-bold text-pink-400 bg-pink-500/10 px-2 py-0.5 rounded">0.15</span>
+              </div>
+              <input type="range" id="inputExplorationRate" min="0.0" max="0.5" step="0.05" value="0.15" class="w-full accent-pink-500 cursor-pointer">
+              <p class="text-[11px] text-slate-400">Injects novel items into feed to prevent echo-chambers and discover new niches.</p>
+            </div>
+
+            <!-- Parameter 5: Minimum Confidence Threshold -->
+            <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700 space-y-3">
+              <div class="flex items-center justify-between">
+                <label class="text-xs font-semibold text-slate-200 flex items-center space-x-1.5">
+                  <i class="fa-solid fa-shield-halved text-emerald-400"></i>
+                  <span>Min Confidence Threshold</span>
+                </label>
+                <span id="valMinConfidenceThreshold" class="text-xs font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">0.40</span>
+              </div>
+              <input type="range" id="inputMinConfidenceThreshold" min="0.1" max="0.8" step="0.05" value="0.40" class="w-full accent-emerald-500 cursor-pointer">
+              <p class="text-[11px] text-slate-400">Discard recommendations below this AI match confidence threshold.</p>
+            </div>
+
+            <!-- Parameter 6: Recency Decay Rate -->
+            <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700 space-y-3">
+              <div class="flex items-center justify-between">
+                <label class="text-xs font-semibold text-slate-200 flex items-center space-x-1.5">
+                  <i class="fa-solid fa-hourglass-half text-cyan-400"></i>
+                  <span>Recency Decay Rate (λ)</span>
+                </label>
+                <span id="valRecencyDecayRate" class="text-xs font-mono font-bold text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded">0.05</span>
+              </div>
+              <input type="range" id="inputRecencyDecayRate" min="0.01" max="0.20" step="0.01" value="0.05" class="w-full accent-cyan-500 cursor-pointer">
+              <p class="text-[11px] text-slate-400">Exponential time-decay applied to historical user interactions.</p>
+            </div>
+
+            <!-- Parameter 7: Category Diversity Cap -->
+            <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700 space-y-3">
+              <div class="flex items-center justify-between">
+                <label class="text-xs font-semibold text-slate-200 flex items-center space-x-1.5">
+                  <i class="fa-solid fa-layer-group text-violet-400"></i>
+                  <span>Category Diversity Cap</span>
+                </label>
+                <span id="valCategoryDiversityCap" class="text-xs font-mono font-bold text-violet-400 bg-violet-500/10 px-2 py-0.5 rounded">4</span>
+              </div>
+              <input type="range" id="inputCategoryDiversityCap" min="1" max="10" step="1" value="4" class="w-full accent-violet-500 cursor-pointer">
+              <p class="text-[11px] text-slate-400">Maximum recommendations per category to enforce diverse suggestions.</p>
+            </div>
+
+            <!-- Parameter 8: Live Web Search Fallback Toggle -->
+            <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700 space-y-3 flex flex-col justify-between">
+              <div class="flex items-center justify-between">
+                <label class="text-xs font-semibold text-slate-200 flex items-center space-x-1.5">
+                  <i class="fa-solid fa-globe text-cyan-400"></i>
+                  <span>Live Internet Synthesis</span>
+                </label>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" id="inputEnableLiveWebSearch" checked class="sr-only peer">
+                  <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                </label>
+              </div>
+              <p class="text-[11px] text-slate-400">Enable real-time dynamic web fetching for queries not pre-cached in local catalog.</p>
+            </div>
+
+          </form>
+        </div>
+
+        <!-- Live System Audit Log -->
+        <div class="p-5 rounded-2xl bg-slate-800/40 border border-slate-700 space-y-3">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center space-x-2">
+              <i class="fa-solid fa-clock-rotate-left text-indigo-400"></i>
+              <span>Live System Audit Log (Recent Parameter Modifications)</span>
+            </h4>
+            <span class="text-[10px] text-slate-500 font-mono">SQLite & In-Memory Journal</span>
+          </div>
+          <div id="adminAuditLogList" class="max-h-48 overflow-y-auto space-y-1.5 text-xs">
+            <!-- Audit logs injected dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- TAB 2: EFFECTIVENESS ANALYSIS & AI ADVISOR    -->
+      <!-- ============================================== -->
+      <div id="adminTabAnalyticsContent" class="hidden space-y-6">
+        
+        <!-- Analytics Top Bar & Export Options -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-slate-800/40 border border-slate-700 p-4 rounded-2xl">
+          <div class="flex items-center space-x-2">
+            <span class="px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-xs font-bold flex items-center space-x-1.5">
+              <i class="fa-solid fa-satellite-dish animate-pulse"></i>
+              <span>30-Day Simulation & Real-Time Telemetry</span>
+            </span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <button id="btnExportCsv" type="button" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold border border-slate-700 transition flex items-center space-x-1.5">
+              <i class="fa-solid fa-file-csv text-emerald-400"></i>
+              <span>Export CSV</span>
+            </button>
+            <button id="btnExportJson" type="button" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold border border-slate-700 transition flex items-center space-x-1.5">
+              <i class="fa-solid fa-file-code text-indigo-400"></i>
+              <span>Export JSON</span>
+            </button>
+            <button id="btnRefreshAnalytics" type="button" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md shadow-indigo-600/30 transition flex items-center space-x-1.5">
+              <i class="fa-solid fa-arrows-rotate"></i>
+              <span>Refresh Analytics</span>
+            </button>
+          </div>
         </div>
 
         <!-- KPI Summary Cards -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
           
-          <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700/80">
-            <p class="text-xs text-slate-400">Total Impressions</p>
-            <p id="kpiImpressions" class="text-xl font-extrabold text-white mt-1">-</p>
-            <p class="text-[10px] text-indigo-400 mt-1"><i class="fa-solid fa-eye"></i> Feed items served</p>
+          <div class="p-3.5 rounded-xl bg-slate-800/60 border border-slate-700/80">
+            <p class="text-[11px] text-slate-400">Impressions</p>
+            <p id="kpiImpressions" class="text-lg font-extrabold text-white mt-0.5">-</p>
+            <p class="text-[10px] text-indigo-400 mt-0.5"><i class="fa-solid fa-eye"></i> Served</p>
           </div>
 
-          <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700/80">
-            <p class="text-xs text-slate-400">Total Clicks</p>
-            <p id="kpiClicks" class="text-xl font-extrabold text-white mt-1">-</p>
-            <p class="text-[10px] text-purple-400 mt-1"><i class="fa-solid fa-arrow-pointer"></i> Engaged clicks</p>
+          <div class="p-3.5 rounded-xl bg-slate-800/60 border border-slate-700/80">
+            <p class="text-[11px] text-slate-400">Clicks</p>
+            <p id="kpiClicks" class="text-lg font-extrabold text-white mt-0.5">-</p>
+            <p class="text-[10px] text-purple-400 mt-0.5"><i class="fa-solid fa-arrow-pointer"></i> Engaged</p>
           </div>
 
-          <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700/80">
-            <p class="text-xs text-slate-400">Overall CTR</p>
-            <p id="kpiCtr" class="text-xl font-extrabold text-emerald-400 mt-1">-%</p>
-            <p class="text-[10px] text-emerald-400 mt-1"><i class="fa-solid fa-chart-simple"></i> Click-through rate</p>
+          <div class="p-3.5 rounded-xl bg-slate-800/60 border border-slate-700/80">
+            <p class="text-[11px] text-slate-400">Overall CTR</p>
+            <p id="kpiCtr" class="text-lg font-extrabold text-emerald-400 mt-0.5">-%</p>
+            <p class="text-[10px] text-emerald-400 mt-0.5"><i class="fa-solid fa-chart-simple"></i> Click-rate</p>
           </div>
 
-          <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700/80">
-            <p class="text-xs text-slate-400">Conversion Rate</p>
-            <p id="kpiConversion" class="text-xl font-extrabold text-amber-400 mt-1">-%</p>
-            <p class="text-[10px] text-amber-400 mt-1"><i class="fa-solid fa-bag-shopping"></i> Purchase / Save</p>
+          <div class="p-3.5 rounded-xl bg-slate-800/60 border border-slate-700/80">
+            <p class="text-[11px] text-slate-400">Conversion</p>
+            <p id="kpiConversion" class="text-lg font-extrabold text-amber-400 mt-0.5">-%</p>
+            <p class="text-[10px] text-amber-400 mt-0.5"><i class="fa-solid fa-bag-shopping"></i> Action</p>
           </div>
 
-          <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700/80">
-            <p class="text-xs text-slate-400">Precision@5</p>
-            <p id="kpiPrecision" class="text-xl font-extrabold text-indigo-400 mt-1">-</p>
-            <p class="text-[10px] text-indigo-400 mt-1"><i class="fa-solid fa-bullseye"></i> Top-5 accuracy</p>
+          <div class="p-3.5 rounded-xl bg-slate-800/60 border border-slate-700/80">
+            <p class="text-[11px] text-slate-400">Precision@10</p>
+            <p id="kpiPrecision" class="text-lg font-extrabold text-indigo-400 mt-0.5">-</p>
+            <p class="text-[10px] text-indigo-400 mt-0.5"><i class="fa-solid fa-bullseye"></i> Top-10</p>
           </div>
 
-          <div class="p-4 rounded-xl bg-slate-800/60 border border-slate-700/80">
-            <p class="text-xs text-slate-400">Diversity Score</p>
-            <p id="kpiDiversity" class="text-xl font-extrabold text-pink-400 mt-1">-%</p>
-            <p class="text-[10px] text-pink-400 mt-1"><i class="fa-solid fa-network-wired"></i> Cross-domain</p>
+          <div class="p-3.5 rounded-xl bg-slate-800/60 border border-slate-700/80">
+            <p class="text-[11px] text-slate-400">Recall@10</p>
+            <p id="kpiRecallAt10" class="text-lg font-extrabold text-cyan-400 mt-0.5">-</p>
+            <p class="text-[10px] text-cyan-400 mt-0.5"><i class="fa-solid fa-magnet"></i> Coverage</p>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-slate-800/60 border border-slate-700/80">
+            <p class="text-[11px] text-slate-400">Engagement Lift</p>
+            <p id="kpiEngagementLift" class="text-lg font-extrabold text-emerald-400 mt-0.5">+24.8%</p>
+            <p class="text-[10px] text-emerald-400 mt-0.5"><i class="fa-solid fa-arrow-trend-up"></i> vs baseline</p>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-slate-800/60 border border-slate-700/80">
+            <p class="text-[11px] text-slate-400">Diversity Score</p>
+            <p id="kpiDiversity" class="text-lg font-extrabold text-pink-400 mt-0.5">-%</p>
+            <p class="text-[10px] text-pink-400 mt-0.5"><i class="fa-solid fa-network-wired"></i> Cross-domain</p>
           </div>
 
         </div>
 
-        <!-- Interactive Charts Grid (Chart.js) -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Interactive Analytical Charts Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
           
           <!-- Chart 1: CTR by Category -->
           <div class="p-5 rounded-2xl bg-slate-800/50 border border-slate-700/80 space-y-4">
             <div class="flex items-center justify-between">
-              <h4 class="text-sm font-bold text-white flex items-center space-x-2">
+              <h4 class="text-xs font-bold text-white uppercase tracking-wider flex items-center space-x-2">
                 <i class="fa-solid fa-chart-column text-indigo-400"></i>
-                <span>Click-Through Rate (CTR) by Category</span>
+                <span>CTR by Category</span>
               </h4>
-              <span class="text-[11px] text-slate-400">Performance %</span>
+              <span class="text-[10px] text-slate-400">Performance %</span>
             </div>
-            <div class="h-64 relative">
+            <div class="h-60 relative">
               <canvas id="chartCategoryCtr"></canvas>
             </div>
           </div>
 
-          <!-- Chart 2: Timeline Impressions vs Clicks -->
+          <!-- Chart 2: 30-Day Timeline Impressions vs Clicks -->
           <div class="p-5 rounded-2xl bg-slate-800/50 border border-slate-700/80 space-y-4">
             <div class="flex items-center justify-between">
-              <h4 class="text-sm font-bold text-white flex items-center space-x-2">
+              <h4 class="text-xs font-bold text-white uppercase tracking-wider flex items-center space-x-2">
                 <i class="fa-solid fa-wave-square text-emerald-400"></i>
-                <span>7-Day Engagement Timeline</span>
+                <span>30-Day Engagement Timeline</span>
               </h4>
-              <span class="text-[11px] text-slate-400">Impressions vs Clicks</span>
+              <span class="text-[10px] text-slate-400">Impressions vs Clicks</span>
             </div>
-            <div class="h-64 relative">
+            <div class="h-60 relative">
               <canvas id="chartTimeline"></canvas>
+            </div>
+          </div>
+
+          <!-- Chart 3: Model Comparison Bar Chart -->
+          <div class="p-5 rounded-2xl bg-slate-800/50 border border-slate-700/80 space-y-4">
+            <div class="flex items-center justify-between">
+              <h4 class="text-xs font-bold text-white uppercase tracking-wider flex items-center space-x-2">
+                <i class="fa-solid fa-cubes-stacked text-purple-400"></i>
+                <span>Algorithm Model Comparison</span>
+              </h4>
+              <span class="text-[10px] text-slate-400">CTR Benchmark</span>
+            </div>
+            <div class="h-60 relative">
+              <canvas id="chartModelComparison"></canvas>
             </div>
           </div>
 
         </div>
 
-        <!-- Automated AI Optimization Suggestions & Reports -->
-        <div class="p-5 rounded-2xl bg-gradient-to-r from-indigo-950/40 via-slate-800/60 to-slate-800/40 border border-indigo-500/20 space-y-3">
-          <h4 class="text-sm font-bold text-white flex items-center space-x-2">
-            <i class="fa-solid fa-robot text-indigo-400"></i>
-            <span>AI Automated Optimization Suggestions</span>
-          </h4>
+        <!-- Automated AI Optimization Suggestions & AI Advisor -->
+        <div class="p-5 rounded-2xl bg-gradient-to-r from-indigo-950/40 via-slate-800/60 to-slate-800/40 border border-indigo-500/20 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+              <h4 class="text-sm font-bold text-white flex items-center space-x-2">
+                <i class="fa-solid fa-robot text-indigo-400"></i>
+                <span>AI Automated Optimization Advisor</span>
+              </h4>
+              <p class="text-xs text-slate-400">Automated machine learning advisor evaluating recent telemetry to maximize CTR and precision</p>
+            </div>
+            <button id="btnApplyAiOptimization" type="button" class="px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-bold shadow-lg shadow-indigo-600/30 transition flex items-center space-x-1.5">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+              <span>Apply Suggested Optimization</span>
+            </button>
+          </div>
           <div id="aiSuggestionsList" class="space-y-2 text-xs text-slate-300">
             <!-- Dynamic suggestions injected here -->
           </div>
         </div>
 
+      </div>
+
+      <!-- ============================================== -->
+      <!-- TAB 3: USERS & CATALOG MANAGEMENT              -->
+      <!-- ============================================== -->
+      <div id="adminTabCatalogContent" class="hidden space-y-6">
+        
         <!-- User Profiles Management Table -->
         <div class="p-5 rounded-2xl bg-slate-800/50 border border-slate-700/80 space-y-4">
           <div class="flex items-center justify-between">
-            <h4 class="text-sm font-bold text-white flex items-center space-x-2">
-              <i class="fa-solid fa-users text-purple-400"></i>
-              <span>User Profiles Management</span>
-            </h4>
-            <span class="text-xs text-slate-400">Active Test Users</span>
+            <div>
+              <h4 class="text-sm font-bold text-white flex items-center space-x-2">
+                <i class="fa-solid fa-users text-purple-400"></i>
+                <span>User Profiles & Personas</span>
+              </h4>
+              <p class="text-xs text-slate-400">Inspect pre-seeded personas, preference profiles, and interaction histories</p>
+            </div>
+            <span class="text-xs text-slate-400 font-mono">5 Personas + Admin</span>
           </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs text-slate-300">
@@ -605,10 +793,49 @@
                   <th class="px-4 py-3">Role</th>
                   <th class="px-4 py-3">Favorite Categories</th>
                   <th class="px-4 py-3">Location Anchor</th>
+                  <th class="px-4 py-3 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody id="userProfilesTableBody" class="divide-y divide-slate-700/60">
                 <!-- User rows injected here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Catalog Items Management Table -->
+        <div class="p-5 rounded-2xl bg-slate-800/50 border border-slate-700/80 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+              <h4 class="text-sm font-bold text-white flex items-center space-x-2">
+                <i class="fa-solid fa-boxes-stacked text-emerald-400"></i>
+                <span>Item Catalog Management</span>
+              </h4>
+              <p class="text-xs text-slate-400">Manage 30+ products and learning/media items indexed in the SQLite engine</p>
+            </div>
+            <div class="flex items-center space-x-2">
+              <input type="text" id="catalogSearchInput" placeholder="Filter catalog..." class="px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+              <button id="btnOpenAddCatalogItem" type="button" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-md shadow-emerald-600/30 transition flex items-center space-x-1.5">
+                <i class="fa-solid fa-plus"></i>
+                <span>Add New Item</span>
+              </button>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-300">
+              <thead class="bg-slate-800/80 text-slate-400 uppercase font-semibold border-b border-slate-700">
+                <tr>
+                  <th class="px-4 py-3">Item ID</th>
+                  <th class="px-4 py-3">Title</th>
+                  <th class="px-4 py-3">Category</th>
+                  <th class="px-4 py-3">Type</th>
+                  <th class="px-4 py-3">Price</th>
+                  <th class="px-4 py-3">Rating</th>
+                  <th class="px-4 py-3 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody id="catalogTableBody" class="divide-y divide-slate-700/60">
+                <!-- Catalog items injected dynamically -->
               </tbody>
             </table>
           </div>
@@ -891,15 +1118,15 @@
   <!-- MODAL 5: USER PREFERENCES SETTINGS         -->
   <!-- ========================================== -->
   <div id="modalPreferences" class="fixed inset-0 z-50 hidden overflow-y-auto bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="relative bg-slate-900 border border-slate-700 rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-6 animate-scaleIn">
+    <div class="relative bg-slate-900 border border-slate-700 rounded-2xl max-w-3xl w-full p-6 shadow-2xl space-y-6 animate-scaleIn">
       <div class="flex items-center justify-between border-b border-slate-800 pb-4">
         <div class="flex items-center space-x-3">
           <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center text-lg">
             <i class="fa-solid fa-sliders"></i>
           </div>
           <div>
-            <h3 class="text-lg font-bold text-white">Preference Settings</h3>
-            <p class="text-xs text-slate-400">Customize your recommendation profile</p>
+            <h3 class="text-lg font-bold text-white">Preference Settings & Affinity Vector</h3>
+            <p class="text-xs text-slate-400">Customize recommendation priorities, content formats, and review your live feature profile</p>
           </div>
         </div>
         <button class="modal-close-btn text-slate-400 hover:text-white p-2">
@@ -907,57 +1134,138 @@
         </button>
       </div>
 
-      <form id="userPreferencesForm" class="space-y-4 text-xs">
+      <form id="userPreferencesForm" class="space-y-5 text-xs">
         
-        <!-- Preferred Categories -->
-        <div class="space-y-1.5">
-          <label class="font-bold text-slate-200">Interests & Categories</label>
-          <div class="grid grid-cols-2 gap-2">
-            <label class="flex items-center space-x-2 bg-slate-800 p-2.5 rounded-lg cursor-pointer border border-slate-700">
-              <input type="checkbox" name="prefCat" value="PRODUCT" checked class="rounded accent-indigo-500">
-              <span>🛍️ Products & Deals</span>
-            </label>
-            <label class="flex items-center space-x-2 bg-slate-800 p-2.5 rounded-lg cursor-pointer border border-slate-700">
-              <input type="checkbox" name="prefCat" value="MOVIE" checked class="rounded accent-indigo-500">
-              <span>🎬 Movies & Shows</span>
-            </label>
-            <label class="flex items-center space-x-2 bg-slate-800 p-2.5 rounded-lg cursor-pointer border border-slate-700">
-              <input type="checkbox" name="prefCat" value="PLACE" checked class="rounded accent-indigo-500">
-              <span>📍 Places & Travel</span>
-            </label>
-            <label class="flex items-center space-x-2 bg-slate-800 p-2.5 rounded-lg cursor-pointer border border-slate-700">
-              <input type="checkbox" name="prefCat" value="FOOD" checked class="rounded accent-indigo-500">
-              <span>🍔 Food & Dining</span>
-            </label>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          
+          <!-- LEFT COLUMN: PREFERENCE CONTROLS -->
+          <div class="space-y-4">
+            <!-- Preferred Categories -->
+            <div class="space-y-1.5">
+              <label class="font-bold text-slate-200 uppercase tracking-wider text-[11px]">Interests & Domain Categories</label>
+              <div class="grid grid-cols-2 gap-2">
+                <label class="flex items-center space-x-2 bg-slate-800/80 p-2 rounded-lg cursor-pointer border border-slate-700 hover:border-indigo-500/40 transition">
+                  <input type="checkbox" name="prefCat" value="PRODUCT" checked class="rounded accent-indigo-500">
+                  <span class="truncate">🛍️ Products & Gear</span>
+                </label>
+                <label class="flex items-center space-x-2 bg-slate-800/80 p-2 rounded-lg cursor-pointer border border-slate-700 hover:border-indigo-500/40 transition">
+                  <input type="checkbox" name="prefCat" value="MOVIE" checked class="rounded accent-indigo-500">
+                  <span class="truncate">🎬 Movies & Shows</span>
+                </label>
+                <label class="flex items-center space-x-2 bg-slate-800/80 p-2 rounded-lg cursor-pointer border border-slate-700 hover:border-indigo-500/40 transition">
+                  <input type="checkbox" name="prefCat" value="PLACE" checked class="rounded accent-indigo-500">
+                  <span class="truncate">📍 Places & Travel</span>
+                </label>
+                <label class="flex items-center space-x-2 bg-slate-800/80 p-2 rounded-lg cursor-pointer border border-slate-700 hover:border-indigo-500/40 transition">
+                  <input type="checkbox" name="prefCat" value="FOOD" checked class="rounded accent-indigo-500">
+                  <span class="truncate">🍔 Food & Dining</span>
+                </label>
+                <label class="flex items-center space-x-2 bg-slate-800/80 p-2 rounded-lg cursor-pointer border border-slate-700 hover:border-indigo-500/40 transition">
+                  <input type="checkbox" name="prefCat" value="AI & Tech" checked class="rounded accent-indigo-500">
+                  <span class="truncate">🤖 AI & Data Science</span>
+                </label>
+                <label class="flex items-center space-x-2 bg-slate-800/80 p-2 rounded-lg cursor-pointer border border-slate-700 hover:border-indigo-500/40 transition">
+                  <input type="checkbox" name="prefCat" value="Books" checked class="rounded accent-indigo-500">
+                  <span class="truncate">📚 Tech Books & Docs</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Price Tolerance -->
+            <div class="space-y-1.5">
+              <label class="font-bold text-slate-200 uppercase tracking-wider text-[11px]">Price Sensitivity</label>
+              <select id="prefPriceSelect" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-indigo-500">
+                <option value="LOW">Budget Friendly (Under $50)</option>
+                <option value="MEDIUM" selected>Mid-Range & Best Value ($50 - $400)</option>
+                <option value="HIGH">Premium & High End ($400+)</option>
+              </select>
+            </div>
+
+            <!-- Content Formats -->
+            <div class="space-y-1.5">
+              <label class="font-bold text-slate-200 uppercase tracking-wider text-[11px]">Preferred Content Formats</label>
+              <div class="grid grid-cols-2 gap-2">
+                <label class="flex items-center space-x-2 bg-slate-800/80 p-2 rounded-lg cursor-pointer border border-slate-700">
+                  <input type="checkbox" name="prefFormat" value="eBooks" checked class="rounded accent-indigo-500">
+                  <span>eBooks & Guides</span>
+                </label>
+                <label class="flex items-center space-x-2 bg-slate-800/80 p-2 rounded-lg cursor-pointer border border-slate-700">
+                  <input type="checkbox" name="prefFormat" value="Courses" checked class="rounded accent-indigo-500">
+                  <span>Video Courses</span>
+                </label>
+                <label class="flex items-center space-x-2 bg-slate-800/80 p-2 rounded-lg cursor-pointer border border-slate-700">
+                  <input type="checkbox" name="prefFormat" value="Hardware" checked class="rounded accent-indigo-500">
+                  <span>Physical Hardware</span>
+                </label>
+                <label class="flex items-center space-x-2 bg-slate-800/80 p-2 rounded-lg cursor-pointer border border-slate-700">
+                  <input type="checkbox" name="prefFormat" value="Tools" checked class="rounded accent-indigo-500">
+                  <span>Software Tools</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Discovery Mode Toggle -->
+            <div class="p-3 rounded-xl bg-slate-800/60 border border-slate-700 flex items-center justify-between">
+              <div>
+                <p class="font-bold text-slate-200 text-xs">Discovery / Serendipity Mode</p>
+                <p class="text-[10px] text-slate-400">Expand exploration outside known preference vectors</p>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="prefDiscoveryMode" checked class="sr-only peer">
+                <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+              </label>
+            </div>
+
+            <!-- Dietary Preference -->
+            <div class="space-y-1.5">
+              <label class="font-bold text-slate-200 uppercase tracking-wider text-[11px]">Dietary Preference (Food)</label>
+              <select id="prefDietarySelect" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-indigo-500">
+                <option value="All" selected>All Cuisines</option>
+                <option value="Vegetarian">Vegetarian</option>
+                <option value="Vegan">Vegan</option>
+                <option value="Halal">Halal</option>
+                <option value="Gluten-Free">Gluten-Free</option>
+              </select>
+            </div>
+
+            <!-- Current Location Anchor -->
+            <div class="space-y-1.5">
+              <label class="font-bold text-slate-200 uppercase tracking-wider text-[11px]">Current Location Anchor</label>
+              <input type="text" id="prefLocationInput" value="Paris, France" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-indigo-500">
+            </div>
           </div>
-        </div>
 
-        <!-- Price Range Preference -->
-        <div class="space-y-1.5">
-          <label class="font-bold text-slate-200">Price Tolerance</label>
-          <select id="prefPriceSelect" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-indigo-500">
-            <option value="LOW">Budget Friendly (Under $50)</option>
-            <option value="MEDIUM" selected>Mid-Range & Best Value ($50 - $400)</option>
-            <option value="HIGH">Premium & Luxury ($400+)</option>
-          </select>
-        </div>
+          <!-- RIGHT COLUMN: VISUAL VECTOR CHART & ACTIVITY TIMELINE -->
+          <div class="space-y-4 flex flex-col justify-between">
+            <!-- Preference Vector Radar Chart -->
+            <div class="p-4 rounded-xl bg-slate-800/50 border border-slate-700 space-y-2">
+              <div class="flex items-center justify-between">
+                <h4 class="font-bold text-white text-xs flex items-center space-x-1.5">
+                  <i class="fa-solid fa-chart-radar text-indigo-400"></i>
+                  <span>Preference Feature Vector</span>
+                </h4>
+                <span class="text-[10px] text-slate-400 font-mono">Cosine Weight Affinity</span>
+              </div>
+              <div class="h-44 relative flex items-center justify-center">
+                <canvas id="userPrefVectorChart"></canvas>
+              </div>
+            </div>
 
-        <!-- Dietary Preference -->
-        <div class="space-y-1.5">
-          <label class="font-bold text-slate-200">Dietary Preference (for Food suggestions)</label>
-          <select id="prefDietarySelect" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-indigo-500">
-            <option value="All" selected>All Cuisines</option>
-            <option value="Vegetarian">Vegetarian</option>
-            <option value="Vegan">Vegan</option>
-            <option value="Halal">Halal</option>
-            <option value="Gluten-Free">Gluten-Free</option>
-          </select>
-        </div>
+            <!-- Recent User Behavioral Timeline -->
+            <div class="p-4 rounded-xl bg-slate-800/50 border border-slate-700 space-y-2">
+              <div class="flex items-center justify-between">
+                <h4 class="font-bold text-white text-xs flex items-center space-x-1.5">
+                  <i class="fa-solid fa-clock-rotate-left text-emerald-400"></i>
+                  <span>Recent Behavioral Activity</span>
+                </h4>
+                <span class="text-[10px] text-slate-400">Time-Decayed Signals</span>
+              </div>
+              <div id="userActivityTimeline" class="max-h-40 overflow-y-auto space-y-1.5 pr-1 text-xs">
+                <!-- Activity timeline items injected dynamically -->
+              </div>
+            </div>
+          </div>
 
-        <!-- Current Location Anchor for Shortest Path calculation -->
-        <div class="space-y-1.5">
-          <label class="font-bold text-slate-200">Current Location Anchor (Origin for Shortest Paths)</label>
-          <input type="text" id="prefLocationInput" value="Paris, France" class="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-lg text-slate-200 focus:outline-none focus:border-indigo-500">
         </div>
 
         <!-- Action Buttons -->
@@ -967,6 +1275,92 @@
           </button>
           <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-semibold shadow-lg shadow-indigo-600/30 transition">
             Save Preferences
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD CATALOG ITEM -->
+  <div id="modalAddCatalogItem" class="fixed inset-0 z-50 hidden overflow-y-auto bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="relative bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-5 animate-scaleIn text-xs">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-9 h-9 rounded-xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center justify-center text-base">
+            <i class="fa-solid fa-plus"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">Add Item to Catalog</h3>
+            <p class="text-[11px] text-slate-400">Indexed for real-time recommendation scoring</p>
+          </div>
+        </div>
+        <button id="btnCloseAddCatalogItem" class="modal-close-btn text-slate-400 hover:text-white p-1.5">
+          <i class="fa-solid fa-xmark text-base"></i>
+        </button>
+      </div>
+
+      <form id="addCatalogItemForm" class="space-y-3.5">
+        <div class="grid grid-cols-2 gap-3">
+          <div class="space-y-1">
+            <label class="font-bold text-slate-300">Item ID</label>
+            <input type="text" id="newItemId" required placeholder="e.g. prod-11, cont-7" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs focus:outline-none focus:border-indigo-500">
+          </div>
+          <div class="space-y-1">
+            <label class="font-bold text-slate-300">Item Type</label>
+            <select id="newItemType" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs focus:outline-none focus:border-indigo-500">
+              <option value="PRODUCT" selected>🛍️ Product</option>
+              <option value="CONTENT">📚 Learning / Content</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label class="font-bold text-slate-300">Item Title</label>
+          <input type="text" id="newItemTitle" required placeholder="e.g. Autonomous Agents in Production" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs focus:outline-none focus:border-indigo-500">
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div class="space-y-1">
+            <label class="font-bold text-slate-300">Category</label>
+            <select id="newItemCategory" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs focus:outline-none focus:border-indigo-500">
+              <option value="PRODUCT">PRODUCT</option>
+              <option value="MOVIE">MOVIE</option>
+              <option value="PLACE">PLACE</option>
+              <option value="FOOD">FOOD</option>
+            </select>
+          </div>
+          <div class="space-y-1">
+            <label class="font-bold text-slate-300">Price ($)</label>
+            <input type="number" step="0.01" id="newItemPrice" value="49.99" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs focus:outline-none focus:border-indigo-500">
+          </div>
+          <div class="space-y-1">
+            <label class="font-bold text-slate-300">Rating (0-5)</label>
+            <input type="number" step="0.1" min="1" max="5" id="newItemRating" value="4.8" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs focus:outline-none focus:border-indigo-500">
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label class="font-bold text-slate-300">Image URL</label>
+          <input type="url" id="newItemImageUrl" placeholder="https://images.unsplash.com/..." class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs focus:outline-none focus:border-indigo-500">
+        </div>
+
+        <div class="space-y-1">
+          <label class="font-bold text-slate-300">Feature Tags (comma separated)</label>
+          <input type="text" id="newItemTags" placeholder="e.g. AI, Machine Learning, Python, LLM" class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs focus:outline-none focus:border-indigo-500">
+        </div>
+
+        <div class="space-y-1">
+          <label class="font-bold text-slate-300">Description</label>
+          <textarea id="newItemDescription" rows="2" placeholder="Brief description of item..." class="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs focus:outline-none focus:border-indigo-500"></textarea>
+        </div>
+
+        <div class="pt-3 border-t border-slate-800 flex items-center justify-end space-x-2">
+          <button type="button" class="modal-close-btn px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-slate-300 font-semibold transition">
+            Cancel
+          </button>
+          <button type="submit" id="btnAddCatalogItemSubmit" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold shadow-md shadow-emerald-600/30 transition flex items-center space-x-1.5">
+            <i class="fa-solid fa-plus"></i>
+            <span>Add Item to Engine</span>
           </button>
         </div>
       </form>
@@ -996,33 +1390,47 @@
       <!-- Quick 1-Click Demo Profiles -->
       <div class="mt-4 p-3 bg-slate-800/60 rounded-xl border border-slate-700/60">
         <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block mb-2">1-Click Demo Personas:</span>
-        <div class="grid grid-cols-2 gap-2 text-xs">
-          <button type="button" class="quick-persona-btn text-left p-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700/80 hover:border-indigo-500/50 transition flex items-center space-x-2" data-id="usr-alice" data-name="Alice">
+        <div class="grid grid-cols-3 gap-2 text-xs">
+          <button type="button" class="quick-persona-btn text-left p-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700/80 hover:border-indigo-500/50 transition flex items-center space-x-1.5" data-id="usr-alice" data-name="Alice">
             <span class="w-6 h-6 rounded-md bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-[10px]">A</span>
-            <div>
+            <div class="truncate">
               <p class="font-bold text-white leading-tight">Alice</p>
-              <p class="text-[10px] text-slate-400">Tech & Movies</p>
+              <p class="text-[9px] text-slate-400 truncate">Tech & AI</p>
             </div>
           </button>
-          <button type="button" class="quick-persona-btn text-left p-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700/80 hover:border-indigo-500/50 transition flex items-center space-x-2" data-id="usr-bob" data-name="Bob">
+          <button type="button" class="quick-persona-btn text-left p-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700/80 hover:border-indigo-500/50 transition flex items-center space-x-1.5" data-id="usr-bob" data-name="Bob">
             <span class="w-6 h-6 rounded-md bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-[10px]">B</span>
-            <div>
+            <div class="truncate">
               <p class="font-bold text-white leading-tight">Bob</p>
-              <p class="text-[10px] text-slate-400">Travel & Food</p>
+              <p class="text-[9px] text-slate-400 truncate">Travel & Food</p>
             </div>
           </button>
-          <button type="button" class="quick-persona-btn text-left p-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700/80 hover:border-indigo-500/50 transition flex items-center space-x-2" data-id="usr-charlie" data-name="Charlie">
+          <button type="button" class="quick-persona-btn text-left p-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700/80 hover:border-indigo-500/50 transition flex items-center space-x-1.5" data-id="usr-charlie" data-name="Charlie">
             <span class="w-6 h-6 rounded-md bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold text-[10px]">C</span>
-            <div>
+            <div class="truncate">
               <p class="font-bold text-white leading-tight">Charlie</p>
-              <p class="text-[10px] text-slate-400">Bargains</p>
+              <p class="text-[9px] text-slate-400 truncate">Bargains</p>
             </div>
           </button>
-          <button type="button" class="quick-persona-btn text-left p-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700/80 hover:border-amber-500/50 transition flex items-center space-x-2" data-id="usr-admin" data-name="Admin">
-            <span class="w-6 h-6 rounded-md bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-[10px]">★</span>
-            <div>
+          <button type="button" class="quick-persona-btn text-left p-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700/80 hover:border-cyan-500/50 transition flex items-center space-x-1.5" data-id="usr-david" data-name="David">
+            <span class="w-6 h-6 rounded-md bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold text-[10px]">D</span>
+            <div class="truncate">
+              <p class="font-bold text-white leading-tight">David</p>
+              <p class="text-[9px] text-slate-400 truncate">Data Science</p>
+            </div>
+          </button>
+          <button type="button" class="quick-persona-btn text-left p-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700/80 hover:border-amber-500/50 transition flex items-center space-x-1.5" data-id="usr-eva" data-name="Eva">
+            <span class="w-6 h-6 rounded-md bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-[10px]">E</span>
+            <div class="truncate">
+              <p class="font-bold text-white leading-tight">Eva</p>
+              <p class="text-[9px] text-slate-400 truncate">Cold Start</p>
+            </div>
+          </button>
+          <button type="button" class="quick-persona-btn text-left p-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700/80 hover:border-rose-500/50 transition flex items-center space-x-1.5" data-id="usr-admin" data-name="Admin">
+            <span class="w-6 h-6 rounded-md bg-rose-500/20 text-rose-300 flex items-center justify-center font-bold text-[10px]"><i class="fa-solid fa-shield-halved text-[9px]"></i></span>
+            <div class="truncate">
               <p class="font-bold text-white leading-tight">Admin</p>
-              <p class="text-[10px] text-slate-400">Administrator</p>
+              <p class="text-[9px] text-slate-400 truncate">System Admin</p>
             </div>
           </button>
         </div>

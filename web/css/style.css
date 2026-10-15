@@ -206,3 +206,34 @@ input[type="range"]::-webkit-slider-thumb:hover {
 .leaflet-popup-tip {
   background: #0b0f19;
 }
+
+/* Type Filter Buttons */
+.type-filter-btn {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.type-filter-btn.active {
+  background: rgba(99, 102, 241, 0.2) !important;
+  border-color: rgba(99, 102, 241, 0.5) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+}
+
+/* Admin Sub-Tab Buttons */
+.admin-tab-btn {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.admin-tab-btn.active {
+  background: linear-gradient(135deg, #3730a3 0%, #4f46e5 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.35);
+}
+
+/* Quick Persona Pills */
+.persona-pill {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.persona-pill.active {
+  border-color: rgba(99, 102, 241, 0.6) !important;
+  background: rgba(99, 102, 241, 0.18) !important;
+  box-shadow: 0 0 12px rgba(99, 102, 241, 0.25);
+}

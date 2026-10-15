@@ -155,6 +155,125 @@ public class RecommendationEngine {
                 List.of("Indian", "Biryani", "Awadhi", "Halal", "Royal Mughlai"), 22.00);
         f4.getMetadata().put("foodReview", foodService.getFoodReview(f4).toMap());
         itemCatalog.put(f4.getId(), f4);
+
+        // --- Additional Products (Home Office, Fitness, Audio) ---
+        Item p5 = new Item("prod-5", "Keychron Q1 Pro Wireless Custom Mechanical Keyboard", "PRODUCT",
+                "Fully customizable CNC aluminum mechanical keyboard with hot-swappable tactile switches, RGB backlighting, and Bluetooth 5.1.",
+                4.8, 14200,
+                "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=600&q=80",
+                List.of("Electronics", "Keyboard", "Mechanical", "Home Office", "Hardware"), 199.99);
+        p5.setType("PRODUCT");
+        p5.getMetadata().put("comparison", comparisonService.compareProduct(p5).toMap());
+        itemCatalog.put(p5.getId(), p5);
+
+        Item p6 = new Item("prod-6", "LG UltraFine 32-inch 4K OLED Pro Monitor", "PRODUCT",
+                "Self-lit OLED pixels delivering 99% DCI-P3 color gamut, 1M:1 contrast ratio, and true 10-bit color depth for creative professionals.",
+                4.9, 8700,
+                "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=600&q=80",
+                List.of("Electronics", "Monitor", "4K", "OLED", "Design", "Home Office"), 899.99);
+        p6.setType("PRODUCT");
+        p6.getMetadata().put("comparison", comparisonService.compareProduct(p6).toMap());
+        itemCatalog.put(p6.getId(), p6);
+
+        Item p7 = new Item("prod-7", "Garmin Fenix 7X Sapphire Solar Multisport Watch", "PRODUCT",
+                "Rugged GPS smartwatch with scratch-resistant Power Sapphire solar charging lens, built-in LED flashlight, and advanced training metrics.",
+                4.8, 12800,
+                "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80",
+                List.of("Fitness", "Wearable", "GPS", "Running", "Health"), 749.99);
+        p7.setType("PRODUCT");
+        p7.getMetadata().put("comparison", comparisonService.compareProduct(p7).toMap());
+        itemCatalog.put(p7.getId(), p7);
+
+        Item p8 = new Item("prod-8", "Herman Miller Aeron Ergonomic Chair", "PRODUCT",
+                "The benchmark for ergonomic seating with 8Z Pellicle suspension, PostureFit SL sacral support, and forward tilt adjustability.",
+                4.9, 19400,
+                "https://images.unsplash.com/photo-1580481077195-c322b724599a?auto=format&fit=crop&w=600&q=80",
+                List.of("Home Office", "Ergonomic", "Chair", "Design", "Furniture"), 1195.00);
+        p8.setType("PRODUCT");
+        p8.getMetadata().put("comparison", comparisonService.compareProduct(p8).toMap());
+        itemCatalog.put(p8.getId(), p8);
+
+        Item p9 = new Item("prod-9", "Bowflex SelectTech 552 Adjustable Dumbbells", "PRODUCT",
+                "Replaces 15 sets of weights with selector dial adjusting rapidly from 5 to 52.5 lbs per dumbbell in space-saving form.",
+                4.7, 26800,
+                "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=600&q=80",
+                List.of("Fitness", "Strength", "Gym", "Dumbbells", "Health"), 429.00);
+        p9.setType("PRODUCT");
+        p9.getMetadata().put("comparison", comparisonService.compareProduct(p9).toMap());
+        itemCatalog.put(p9.getId(), p9);
+
+        Item p10 = new Item("prod-10", "DJI Mini 4 Pro Drone with 4K HDR Camera & RC 2", "PRODUCT",
+                "Sub-249g ultra-light camera drone with omnidirectional obstacle sensing, 4K/60fps HDR video, and 20km video transmission.",
+                4.8, 11300,
+                "https://images.unsplash.com/photo-1527977966376-1c8408f9f108?auto=format&fit=crop&w=600&q=80",
+                List.of("Electronics", "Drone", "Camera", "Aerial", "Gadget"), 759.00);
+        p10.setType("PRODUCT");
+        p10.getMetadata().put("comparison", comparisonService.compareProduct(p10).toMap());
+        itemCatalog.put(p10.getId(), p10);
+
+        // --- 5. LEARNING & MEDIA CONTENT ---
+        Item c1 = new Item("cont-1", "Deep Learning with Python (2nd Edition) - Francois Chollet", "MOVIE",
+                "Master neural networks, computer vision, and NLP using Keras and TensorFlow directly from the creator of Keras.",
+                4.9, 18200,
+                "https://images.unsplash.com/photo-1532012164546-f432f2e3777a?auto=format&fit=crop&w=600&q=80",
+                List.of("AI & Data Science", "Books", "Deep Learning", "Python", "Machine Learning"), 49.99);
+        c1.setType("CONTENT");
+        c1.getMetadata().put("movieDetails", movieService.getMovieDetails(c1).toMap());
+        itemCatalog.put(c1.getId(), c1);
+
+        Item c2 = new Item("cont-2", "Designing Data-Intensive Applications - Martin Kleppmann", "MOVIE",
+                "The definitive architectural blueprint for reliable, scalable, and maintainable distributed data systems, consensus, and storage engines.",
+                4.9, 34500,
+                "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=80",
+                List.of("AI & Data Science", "Books", "Distributed Systems", "Software", "Architecture"), 44.99);
+        c2.setType("CONTENT");
+        c2.getMetadata().put("movieDetails", movieService.getMovieDetails(c2).toMap());
+        itemCatalog.put(c2.getId(), c2);
+
+        Item c3 = new Item("cont-3", "Generative AI, Large Language Models & RAG Architectures", "MOVIE",
+                "Hands-on architectural masterclass building multi-agent AI systems, vector search pipelines, and low-latency inference endpoints.",
+                4.9, 15400,
+                "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80",
+                List.of("AI & Data Science", "Video", "LLM", "Generative AI", "Software"), 89.00);
+        c3.setType("CONTENT");
+        c3.getMetadata().put("movieDetails", movieService.getMovieDetails(c3).toMap());
+        itemCatalog.put(c3.getId(), c3);
+
+        Item c4 = new Item("cont-4", "System Design & Microservices at Scale", "MOVIE",
+                "Comprehensive deep-dive into sharding, CAP theorem, write-ahead logs, caching tiers, and event-driven architectures.",
+                4.8, 22100,
+                "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&q=80",
+                List.of("Software", "Article", "Architecture", "System Design", "Backend"), 39.00);
+        c4.setType("CONTENT");
+        c4.getMetadata().put("movieDetails", movieService.getMovieDetails(c4).toMap());
+        itemCatalog.put(c4.getId(), c4);
+
+        Item c5 = new Item("cont-5", "Figma Design Systems & Modern UI Component Architecture", "MOVIE",
+                "Build scalable component libraries, design tokens, responsive auto-layout, and micro-interactions in modern product design.",
+                4.8, 12900,
+                "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=600&q=80",
+                List.of("Design", "Video", "UI/UX", "Figma", "Web Design"), 49.00);
+        c5.setType("CONTENT");
+        c5.getMetadata().put("movieDetails", movieService.getMovieDetails(c5).toMap());
+        itemCatalog.put(c5.getId(), c5);
+
+        Item m5 = new Item("mov-5", "The Social Network (2010)", "MOVIE",
+                "As Harvard student Mark Zuckerberg creates the social networking site that would become Facebook, he is sued by the twins who claimed he stole their idea.",
+                8.7, 720000,
+                "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=600&q=80",
+                List.of("Drama", "Biography", "Tech", "Startup", "David Fincher"), null);
+        m5.setType("CONTENT");
+        m5.getMetadata().put("movieDetails", movieService.getMovieDetails(m5).toMap());
+        itemCatalog.put(m5.getId(), m5);
+
+        Item m6 = new Item("mov-6", "Ex Machina (2014)", "MOVIE",
+                "A young programmer is selected to participate in a ground-breaking experiment in synthetic intelligence by evaluating a humanoid AI.",
+                8.6, 560000,
+                "https://images.unsplash.com/photo-1507499739999-097706ad8914?auto=format&fit=crop&w=600&q=80",
+                List.of("Sci-Fi", "AI", "Drama", "Mystery", "Alex Garland"), null);
+        m6.setType("CONTENT");
+        m6.getMetadata().put("movieDetails", movieService.getMovieDetails(m6).toMap());
+        itemCatalog.put(m6.getId(), m6);
     }
 
     public List<Item> getPersonalizedRecommendations(String userId, String categoryFilter) {
@@ -166,7 +285,15 @@ public class RecommendationEngine {
         List<Item> candidates = new ArrayList<>();
         for (Item item : itemCatalog.values()) {
             if (categoryFilter != null && !categoryFilter.equalsIgnoreCase("ALL")) {
-                if (!item.getCategory().equalsIgnoreCase(categoryFilter)) {
+                if ("PRODUCT".equalsIgnoreCase(categoryFilter)) {
+                    if (!"PRODUCT".equalsIgnoreCase(item.getType()) && !"PRODUCT".equalsIgnoreCase(item.getCategory())) {
+                        continue;
+                    }
+                } else if ("CONTENT".equalsIgnoreCase(categoryFilter) || "LEARNING".equalsIgnoreCase(categoryFilter)) {
+                    if (!"CONTENT".equalsIgnoreCase(item.getType()) && "PRODUCT".equalsIgnoreCase(item.getCategory())) {
+                        continue;
+                    }
+                } else if (!item.getCategory().equalsIgnoreCase(categoryFilter)) {
                     continue;
                 }
             }
@@ -181,6 +308,8 @@ public class RecommendationEngine {
 
         Random rng = new Random();
         double explorationRate = config.getExplorationRate();
+        String mode = config.getAlgorithmMode();
+        if (mode == null) mode = "HYBRID";
 
         for (Item item : candidates) {
             // 1. Content-based similarity score
@@ -192,10 +321,25 @@ public class RecommendationEngine {
             // 3. Popularity & Trend score
             double popScore = Math.min(1.0, (Math.log10(Math.max(10, item.getReviewCount())) / 6.0) * (item.getRating() / 5.0));
 
-            // Hybrid score weighted by Admin settings
-            double hybridScore = (config.getContentWeight() * contentScore)
-                    + (config.getCollaborativeWeight() * collabScore)
-                    + (config.getPopularityWeight() * popScore);
+            // Scoring according to active algorithm mode
+            double hybridScore;
+            switch (mode.toUpperCase()) {
+                case "CONTENT_ONLY" -> hybridScore = contentScore;
+                case "COLLABORATIVE_ONLY" -> hybridScore = collabScore;
+                case "POPULARITY_ONLY" -> hybridScore = popScore;
+                default -> hybridScore = (config.getContentWeight() * contentScore)
+                        + (config.getCollaborativeWeight() * collabScore)
+                        + (config.getPopularityWeight() * popScore);
+            }
+
+            // Cold-start strategy for new users with zero or few interactions
+            if (interactedIds.isEmpty()) {
+                if ("POPULARITY_TRENDING".equalsIgnoreCase(config.getColdStartStrategy())) {
+                    hybridScore = (popScore * 0.65) + (contentScore * 0.35);
+                } else if ("DIVERSITY_SAMPLING".equalsIgnoreCase(config.getColdStartStrategy())) {
+                    hybridScore = (hybridScore * 0.60) + (rng.nextDouble() * 0.30);
+                }
+            }
 
             // Epsilon-greedy exploration injection
             if (rng.nextDouble() < explorationRate && !interactedIds.contains(item.getId())) {
@@ -205,6 +349,25 @@ public class RecommendationEngine {
             // Normalization
             hybridScore = Math.max(0.1, Math.min(0.99, hybridScore));
             item.setMatchScore(hybridScore);
+
+            // Compute Explainable AI factors
+            Map<String, Object> factors = new LinkedHashMap<>();
+            double cSim = Math.round(contentScore * 100.0) / 100.0;
+            double cAff = Math.round(collabScore * 100.0) / 100.0;
+            double pPop = Math.round(popScore * 100.0) / 100.0;
+            factors.put("contentSimilarity", cSim);
+            factors.put("collaborativeAffinity", cAff);
+            factors.put("popularityWeight", pPop);
+            factors.put("contentMatchPercent", (int) Math.round(contentScore * 100));
+            factors.put("behavioralMatchPercent", (int) Math.round(collabScore * 100));
+            factors.put("trendingBoostPercent", (int) Math.round(popScore * 100));
+            item.setScoreFactors(factors);
+
+            int finalPct = (int) Math.round(item.getMatchScore() * 100);
+            String topTag = (item.getTags() != null && !item.getTags().isEmpty()) ? item.getTags().get(0) : item.getCategory();
+            String aiExpl = String.format("%d%% Match — Based on your affinity for '%s' and community rating of %.1f/5.0 (%s reviews).",
+                    finalPct, topTag, item.getRating(), String.format("%,d", item.getReviewCount()));
+            item.setAiExplanation(aiExpl);
 
             // Log VIEW interaction for active user
             userService.recordInteraction(new Interaction(user.getId(), item.getId(), item.getCategory(), "VIEW", null));
@@ -221,6 +384,23 @@ public class RecommendationEngine {
 
         // Sort descending by match score
         filtered.sort((a, b) -> Double.compare(b.getMatchScore(), a.getMatchScore()));
+
+        // Apply category diversity cap if configured
+        int cap = config.getCategoryDiversityCap();
+        if (cap > 0 && filtered.size() > cap) {
+            Map<String, Integer> catCounts = new HashMap<>();
+            List<Item> diversified = new ArrayList<>();
+            for (Item it : filtered) {
+                int count = catCounts.getOrDefault(it.getCategory(), 0);
+                if (count < cap) {
+                    diversified.add(it);
+                    catCounts.put(it.getCategory(), count + 1);
+                }
+            }
+            if (diversified.size() >= Math.min(filtered.size(), config.getMaxRecommendationsPerQuery())) {
+                filtered = diversified;
+            }
+        }
 
         // Limit results to maxRecommendationsPerQuery
         int limit = Math.min(config.getMaxRecommendationsPerQuery(), filtered.size());
@@ -347,19 +527,38 @@ public class RecommendationEngine {
     }
 
     private double computeCollaborativeScore(User user, Item item) {
-        // Collaborative filtering: check how frequently other users interacted with this item
+        // Collaborative filtering: check how frequently other users interacted with this item with time-decay weighting
         List<Interaction> all = userService.getAllInteractions();
-        long itemInteractions = 0;
-        long totalInteractions = Math.max(1, all.size());
+        double recencyDecay = config.getRecencyDecayRate();
+        long now = System.currentTimeMillis();
+        double weightedInteractions = 0.0;
+        double totalWeighted = 0.0;
 
         for (Interaction in : all) {
+            long ageDays = Math.max(0, (now - in.getTimestamp()) / 86_400_000L);
+            double decay = Math.exp(-recencyDecay * ageDays);
+            totalWeighted += decay;
+
             if (item.getId().equals(in.getItemId()) && !in.getUserId().equals(user.getId())) {
-                itemInteractions++;
+                weightedInteractions += decay;
             }
         }
 
-        double ratio = (double) itemInteractions / totalInteractions;
+        double ratio = weightedInteractions / Math.max(1.0, totalWeighted);
         return Math.min(1.0, 0.4 + (ratio * 15.0));
+    }
+
+    public synchronized void addItem(Item item) {
+        if (item != null && item.getId() != null) {
+            itemCatalog.put(item.getId(), item);
+        }
+    }
+
+    public synchronized boolean removeItem(String id) {
+        if (id != null) {
+            return itemCatalog.remove(id) != null;
+        }
+        return false;
     }
 
     public Item getItem(String id) {

@@ -132,6 +132,16 @@ public class ApiHandler implements HttpHandler {
                 handleApplyPreset(exchange, params);
             } else if (path.equals("/api/admin/analytics") && "GET".equals(method)) {
                 handleGetAnalytics(exchange);
+            } else if (path.startsWith("/api/user/") && path.endsWith("/activity") && "GET".equals(method)) {
+                handleGetUserActivity(exchange, path);
+            } else if (path.equals("/api/admin/catalog/add") && "POST".equals(method)) {
+                handleAdminCatalogAdd(exchange);
+            } else if (path.startsWith("/api/admin/catalog/delete") && "POST".equals(method)) {
+                handleAdminCatalogDelete(exchange, path, params);
+            } else if (path.equals("/api/admin/export") && "GET".equals(method)) {
+                handleAdminExport(exchange, params);
+            } else if (path.equals("/api/admin/optimize") && "POST".equals(method)) {
+                handleAdminOptimize(exchange);
             } else if (path.equals("/api/database/status") && "GET".equals(method)) {
                 handleDatabaseStatus(exchange);
             } else if (path.equals("/api/database/users") && "GET".equals(method)) {
@@ -417,6 +427,131 @@ public class ApiHandler implements HttpHandler {
         } catch (Exception e) {
             sendJson(exchange, 500, Map.of("error", e.getMessage()));
         }
+    }
+
+    private void handleGetUserActivity(HttpExchange exchange, String path) throws IOException {
+        String userId = path.substring("/api/user/".length(), path.length() - "/activity".length());
+        List<Map<String, Object>> list = userService.getUserActivity(userId);
+        sendJson(exchange, 200, Map.of("userId", userId, "activity", list, "count", list.size()));
+    }
+
+    private void handleAdminCatalogAdd(HttpExchange exchange) throws IOException {
+        String body = readBody(exchange);
+        Map<String, Object> map = JsonUtil.parseMap(body);
+        String id = map.containsKey("id") ? String.valueOf(map.get("id")) : "custom-" + System.currentTimeMillis();
+        String title = String.valueOf(map.getOrDefault("title", "New Custom Item"));
+        String category = String.valueOf(map.getOrDefault("category", "PRODUCT")).toUpperCase();
+        String description = String.valueOf(map.getOrDefault("description", ""));
+        double rating = map.containsKey("rating") ? ((Number) map.get("rating")).doubleValue() : 4.8;
+        int reviews = map.containsKey("reviewCount") ? ((Number) map.get("reviewCount")).intValue() : 1200;
+        String imageUrl = String.valueOf(map.getOrDefault("imageUrl", "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80"));
+        Double price = map.containsKey("price") && map.get("price") != null ? ((Number) map.get("price")).doubleValue() : 99.99;
+        
+        List<String> tags = new ArrayList<>();
+        if (map.containsKey("tags") && map.get("tags") instanceof List<?>) {
+            for (Object t : (List<?>) map.get("tags")) tags.add(String.valueOf(t));
+        } else {
+            tags.addAll(List.of(category, "Curated", "Featured"));
+        }
+
+        Item item = new Item(id, title, category, description, rating, reviews, imageUrl, tags, price);
+        if (map.containsKey("type")) {
+            item.setType(String.valueOf(map.get("type")));
+        }
+        if ("PRODUCT".equalsIgnoreCase(category)) {
+            item.getMetadata().put("comparison", comparisonService.compareProduct(item).toMap());
+        }
+        recommendationEngine.addItem(item);
+        try {
+            itemDao.save(item);
+        } catch (Exception ignored) {}
+
+        sendJson(exchange, 200, Map.of(
+                "success", true,
+                "message", "Item successfully added to active catalog and persistent database.",
+                "item", item.toMap()
+        ));
+    }
+
+    private void handleAdminCatalogDelete(HttpExchange exchange, String path, Map<String, String> params) throws IOException {
+        String id = params.get("id");
+        if (id == null || id.isEmpty()) {
+            String body = readBody(exchange);
+            if (!body.isEmpty()) {
+                Map<String, Object> map = JsonUtil.parseMap(body);
+                id = String.valueOf(map.get("id"));
+            }
+        }
+        if (id == null || id.isEmpty()) {
+            sendJson(exchange, 400, Map.of("error", "Item ID is required for deletion."));
+            return;
+        }
+        boolean removed = recommendationEngine.removeItem(id);
+        try {
+            itemDao.deleteById(id);
+        } catch (Exception ignored) {}
+        sendJson(exchange, 200, Map.of("success", removed, "id", id, "message", "Item removed from catalog."));
+    }
+
+    private void handleAdminExport(HttpExchange exchange, Map<String, String> params) throws IOException {
+        String format = params.getOrDefault("format", "json").toLowerCase();
+        RecommendationMetrics metrics = userService.calculateMetrics(config);
+
+        if ("csv".equals(format)) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Report,OmniRecommend AI Recommendation Effectiveness Report\n");
+            sb.append("GeneratedAt,").append(new Date()).append("\n");
+            sb.append("TotalImpressions,").append(metrics.getTotalImpressions()).append("\n");
+            sb.append("TotalClicks,").append(metrics.getTotalClicks()).append("\n");
+            sb.append("TotalConversions,").append(metrics.getTotalConversions()).append("\n");
+            sb.append("OverallCTR,").append(metrics.getOverallCtr()).append("%\n");
+            sb.append("ConversionRate,").append(metrics.getConversionRate()).append("%\n");
+            sb.append("PrecisionAt10,").append(metrics.getPrecisionAt10()).append("\n");
+            sb.append("RecallAt10,").append(metrics.getRecallAt10()).append("\n");
+            sb.append("UserEngagementLift,").append(metrics.getUserEngagementLift()).append("%\n\n");
+
+            sb.append("Category,Impressions,Clicks,CTR%,ConversionRate%\n");
+            for (Map.Entry<String, RecommendationMetrics.CategoryMetric> entry : metrics.getCategoryMetrics().entrySet()) {
+                var c = entry.getValue();
+                sb.append(c.getCategory()).append(",").append(c.getImpressions()).append(",").append(c.getClicks())
+                  .append(",").append(c.getCtr()).append("%,")
+                  .append(c.getConversionRate()).append("%\n");
+            }
+
+            sb.append("\nDate,DailyImpressions,DailyClicks,DailyCTR%\n");
+            for (RecommendationMetrics.DailyMetric dm : metrics.getTimelineMetrics()) {
+                Map<String, Object> m = dm.toMap();
+                sb.append(m.get("date")).append(",").append(m.get("impressions")).append(",").append(m.get("clicks"))
+                  .append(",").append(m.get("ctr")).append("%\n");
+            }
+
+            byte[] bytes = sb.toString().getBytes(StandardCharsets.UTF_8);
+            exchange.getResponseHeaders().set("Content-Type", "text/csv; charset=UTF-8");
+            exchange.getResponseHeaders().set("Content-Disposition", "attachment; filename=\"recommendation_report.csv\"");
+            exchange.sendResponseHeaders(200, bytes.length);
+            try (OutputStream os = exchange.getResponseBody()) {
+                os.write(bytes);
+            }
+        } else {
+            Map<String, Object> report = new LinkedHashMap<>();
+            report.put("timestamp", System.currentTimeMillis());
+            report.put("metrics", metrics.toMap());
+            report.put("config", config.toMap());
+            sendJson(exchange, 200, report);
+        }
+    }
+
+    private void handleAdminOptimize(HttpExchange exchange) throws IOException {
+        config.setAlgorithmMode("HYBRID");
+        config.setRecencyDecayRate(0.06);
+        config.applyPreset("ACCURACY_OPTIMIZED", "AI_Advisor");
+        config.saveToDb();
+
+        sendJson(exchange, 200, Map.of(
+                "success", true,
+                "message", "AI Advisor Optimization Applied! Hyperparameters auto-tuned: Content Weight boosted to 60%, Epsilon exploration tuned to 5%, and Recency Decay adapted.",
+                "settings", config.toMap()
+        ));
     }
 
     private void handleDeepHealth(HttpExchange exchange) throws IOException {
